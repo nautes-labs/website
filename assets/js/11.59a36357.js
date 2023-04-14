@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[11],{282:function(n,t,l){"use strict";l.r(t);var e={name:"FullWidthPage"},s=l(14),u=Object(s.a)(e,(function(){var n=this._self._c;return n("div",{staticClass:"full-width"},[n("Content")],1)}),[],!1,null,null,null);t.default=u.exports}}]);
