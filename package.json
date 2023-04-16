@@ -1,0 +1,20 @@
+{
+  "name": "website",
+  "version": "0.1.0",
+  "description": "Nautes website and documentation repo.",
+  "main": "index.js",
+  "authors": {
+    "name": "gaozheng",
+    "email": "gaozheng.cn@gmail.com"
+  },
+  "repository": "https://github.com/nautes-labs/website",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src",
+    "build-swagger-ui": "npx @openapitools/openapi-generator-cli generate -i src/api/api-server.yaml -g markdown -o  src/api"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "vuepress": "^1.9.9"
+  }
+}
