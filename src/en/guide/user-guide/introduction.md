@@ -1,38 +1,38 @@
 ---
 footerLink: /guide/user-guide/introduction
-title: 概述
+title: Overview
 ---
 
-# 概述
+# Overview
 
-Nautes 是 Kubernetes 原生的开源一站式开发者平台，融合了 DevOps 和 GitOps 的理念和最佳实践，以可插拔的方式集成了业界最优秀的云原生开源项目。
+Nautes is a Kubernetes-native all-in-one Internal Developer Platform that combines the concepts and best practices of DevOps and GitOps. It integrates the industry's best cloud-native open-source projects in a pluggable manner.
 
-## 特性
+## Features
 
-- 覆盖敏捷开发、CI/CD、自动化测试、安全、运维等全流程的一站式开发者平台。
-- 遵循 GitOps 最佳实践，以版本库作为唯一可信数据源。当版本库中的数据有变更时，由 Operator 自动识别变更并向 Kubernetes 集群做增量更新。
-- 全分布式的多租户架构，租户作为分布式的计算单元和存储单元支持水平扩展，租户所管理的资源同样支持水平扩展。
-- 良好的适配性，除了底座 Kubernetes 以及 Git 外，其他组件均可被替换。
-- 所有功能均提供声明式的REST API，支持二次开发。
-- 对所集成的开源项目，均保持其原生特性，无裁剪式封装，对受管应用不产生二次绑定。
-- 通过构建上层数据模型，实现对所集成的开源项目的统一认证、统一授权。
-- 支持私有云、混合云的部署模式。
+- a Kubernetes-native all-in-one Internal Developer Platform that covers the entire process, including agile development, CI/CD, automated testing, security, and operations.
+- Following GitOps best practices, the version control repository serves as the single source of truth. When data in the repository changes, the Operator automatically detects the changes and performs incremental updates to the Kubernetes cluster.
+- A fully distributed multi-tenant architecture, where tenants serve as distributed computing and storage units that support horizontal scaling. The resources managed by tenants also support horizontal scaling.
+- Good adaptability, apart from the base Kubernetes and Git, other components can be replaced.
+- All features offer declarative REST APIs, allowing for secondary development.
+- For all integrated open-source projects, their native features are maintained without any trimmed encapsulation, ensuring that there is no secondary binding for the managed applications.
+- By constructing a higher-level data model, unified authentication and authorization are achieved for all integrated open-source projects.
+- Supports deployment modes for private cloud and hybrid cloud.
 
-## 架构
+## Architecture
 
-Nautes 采用全分布式的多租户架构，平台管理集群负责租户的分配和回收，每个租户独占一套资源（包括代码库、密钥库、制品库、认证服务器、集群等），租户内的资源由租户管理集群进行管理。
+Nautes adopts a fully distributed multi-tenant architecture, where the platform management cluster is responsible for tenant allocation and recovery. Each tenant has exclusive access to a set of resources, including code repositories, key repositories, artifact repositories, authentication servers, and clusters. Resources within a tenant are managed by the tenant management cluster.
 
-租户作为资源的管理单元，可由用户根据自身组织特性进行划分，常见的划分方式有：按产品团队、按部门、按子公司等。
+Tenants serve as the unit of resource management and can be divided based on the organization's characteristics, such as by product teams, departments, or subsidiaries.
 
-租户内的资源也支持多实例部署，例如：可以在一个租户内部署多个 Harbor 实例，用于隔离不同产品的容器镜像数据。
+Resources within a tenant can also be deployed with multiple instances, for example, multiple Harbor instances can be deployed within a single tenant to isolate container image data for different products.
 
 ![](./../images/brief-architecture.png)
 
-## 实体定义
+## Entity Definition
 
-- **产品**：对应一个软件系统，包含团队、微服务、及制品库。产品可以被租户管理员授权使用指定的 Kubernetes 集群。
-- **项目**：对应一个微服务，每个微服务有自己的代码库。您可以使用集群进行微服务的集成和部署，也可以使用产品的制品库对微服务的制品进行存储和版本管理。 一个产品下可以包含多个项目。
-- **环境**：使用集群（目前只支持 Kubernetes集群）来承载产品中各个微服务的集成和部署的管理单元。一个产品包含多个环境，如：开发环境、测试环境、预生产环境和生产环境等。
-- **代码库**：用于存储微服务的源代码、流水线配置、部署清单的版本库。只支持 Git。
-- 流水线运行时：定义用于集成微服务流水线的配置声明，如：流水线配置的存储位置、流水线的触发方式、运行流水线的目标环境等。
-- **部署运行时**：定义用于部署微服务的配置声明，如：部署清单的存储位置、部署到的目标环境等。
+- **Product:** Corresponds to a software system, including teams, projects, environments, code repositories, artifact repositories, and runtime. A product can be authorized by the Tenant Manager for use on specified Kubernetes clusters.
+- **Project:** Corresponds to a microservice, and each project has its own code repository. You can use a cluster for project integration and deployment, or use the artifact repository of the product to store and version control the project artifacts. A product can contain multiple projects.
+- **Environment:** Uses a cluster (currently only supports Kubernetes) as the management unit for integrating and deploying various projects within a product. A product contains multiple environments, such as development, testing, pre-production, and production environments.
+- **Code Repository:** A repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
+- **Pipeline Runtime:** The configuration declaration defining the aspects for integrating a project's pipeline, such as: the storage location of pipeline configurations, the pipeline's triggering method, the target environment for running the pipeline, etc.
+- **Deployment Runtime:** The configuration declaration defining the aspects for deploying projects, such as: the storage location of deployment manifests, the target environment to deploy to, etc.
