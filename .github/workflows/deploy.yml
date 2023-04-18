@@ -22,6 +22,7 @@ jobs:
     - name: Build
       run: |
         npm run build-swagger-ui
+        npm run build-swagger-ui-en
         npm run build
 
     - name: Deploy
