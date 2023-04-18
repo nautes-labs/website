@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "vuepress dev src",
     "build": "vuepress build src",
-    "build-swagger-ui": "npx @openapitools/openapi-generator-cli generate -i src/api/api-server.yaml -g markdown -o  src/api"
+    "build-swagger-ui": "npx @openapitools/openapi-generator-cli generate -i src/api/api-server.yaml -g markdown -o  src/api",
+    "build-swagger-ui-en": "npx @openapitools/openapi-generator-cli generate -i src/api/api-server.yaml -g markdown -o  src/en/api"
   },
   "license": "MIT",
   "dependencies": {
