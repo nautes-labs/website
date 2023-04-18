@@ -49,7 +49,7 @@ sh start.sh
 - service：租户管理集群、Dex、ArgoCD、Vault、GitLab、Nautes API Server 的访问地址。
 - logs：安装程序的日志。
 
-> Nautes API Server 的 Swagger UI 实例的相对路径为：/q/swagger-ui。 
+> Nautes API Server 的 Swagger UI 文档的相对路径为：/q/swagger-ui。 
 
 ## 销毁环境
 > 请确保已成功执行安装，未删除安装机上的 /opt/nautes 目录。
