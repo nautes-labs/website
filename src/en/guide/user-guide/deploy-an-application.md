@@ -6,7 +6,7 @@ title: Deploy an Application
 
 本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上部署一个应用的过程。
 
-## 前提条件
+## Prerequisites
 
 ### 注册 GitLab 账号
 GitLab 安装完成后，您需要注册一个账号，并创建 [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) ，设置 access token 的权限范围：api、read_api、read_repository 和 write_repository。
