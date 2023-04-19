@@ -1,88 +1,94 @@
 ---
 footerLink: /guide/user-guide/deploy-an-application
-title: 部署一个应用
+title: Deploy an Application
 ---
-# 部署一个应用
+# Deploy an Application
 
-本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上部署一个应用的过程。
+This document describes the process of registering a new Kubernetes cluster to Nautes, on which an application will be deployed.
 
-## 前提条件
+## Prerequisites
 
-### 注册 GitLab 账号
-GitLab 安装完成后，您需要注册一个账号，并创建 [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) ，设置 access token 的权限范围：api、read_api、read_repository 和 write_repository。
+### Register a GitLab Account
+After GitLab installation, you need to register an account and create a  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) with the scopes: api, read_api, read_repository, and write_repository.
 
-如果此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
+The account needs to call the API for [managing the runtime clusters](#register-runtime-cluster), you need to add the account to the member list of the tenant configuration repository and ensure that the account can push code to the main branch.
 
-### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。  
+### Import Certificates
 
-### 准备服务器
-您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。  
+If you want to access Nautes API Server using the HTTPS protocol, please download the ca.crt certificate from [the installation result](installation.md#check-the-installation-results), and add ca.crt to the trusted certificate list of the server that executes the API.
 
-下文将以阿里云为例描述如何准备服务器并安装一个 K3s 集群。
+### Prepare a Server
+You need to prepare a server for installing the Kubernetes cluster. If you already have a Kubernetes cluster (with a public IP), you can skip this step.
 
-先创建 ECS 云服务器，详情参考 [云服务器 ECS](https://help.aliyun.com/document_detail/25422.html)。服务器安装成功后，在服务器上安装 K3s，命令如下：
+The following will describe how to prepare a server and install a K3s cluster using Alibaba Cloud as an example. 
+
+Create an ECS cloud server. For more details, refer to [Elastic Compute Service (ECS)](https://help.aliyun.com/document_detail/25422.html). After the server is successfully installed, install K3s on the server using the following command: 
+
 ```Shell
-# 根据实际情况，替换 $PUBLIC_IP 为服务器的公网 IP
+# Replace $PUBLIC_IP with the public IP of the server.
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server
 mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/k3s-config
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
 export KUBECONFIG=${HOME}/.kube/config
 ```
+After the K3s installation is complete, you need to add an inbound rule for port 6443. For more information, refer to the [Security Group Rules](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/create-a-security-group-2). 
 
-## 安装
 
-以阿里云为例描述在公有云部署 Nautes 的过程，详情参考 [安装](installation.md)。
+## Installation
 
-## 注册运行时集群
+Using Alibaba Cloud as an example, this section describes the process of deploying Nautes on a public cloud. For more information, refer to the [Installation](installation.md). 
 
-注册运行时集群用于把已准备好的 Kubernetes 集群托管给租户管理集群，并由租户管理集群初始化集群的相关配置。初始化完成后的集群可以作为承载应用的运行时环境。
+## Register Runtime Cluster
 
-注册运行时集群支持的集群形态包括物理集群和虚拟集群。
+Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can function as a runtime environment for hosting applications. 
 
-当您的应用的运行时环境需要更高的性能、隔离性和可靠性时，建议使用[物理集群](#注册物理集群)。而对于其他环境，例如开发测试环境和试用环境等，可以使用[虚拟集群](#注册虚拟集群)。
+The supported cluster types include physical clusters and virtual clusters.  
 
-### 注册物理集群
-1. 将命令行程序的代码库克隆到本地。
+When higher performance, isolation, and reliability are required for your application's runtime environment, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
+
+### Register Physical Cluster
+1. Clone the command-line repository to your local machine.  
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+2. Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+
 ```Shell
-# 查看物理集群的 kubeconfig
+# View the kubeconfig for the physical cluster.
 cat ${HOME}/.kube/config
 ```
 
 ```yaml
-# 物理集群属性模板
+# Physical cluster property template
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  # 集群名称
-  name: "cluster-demo-$suffix"
-  # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
+  # Cluster name
+  name: "host-worker-$suffix"
+  # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
   apiServer: "$api-server"
-  # 集群种类：目前只支持 kubernetes
+  # Cluster kind. Currently only supports Kubernetes.
   clusterKind: "kubernetes"
-  # 集群类型：virtual或physical
+  # Cluster type: virtual or physical
   clusterType: "physical"
-  # 集群用途：host或worker
+  # Cluster usage: host or worker
   usage: "worker"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster_ip
+  # ArgoCD domain. Replace the variable $cluster_ip with the IP of the physical cluster.
   argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
-  # traefik 配置：物理集群才有此属性
+  # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
+  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster.
   kubeconfig: |
     "$kubeconfig"
 ```
 
-替换变量后的物理集群示例如下：
+The physical cluster property example after replacing the variables is shown below: 
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -118,50 +124,52 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令以注册物理集群。
+3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the physical cluster.
 
 ```Shell
-# examples/demo-cluster-host.yaml 指在模板代码库中模板文件的相对路径
-# gitlab-access-token 指 GitLab 访问令牌
-# api-server-address 指 Nautes API Server 的访问地址
+# examples/demo-cluster-physical-worker.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-### 注册虚拟集群
-1. 将命令行程序的代码库克隆到本地。
+### Register Virtual Cluster
+1. Clone the command-line repository to your local machine.  
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
-2. 替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+2. Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+
 ```Shell
-# 查看宿主集群的 kubeconfig
+# View the kubeconfig for the host cluster.
 cat ${HOME}/.kube/config
 ```
 
 ```yaml
-# 宿主集群
+# Host cluster property template
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  # 集群名称
-  name: "cluster-demo-$suffix"
-  # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
+  # Cluster name
+  name: "host-$suffix"
+  # Cluster API SERVER URL. Replace the variable with the address of the host cluster.
   apiServer: "$api-server"
-  # 集群种类：目前只支持 kubernetes
+  # Cluster kind. Currently only supports Kubernetes.
   clusterKind: "kubernetes"
-  # 集群类型：virtual或physical
+  # Cluster type: virtual or physical
   clusterType: "physical"
-  # 集群用途：host或worker
+  # Cluster usage: host or worker
   usage: "host"
-  # traefik 配置
+  # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
+  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster
   kubeconfig: |
     "$kubeconfig"
 ```
-替换变量后的宿主集群示例如下：
+The host cluster property example after replacing the variables is shown below: 
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -196,38 +204,44 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，将注册宿主集群。
+3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the host cluster.
 
 ```Shell
+# examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-4. 替换位于相对路径 `examples/demo-cluster-virtual-worker.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+4. Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker.yaml`, including `$suffix`, `$api-server`, `$host-cluster`, and `$api-server-port`.
+
+
 ```yaml
-# 虚拟集群
+# Virtual cluster property template
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  # 集群名称
+  # Cluster name
   name: "cluster-demo-$suffix"
-  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+  # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
   apiServer: "$api-server"
-  # 集群种类：目前只支持 kubernetes
+  # Cluster kind: Currently only supports Kubernetes
   clusterKind: "kubernetes"
-  # 集群类型：virtual或physical
+  # Cluster type: virtual or physical
   clusterType: "virtual"
-  # 集群用途：host或worker
+  # Cluster usage: host or worker
   usage: "worker"
-  # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
+  # Host cluster: the property is only available for virtual type clusters. Replace the parameter with the name of the host cluster.
   hostCluster: "$host-cluster"
-  # argocd 域名，使用宿主集群的IP替换变量 $cluster_ip
+  # ArgoCD domain. Replace the variable $cluster_ip with the IP of the host cluster.
   argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
-  # 虚拟集群配置：virtual类型集群才有此属性
+  # Virtual cluster configuration: the property is only available for virtual type clusters.
   vcluster: 
-    # API SERVER 端口号
+    # API SERVER port 
     httpsNodePort: "$api-server-port"
 ```
-替换变量后的虚拟集群示例如下：
+The virtual cluster property example after replacing the variables is shown below: 
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -243,111 +257,119 @@ spec:
     httpsNodePort: "31456"
 ```
 
-5. 执行以下命令，将注册该虚拟集群。
+5. Run the following command to register the virtual cluster.
 
 ```Shell
+# examples/demo-cluster-virtual-worker.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
-## 准备运行环境
+## Prepare Runtime Environment
 
-准备运行环境是指在运行时集群中初始化一个用于部署产品的基础环境，包括 namespace、serviceAccount、secret 等资源。
+Preparing the runtime environment refers to initializing a basic environment for deploying a product in the runtime cluster, including resources such as namespaces, serviceAccounts, secrets, etc. 
 
-下文将描述通过命令行提交创建运行环境的相关实体，包括产品、项目、代码库、环境以及部署运行时等。
+The following sections describe the entities related to creating a runtime environment through the command-line, including a product, a project, a code repository, an environment, and a deployment runtime.
 
-1. 将命令行程序的代码库克隆到本地。
+1. Clone the command-line repository to your local machine.  
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+2. Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix` and `$runtime-cluster`.
+
 ```yaml
-# 产品
+# Product
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Product
 spec:
   name: demo-$suffix
   git:
     gitlab:
-      # 产品名称
+      # Product name
       name: demo-$suffix
-      # 产品路径
+      # Product path
       path: demo-$suffix
       visibility: private
       description: demo-$suffix
       parentID: 0
 ---
-# 环境，基于用途可以分为多种类型（比如开发测试环境），需要关联运行时集群
+# Environment
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
-  # 环镜名称
+  # Environment name
   name: env-demo-$suffix
-  # 环境的所属产品
+  # The product to which the environment belongs
   product: demo-$suffix
-  # 环境关联的运行时集群
+  # Runtime cluster associated with the environment
   cluster: $runtime-cluster
-  # 环境类型
+  # Environment type
   envType: dev
 ---
-# 项目
+# Project
 apiVersion: "nautes.resource.nautes.io/v1alpha1"
 kind: Project
 spec:
-  # 项目名称
+  # Project name
   name: project-demo-$suffix
-  # 项目的所属产品
+  # The product to which the project belongs
   product: demo-$suffix
   language: golang
 ---
-# 代码库，用于存储产品的部署配置清单
+# CodeRepo
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
-  # 代码库名称
+  # CodeRepo name
   name: coderepo-demo-$suffix
   codeRepoProvider: gitlab
   deploymentRuntime: true
   pipelineRuntime: false
-  # 代码库的所属产品
+  # The product to which the coderepo belongs
   product: demo-$suffix
-  # 代码库的所属项目
+  # The project to which the coderepo belongs
   project: project-demo-$suffix
   webhook:
     events: ["push_events"]
     isolation: shared
   git:
     gitlab:
-      # 代码库的名称
+      # Repository name
       name: coderepo-demo-$suffix
-      # 代码库的路径
+      # Repository path
       path: coderepo-demo-$suffix 
-      # 代码库的可见性，例如：private、public
+      # Repository visibility：private or public
       visibility: private
       description: coderepo-demo-$suffix 
 ---
-# 部署运行时
+# DeploymentRuntime
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
-  # 部署运行时的名称
+  # DeploymentRuntime name
   name: dr-demo-$suffix
-  # 承载产品的部署运行环境的目标集群
+  # The target environment of the deployment runtime
   destination: env-demo-$suffix
   manifestsource:
-    # 部署运行时监听的代码库
+    # The source coderepo of the deployment runtime
     codeRepo: coderepo-demo-$suffix
-    # 部署运行时监听的代码库的相对路径
+    # The relative path of the source coderepo 
     path: deployments
-    # 部署运行时监听的代码库版本或代码库分支
+    # The revision or branch of the source coderepo 
     targetRevision: main
-  # 部署运行时的所属产品
+  # The product to which the deployment runtime belongs
   product: demo-$suffix
-  # 部署运行时关联的项目
+  # The project to which the deployment runtime belongs
   projectsRef:
     - project-demo-$suffix
 ```
 
-替换变量后的运行环境示例如下：
+The runtime environment example after replacing the variables is shown below: 
+
+> If the runtime environment's host cluster type is physical, you must set the spec.cluster of the Environment resource to the corresponding  [physical cluster](#register-physical-cluster) name. If the runtime environment's host cluster type is virtual, you must set the spec.cluster of the Environment resource to the corresponding  [virtual cluster](#register-virtual-cluster) name.
+
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Product
@@ -409,19 +431,25 @@ spec:
     - project-demo-0412
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备运行环境 。
+3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to prepare the runtime environment.
+
 ```Shell
+# examples/demo-product.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
-## 部署
-将 Kubernetes 资源清单提交至产品的代码库。
+## Deployment
+Submit the Kubernetes Manifests to the product's code repository, such as deployment, service, and other resources. 
 
-1. 克隆部署示例的代码库到本地。
+1. Clone the sample example repository to your local machine.
+
 ```Shell
 git clone https://github.com/lanbingcloud/demo-user-deployments.git
 ```
 
-2. 修改本地代码库中 Ingress 资源的域名：/deployment/test/devops-sample-svc.yaml
+2. Modify the domain name of the Ingress resource in the local code repository: `/deployment/test/devops-sample-svc.yaml`
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -429,27 +457,37 @@ metadata:
   name: ks-sample-dev
 spec:
   rules:
-  # 将 $cluster-ip 替换为运行时集群的公网 IP 
+  # Replace $cluster-ip with the public IP of the runtime cluster.
   - host: devops-sample.$cluster-ip.nip.io
     http:
       paths:
       ...
 ```
-3. 推送 Kubernetes 资源清单至产品的代码库。
+3. Access [GitLab](installation.md#check-the-installation-results) and configure the GitLab account to have permission for force-push code to the main branch. For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch). 
+
+4. Push the Kubernetes Manifests to the product's code repository.
 ```Shell
-# 替换变量 $deployment-manifest-repo 为存储 Kubernetes 资源清单的代码库
+# Replace the variable $deployment-manifest-repo with the code repository storing the Kubernetes Manifests.
 git remote set-url origin $deployment-manifest-repo
-# 推送 Kubernetes 资源清单至产品的代码库
+# Push the Kubernetes Manifests to the product's code repository.
 git add .
-git commit -m '提交 Kubernetes 资源清单'
-git push origin main
+git commit -m 'submit the kubernetes manifests.'
+git push origin main -f
 ```
-## 查看部署结果
 
-部署成功后，使用浏览器访问 `http://devops-sample.$cluster-ip.nip.io` ，可以访问示例应用的 Web 界面。
+## View Deployment Results
+After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport`.
 
-您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
+> Replace the $cluster-ip variable with the public IP of the cluster hosting the runtime environment.
+>
+> Replace the $traefik-httpnodeport variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
-访问安装在运行时集群中的 [ArgoCD 控制台](installation.md#查看安装结果)，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
+Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only. 
 
-在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。
+Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console. 
+
+> Replace the $argocdHost variable with the argocdHost address of the cluster hosting the runtime environment. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+>
+> Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+
+The ArgoCD console lists ArgoCD applications that are related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects associated with authorized products. 

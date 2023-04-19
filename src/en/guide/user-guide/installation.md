@@ -31,7 +31,7 @@ EOT
 sh start.sh
 ```
 
-> Since there are many components to be  installed, the entire installation process is expected to take about 40-50 minutes. After the installation is successful, you can find the installed component information in the `/opt/nautes` directory. If the installation fails, you can troubleshoot issues through the logs in the `/opt/nautes/out/logs` directory.
+> Since there are many components to be installed, the entire installation process is expected to take about 40-50 minutes. After the installation is successful, you can find the installed component information in the `/opt/nautes` directory. If the installation fails, you can troubleshoot issues through the logs in the `/opt/nautes/out/logs` directory.
 
 ## Check the Installation Results
 
