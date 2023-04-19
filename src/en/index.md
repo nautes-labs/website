@@ -5,11 +5,12 @@ tagline: Kubernetes-native all-in-one Internal Developer Platform
 actionText: Get Started →
 actionLink: /en/guide/user-guide/introduction
 features:
-- title: 开箱即用
-  details: 覆盖敏捷开发、CI/CD、自动化测试、安全、微服务治理、监控运维等全流程的一站式开发者平台
-- title: GitOps 最佳实践
-  details: 以版本库作为唯一可信数据源。当版本库中的数据有变更时，由 Operator 自动识别变更并向 Kubernetes 集群做增量更新
-- title: 全分布式的多租户架构
-  details: 全分布式的多租户架构，租户作为分布式的计算单元和存储单元支持水平扩展，租户所管理的资源同样支持水平扩展
+- title: out-of-the-box feature
+  details: a Kubernetes-native all-in-one Internal Developer Platform that covers the entire process, including agile development, CI/CD, automated testing, security, microservice governance, and monitoring and operations
+- title: Best practices of GitOps
+  details: Use the version control repository as the only trusted data source. When data in the repository changes, the Operator automatically recognizes the changes and makes incremental updates to the Kubernetes cluster
+- title: A fully distributed multi-tenant architecture
+  details: A fully distributed multi-tenant architecture, where tenants serve as distributed computing and storage units that support horizontal scaling. The resources managed by tenants also support horizontal scaling
 footer: Made by lanbing.tech with ❤️
 ---
+
