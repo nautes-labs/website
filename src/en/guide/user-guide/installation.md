@@ -1,89 +1,95 @@
 ---
 footerLink: /guide/user-guide/installation
-title: 安装
+title: Installation
 ---
-# 安装
-Nautes 支持基于公有云、私有云、主机、及 Kubernets 集群进行安装，本文档以阿里云为例描述了在公有云安装 Nautes 的过程。
+# Installation
 
-## 准备环境
-- 安装机：AMD64 架构的 Linux 服务器，需要预先安装 Docker、Git、Bash，并确保 /opt/nautes 目录没有被占用。
-- 公有云密钥：一个阿里云账号的访问密钥，如果您使用的是 RAM 用户，请确保 RAM 用户有 AliyunECSFullAccess 和 AliyunVPCFullAccess 权限。详情参考 [创建 AccessKey](https://help.aliyun.com/document_detail/116401.html)。
+Nautes supports installation on public cloud, private cloud, hosts, and Kubernetes clusters. This document uses Alibaba Cloud as an example to describe the process of installing Nautes on a public cloud. 
 
-> 安装程序会调用阿里云的 API 申请资源，这个过程会产生一定的费用（请参考[阿里云费用说明](#阿里云费用说明 )）。
+## Prepare the Environment
+- Installation machine:  An AMD64 architecture Linux server, with Docker, Git, and Bash pre-installed, and ensure that the `/opt/nautes` directory is not occupied.
+- Public cloud access key:  An access key for an Alibaba Cloud account. If you are using a RAM user, make sure the RAM user has AliyunECSFullAccess and AliyunVPCFullAccess permissions. For more information, refer to [Create AccessKey](https://help.aliyun.com/document_detail/116401.html).
+
+> The installer will call Alibaba Cloud's API to apply for resources, which will incur some costs (please refer to [Alibaba Cloud Cost Description](#alibaba-cloud-cost-description)).
 >
-> 受阿里云的计费规则限制，请确保上述阿里云账号内的余额大于100元人民币，否则安装程序无法调用阿里云的 API 申请资源。
+> Due to Alibaba Cloud's billing rules restrictions, please ensure that the Alibaba Cloud account balance is more than 100 RMB, otherwise the installation program cannot call Alibaba Cloud's API to apply for resources.
 
-## 执行安装
-1. 在安装机上克隆安装程序的项目：
+## Execute the Installation
+1. Clone the installer project on the installation machine:
 ```bash
 git clone https://github.com/nautes-labs/installer.git
 ```
-2. 根据 vars.yaml.sample 编写 vars.yaml，其中 access_key 和 secret_key 必须填写为阿里云账号的 AccessKey，其他配置可采用默认值。
+2. Write vars.yaml based on vars.yaml.sample, where access_key and secret_key must be filled in with the AccessKey of the Alibaba Cloud account, and other configurations can use default values.
 ```bash
 cat <<EOT >> vars.yaml
 access_key: < your alicloud access key >
 secret_key: < your alicloud secret key >
 EOT
 ```
-3. 执行 `start.sh` 脚本开始安装：
+3. Run the `start.sh` script to start the installation:
 ```bash
 sh start.sh
 ```
-> 由于需要安装的组件较多，整个安装过程预计耗时40~50分钟，安装成功后，您可以在 /opt/nautes 目录下找到安装后的组件信息。如果安装失败，您可以通过 /opt/nautes/out/logs 目录下的日志排查问题。
 
-## 查看安装结果
-/opt/nautes/management 是租户配置库的本地副本。
+> Since there are many components to be  installed, the entire installation process is expected to take about 40-50 minutes. After the installation is successful, you can find the installed component information in the `/opt/nautes` directory. If the installation fails, you can troubleshoot issues through the logs in the `/opt/nautes/out/logs` directory.
 
-/opt/nautes/terraform 是 terraform 的状态文件，记录了安装程序在阿里云上申请的资源清单。
+## Check the Installation Results
 
-/opt/nautes/out 中存储了已安装组件的相关信息：
-- GitLab 用于托管租户的配置库，用户应用的源代码、部署清单和流水线配置等。GitLab 的管理员密码，以及租户配置库的访问信息等存储在 gitlab 子目录下。
-- Vault 用于存储和管理租户的密钥数据。Vault 的 unseal key 和 root token 存储在 vault 子目录下。
-- Kubernetes 集群用于承载所有的租户管理组件。集群的 kubeconfig 存储在 kubernetes 子目录下。
-- ArgoCD 用于监听租户配置库，并根据仓库中的配置声明向 Kubernetes 集群同步租户配置。ArgoCD 的管理员密码存储在 argocd 子目录下。
-- Dex 用于提供基于 OIDC 协议的统一认证服务。dex 的客户端密钥存储在 kubernetes 子目录下。
+`/opt/nautes/management` is the local copy of the tenant configuration repository. 
 
-除此之外，/opt/nautes/out 下其他子目录的相关信息：
-- hosts：云服务器的 IP 地址和访问密钥。
-- pki：访问组件需要使用的证书和签发证书的 CA。
-- service：租户管理集群、Dex、ArgoCD、Vault、GitLab、Nautes API Server 的访问地址。
-- logs：安装程序的日志。
+`/opt/nautes/terraform` is the terraform state file, which records the list of resources applied for by the installation program on Alibaba Cloud. 
 
-> Nautes API Server 的 Swagger UI 实例的相对路径为：/q/swagger-ui。 
+`/opt/nautes/out` stores information about the installed components: 
 
-## 销毁环境
-> 请确保已成功执行安装，未删除安装机上的 /opt/nautes 目录。
+- GitLab is used to store the tenant configuration repository, user application source code, deployment manifests, pipeline configurations, etc. GitLab's administrator password and tenant configuration repository access information are stored in the `gitlab` subdirectory. 
+- Vault is used to store and manage tenant secret data. Vault's unseal key and root token are stored in the `vault` subdirectory. 
+- Kubernetes clusters are used to host all management components of the tenant. The cluster's kubeconfig is stored in the `kubernetes` subdirectory. 
+- ArgoCD is used to watch to the tenant configuration repository and synchronize the tenant configuration to the Kubernetes cluster according to the configuration declarations in the repository. ArgoCD's administrator password is stored in the `argocd` subdirectory. 
+- Dex provides a unified authentication service based on the OIDC protocol. Dex's client secret is stored in the `kubernetes` subdirectory. 
+
+In addition, related information in other subdirectories under `/opt/nautes/out`: 
+
+- hosts: IP addresses and access keys of the cloud server. 
+- PKI: Certificates that are used to access the components and the CA that issues certificates. 
+- service: Access addresses for the tenant management cluster, Dex, ArgoCD, Vault, GitLab, and Nautes API Server. 
+- logs: Installation program logs. 
+
+> The relative path of the Nautes API Server's Swagger UI documentation is: /q/swagger-ui. 
+
+## Destroy the Environment 
+
+> Please make sure the installation has been successfully executed and the `/opt/nautes directory` has not been deleted on the installation machine.
 >
-> 销毁程序将删除所有从云服务中申请的资源，暂不支持单独对组件执行卸载。
+> The uninstallation program will remove all resources applied from the cloud service, and it does not currently support uninstalling components individually.
 
-1. 在安装机上克隆安装程序的项目：
+1. Clone the installer project on the installation machine:
 ```bash
 git clone https://github.com/nautes-labs/installer.git
 ```
-2. 修改项目根目录下的 vars.yaml 文件，填写 access_key 和 secret_key。
-3. 执行 `destroy.sh` 脚本开始销毁环境：
+2. Modify the vars.yaml file in the project root directory, filling in the access_key and secret_key.
+3. Execute the `destroy.sh` script to start destroying the environment:
 ```bash
 sh destroy.sh
 ```
 
-## 阿里云费用说明
-安装程序所申请的云服务器的默认规格如下：
+## Alibaba Cloud Cost Description
+The default specifications of the cloud server applied by the installer are as follows: 
 
-- 区域：中国香港-可用区B
-- 镜像：Ubuntu 22.04 64位
-- 实例规格：ecs.c6.large(2C4G)
-- 系统盘：ESSD云盘 PL0 40G
-- 网络：实例公网IP
+- Region: China Hong Kong - Availability Zone B
+- Image: Ubuntu 22.04 64-bit
+- Instance Specification: ecs.c6.large (2C4G)
+- System Disk: ESSD Cloud Disk PL0 40G
+- Network: Public IP
 
-安装程序默认使用[抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1)创建云服务器，该模式存在实例被自动释放的风险。如果您希望体验更稳定的环境，请在 vars.yaml 增加以下配置，让安装程序切换至[按量付费模式](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1)申请资源。
+The installer uses the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers by default, which carries the risk of instances being automatically released. If you prefer a more stable environment, please add the following configuration to vars.yaml to switch to the  [Pay-As-You-Go Mode](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) for resources apply.
+
 ```yaml
 alicloud:
   save_money: false
 ```
-两种付费模式的费用预估如下（不包含流量费）：
+The cost estimates for the two billing modes are as follows (excluding traffic fees): 
 
-- 按量付费：88.32￥/天
+- Pay-As-You-Go: ￥ 88.32 pre Day
+- Preemptible Instance: ￥ 24 pre Day
 
-- 抢占式实例：24￥/天
-
-> 实际产生的费用会受到市场价格波动的影响，以上预估值仅供参考
+> The actual costs incurred may be affected by market price fluctuations, and the above estimates are for reference only.
