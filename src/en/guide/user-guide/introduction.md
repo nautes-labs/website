@@ -1,5 +1,4 @@
 ---
-which can be divided by users based on their organization's characteristicswhich can be divided by users based on their organization's characteristics
 footerLink: /guide/user-guide/introduction
 title: Overview
 ---
