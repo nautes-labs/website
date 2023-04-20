@@ -1,8 +1,8 @@
 ---
 footerLink: /guide/user-guide/deploy-an-application
-title: Deploy an Application
+title: 部署一个应用
 ---
-# Deploy an Application
+# 部署一个应用
 
 本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上部署一个应用的过程。
 
