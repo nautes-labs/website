@@ -22,7 +22,7 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 
 下文将以阿里云为例描述如何准备服务器并安装一个 K3s 集群。
 
-先创建 ECS 云服务器，详情参考 [云服务器 ECS](https://help.aliyun.com/document_detail/25422.html)。服务器安装成功后，在服务器上安装 K3s，命令如下：
+创建 ECS 云服务器，详情参考 [云服务器 ECS](https://help.aliyun.com/document_detail/25422.html)。服务器安装成功后，在服务器上安装 K3s，命令如下：
 ```Shell
 # 根据实际情况，替换 $PUBLIC_IP 为服务器的公网 IP
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server
@@ -82,7 +82,7 @@ spec:
     "$kubeconfig"
 ```
 
-替换变量后的物理集群示例如下：
+替换变量后的物理集群属性示例如下：
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -121,7 +121,7 @@ spec:
 3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令以注册物理集群。
 
 ```Shell
-# examples/demo-cluster-host.yaml 指在模板代码库中模板文件的相对路径
+# examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab 访问令牌
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
@@ -161,7 +161,7 @@ spec:
   kubeconfig: |
     "$kubeconfig"
 ```
-替换变量后的宿主集群示例如下：
+替换变量后的宿主集群属性示例如下：
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -227,7 +227,7 @@ spec:
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
 ```
-替换变量后的虚拟集群示例如下：
+替换变量后的虚拟集群属性示例如下：
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -276,7 +276,7 @@ spec:
       description: demo-$suffix
       parentID: 0
 ---
-# 环境，基于用途可以分为多种类型（比如开发测试环境），需要关联运行时集群
+# 环境
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
@@ -299,7 +299,7 @@ spec:
   product: demo-$suffix
   language: golang
 ---
-# 代码库，用于存储产品的部署配置清单
+# 代码库
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
@@ -347,7 +347,7 @@ spec:
     - project-demo-$suffix
 ```
 
-替换变量后的运行环境示例如下：
+替换变量后的运行环境属性示例如下：
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Product
