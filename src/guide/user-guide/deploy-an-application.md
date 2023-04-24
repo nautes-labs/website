@@ -11,7 +11,7 @@ title: 部署一个应用
 ### 注册 GitLab 账号
 GitLab 安装完成后，您需要注册一个账号，并创建 [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) ，设置 access token 的权限范围：api、read_api、read_repository 和 write_repository。
 
-如果此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
+此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
 
 ### 导入证书
 
@@ -31,6 +31,8 @@ mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
 export KUBECONFIG=${HOME}/.kube/config
 ```
+
+K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组规则](https://help.aliyun.com/document_detail/25471.htm?spm=a2c4g.353191.0.0.557a235djwgvC9#concept-sm5-2wz-xdb)。
 
 ## 安装
 
@@ -62,7 +64,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "cluster-demo-$suffix"
+  name: "host-worker-$suffix"
   # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -73,7 +75,7 @@ spec:
   usage: "worker"
   # argocd 域名，使用物理集群的 IP 替换变量 $cluster_ip
   argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
-  # traefik 配置：物理集群才有此属性
+  # traefik 配置
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -121,8 +123,8 @@ spec:
 3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令以注册物理集群。
 
 ```Shell
-# examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
-# gitlab-access-token 指 GitLab 访问令牌
+# examples/demo-cluster-physical-worker.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
@@ -144,7 +146,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "cluster-demo-$suffix"
+  name: "host-$suffix"
   # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -199,6 +201,9 @@ spec:
 3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，将注册宿主集群。
 
 ```Shell
+# examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
@@ -209,7 +214,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "cluster-demo-$suffix"
+  name: "vcluster-$suffix"
   # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -246,6 +251,9 @@ spec:
 5. 执行以下命令，将注册该虚拟集群。
 
 ```Shell
+# examples/demo-cluster-virtual-worker.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
 ## 准备运行环境
@@ -331,13 +339,13 @@ kind: DeploymentRuntime
 spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
-  # 承载产品的部署运行环境的目标集群
+  # 承载部署运行时的环境
   destination: env-demo-$suffix
   manifestsource:
     # 部署运行时监听的代码库
     codeRepo: coderepo-demo-$suffix
     # 部署运行时监听的代码库的相对路径
-    path: deployments
+    path: deployments/test
     # 部署运行时监听的代码库版本或代码库分支
     targetRevision: main
   # 部署运行时的所属产品
@@ -348,6 +356,8 @@ spec:
 ```
 
 替换变量后的运行环境属性示例如下：
+> 如果运行环境的负载集群类型为物理集群，需要将 Environment 资源的 `spec.cluster` 设置为对应的[物理集群名称](#注册物理集群)。如果运行环境的负载集群类型为虚拟集群，需要将 Environment 资源的 `spec.cluster` 设置为相应的[虚拟集群名称](#注册虚拟集群)。 
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Product
@@ -366,7 +376,7 @@ kind: Environment
 spec:
   name: env-demo-0412
   product: demo-0412
-  cluster: host-worker-aliyun-0412
+  cluster: vcluster-aliyun-0412
   envType: dev
 ---
 apiVersion: "nautes.resource.nautes.io/v1alpha1"
@@ -402,7 +412,7 @@ spec:
   destination: env-demo-0412
   manifestsource:
     codeRepo: coderepo-demo-0412
-    path: deployments
+    path: deployments/test
     targetRevision: main
   product: demo-0412
   projectsRef:
@@ -411,10 +421,13 @@ spec:
 
 3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备运行环境 。
 ```Shell
+# examples/demo-product.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 ## 部署
-将 Kubernetes 资源清单提交至产品的代码库。
+将 Kubernetes 资源清单提交至产品的代码库，例如：deployment、service 等资源。
 
 1. 克隆部署示例的代码库到本地。
 ```Shell
@@ -435,21 +448,32 @@ spec:
       paths:
       ...
 ```
-3. 推送 Kubernetes 资源清单至产品的代码库。
+3. 访问 [GitLab](installation.md#查看安装结果)，设置 GitLab 账号有向 main 分支强制推送代码的权限，详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+
+4. 推送 Kubernetes 资源清单至产品的代码库。
 ```Shell
 # 替换变量 $deployment-manifest-repo 为存储 Kubernetes 资源清单的代码库
 git remote set-url origin $deployment-manifest-repo
 # 推送 Kubernetes 资源清单至产品的代码库
 git add .
 git commit -m '提交 Kubernetes 资源清单'
-git push origin main
+git push origin main -f
 ```
 ## 查看部署结果
 
-部署成功后，使用浏览器访问 `http://devops-sample.$cluster-ip.nip.io` ，可以访问示例应用的 Web 界面。
+部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport` ，可以访问示例应用的 Web 界面。
+
+>替换变量 $cluster-ip 为承载运行环境的集群的公网 IP。
+>
+>替换变量 $traefik-httpnodeport 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpNodePort`，例如：`30080`。
 
 您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
 
-访问安装在运行时集群中的 [ArgoCD 控制台](installation.md#查看安装结果)，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
+使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
+
+> 替换变量 $argocdHost 为承载运行环境的集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+> 
+> 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。
+
