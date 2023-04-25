@@ -1,50 +1,55 @@
 ---
 footerLink: /guide/user-guide/main-process
-title: 主体流程
+title: Main Process
 ---
-# 主体流程
+# Main Process
 
-下文将描述部署一个应用的主体流程。包括以下步骤:  
-[安装](#安装)  
-[注册运行时集群](#注册运行时集群)  
-[准备运行环境](#准备运行环境)  
-[部署](#部署)  
-[查看部署结果](#查看部署结果)  
 
-主体流程成功执行之后的效果，如下图所示：
+This document describes the main process of deploying an application, including the following steps:  
+[Installation](#installation)  
+[Register Runtime Cluster](#register-runtime-cluster)  
+[Prepare Runtime Environment](#prepare-runtime-environment)  
+[Deployment](#deployment)  
+[View Deployment Results](#view-deployment-results)  
+
+The main process is shown in the following diagram: 
+
 ![directive syntax graph](./../images/user-guide-overview-1.png)
 
-在 Nautes 中，租户管理集群和部署运行时集群是必不可少的组成部分。每个租户只有一个租户管理集群，负责初始化该租户的所有部署运行时集群，并协调各种组件，以向部署运行时集群实施自动化部署。每个租户只有一个存储在 GitLab 中的租户配置库，租户管理集群通过监听租户配置库，向其自动更新相关组件和资源。  
-每个租户可以拥有多个部署运行时集群，这些部署运行时集群是承载IT系统运行时环境的真正载体，可以是虚拟集群或者物理集群。  
+In Nautes, a tenant management cluster and deployment runtime clusters are essential components. Each tenant has only one tenant management cluster, which is responsible for initializing all deployment runtime clusters for the tenant and coordinating various components to implement automated deployment to deployment runtime clusters. Each tenant has only one tenant configuration repository stored in GitLab, and the tenant management cluster updates its components and resources automatically by watching the tenant configuration repository. 
 
-根据IT系统的生命周期，不同阶段需要有配套的运行时环境，用于验证或使用IT系统的功能和非功能特性。通常根据生命周期的不同阶段划分为不同类型的环境，例如开发、测试、预生产和生产环境，这里的环境是一个逻辑概念，作为IT系统部署运行时的管理单元。  
-环境需要在部署运行时集群上运行，因此必须将环境与部署运行时集群相关联，以便IT系统部署到正确的运行时环境中。  
+Each tenant can have multiple deployment runtime clusters, which serve as the actual infrastructures for hosting IT system runtime environments. These clusters can be either virtual or physical. 
 
-在Nautes中，对于微服务架构的IT系统，“产品”表示一个IT系统，“项目”表示一个微服务。因此，一个产品包含多个项目，每个项目有独立的代码库。  
-产品进行到一定阶段时需要验证或使用其特性，通常会根据部署配置向环境关联的部署运行时集群进行部署，以生成部署运行时环境。每个产品可以包含多个部署运行时环境，例如，使用相同部署配置在不同集群所创建出来的功能测试和客户演示环境。同时，在相同集群上也可以承载多个产品的部署运行时环境。    
+Different stages of the IT system lifecycle require corresponding environments, such as: development, testing, pre-production, and production environments.
+Environments need to run on deployment runtime clusters, it is essential to associate the environment with the deployment runtime cluster to ensure that the IT system is deployed to the correct runtime environment.  
 
-Nautes 通过 Kubernetes 资源文件来定义环境、项目、代码库和部署运行时，并将这些资源文件存储到产品的 GitLab 代码库，资源文件的集合称为“产品配置清单”。Nautes 监听产品配置清单向部署运行时集群实施自动部署，创建或更新产品的部署运行时环境。  
+In Nautes, for IT systems adopting a microservices architecture, a "Product" refers to an IT system, while a "Project" refers to a microservice. Therefore, each Product contains multiple Projects, each with its own independent code repository. 
 
-当用户向部署运行时集群监听的 GitLab 代码库提交 Kubernetes 资源清单，产品的部署运行时环境监听 Kubernetes 资源清单并向部署运行时集群实施自动部署，直到部署运行时集群中的实际状态与 GitLab 代码库中的预期状态一致为止。  
+When a product is ready for testing or utilization, it is typically deployed to the deployment runtime cluster associated with the corresponding environment based on the deployment configuration, resulting in a deployment runtime environment. Each product can have multiple deployment runtime environments, such as functional testing or customer demonstration environments created in different clusters with the same deployment configuration. Additionally, multiple products' deployment runtime environments can be hosted on the same cluster. 
 
-为了保护敏感信息不被泄露，Nautes 中的敏感信息均通过 Vault 存取。    
+Nautes uses Kubernetes resource files to define environments, projects, code repositories, and deployment runtimes and stores these resource files in the product's GitLab repository, collectively referred to as the "product configuration manifest." Nautes watches the product configuration manifest and implements automated deployment to the deployment runtime cluster, creating or updating the product's deployment runtime environment. 
 
-## 安装
-详情参考 [安装](installation.md)。
+When users submit Kubernetes Manifests to the GitLab repository watched by the deployment runtime cluster, the product's deployment runtime environment watches the Kubernetes Manifests and implements automated deployment to the deployment runtime cluster until the actual state in the deployment runtime cluster is consistent with the expected state in the GitLab repository.
 
-## 注册运行时集群
-支持 [命令行](deploy-an-application.md#注册运行时集群) 和 [API](cluster.md) 两种方式注册运行时集群。
+In order to prevent sensitive information from being leaked, sensitive information is managed by Vault in Nautes. 
 
-## 准备运行环境
-提交产品配置清单支持 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式。使用 API 接口的详细参见 [维护产品](product.md)、[维护项目](project.md)、[维护代码库](code-repo.md)、[维护环境](environment.md)、[维护部署运行时](deployment-runtime.md) 章节。  
-提交产品配置清单有先后顺序。正向新增的顺序是：创建产品、创建环境、创建项目、创建代码库、创建部署运行时。反向销毁的顺序是：删除部署运行时、删除代码库、删除项目、删除环境、删除产品。  
+## Installation
+For more information, refer to the [Installation](installation.md).
 
-产品创建成功后，将在 GitLab 中创建与产品同名的 group，并在这个 group 中创建名称为 default.project 的代码库，用于存储该产品的配置清单，包括环境、项目、代码库和部署运行时的资源文件。每个 group 有且只有一个 default.project 代码库。  
+## Register Runtime Cluster
+Support both [Command Line](deploy-an-application.md#register-runtime-cluster)  and  [API](cluster.md) for registering runtime clusters. 
 
-产品配置清单创建成功后，根据产品配置清单将在部署运行时集群中自动安装相关资源，使得部署运行时集群具备监听产品的 GitLab 代码库、并向该集群自动部署的能力。
+## Prepare Runtime Environment
+Submitting product configuration manifests supports both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API methods. For more information about the API interfaces, refer to the [Maintain Product](product.md), [Maintain Project](project.md),[Maintain Code Repository](code-repo.md), [Maintain Environment](environment.md), and [Maintain Deployment Runtime](deployment-runtime.md) sections. 
 
-## 部署
-使用 Git CLI 向产品的 GitLab 代码库提交 Kubernetes 资源清单，例如：deployment、service 等资源。提交成功后，将向指定的部署运行时集群部署产品。详情参考 [部署](deploy-an-application.md#部署)。
+There is an order for submitting product configuration manifests. The forward order for adding is: create a product, create an environment, create a project, create a repository, and create a deployment runtime. The reverse order for destroying is: delete deployment runtime, delete code repository, delete project, delete environment, and delete product.
 
-## 查看部署结果  
-部署成功后，可以通过 ArgoCD 控制台或者 kubectl 命令行查看产品的部署结果，并且只能查看和管理被授权产品的相关资源。详细参考 [查看部署结果](deployment-results.md)。
+After the product is created successfully, a group with the same name as the product will be created in GitLab, and a repository named `default.project` will be created in this group to store the product configuration manifest , including resource files for environments, projects, repositories, and deployment runtimes. Each group has only one `default.project` repository. 
+
+After the product configuration manifest is created successfully, relevant resources will be automatically installed in the deployment runtime cluster according to the product configuration manifest, enabling the deployment runtime cluster to watch the GitLab repository of the product and automatically deploy to the cluster. 
+
+## Deployment
+Use the Git CLI to submit Kubernetes Manifests to the product's GitLab repository, such as deployment, service, etc. After successful submission , the product will be deployed to the specified deployment runtime cluster. For more information, refer to [Deployment](deploy-an-application.md#deployment). 
+
+## View Deployment Results  
+Through the ArgoCD console or the kubectl command-line tool, you will be able to view the deployment results of the product and manage resources related to authorized products only.  For more information, refer to [View Deployment Results](deployment-results.md). 
