@@ -11,7 +11,8 @@ This document describes the process of registering a new Kubernetes cluster to N
 ### Register a GitLab Account
 After GitLab installation, you need to register an account and create a  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) with the scopes: api, read_api, read_repository, and write_repository.
 
-If the account needs to call the API for [managing the runtime clusters](#register-runtime-cluster), you need to add the account to the member list of the tenant configuration repository and ensure that the account can push code to the main branch.
+The account needs to call the API for [managing the runtime clusters](#register-runtime-cluster), you need to add the account to the member list of the tenant configuration repository and ensure that the account can push code to the main branch.
+
 
 ### Import Certificates
 
@@ -32,6 +33,8 @@ mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
 export KUBECONFIG=${HOME}/.kube/config
 ```
+After the K3s installation is complete, you need to add an inbound rule for port 6443. For more information, refer to the [Security Group Rules](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/create-a-security-group-2). 
+
 
 ## Installation
 
@@ -64,7 +67,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "cluster-demo-$suffix"
+  name: "host-worker-$suffix"
   # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -75,7 +78,7 @@ spec:
   usage: "worker"
   # ArgoCD domain. Replace the variable $cluster_ip with the IP of the physical cluster.
   argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
-  # Traefik configuration. Only available for physical clusters.
+  # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -124,7 +127,7 @@ spec:
 3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the physical cluster.
 
 ```Shell
-# examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-cluster-physical-worker.yaml refers to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
@@ -148,7 +151,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "cluster-demo-$suffix"
+  name: "host-$suffix"
   # Cluster API SERVER URL. Replace the variable with the address of the host cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -204,6 +207,9 @@ spec:
 3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the host cluster.
 
 ```Shell
+# examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
@@ -254,6 +260,9 @@ spec:
 5. Run the following command to register the virtual cluster.
 
 ```Shell
+# examples/demo-cluster-virtual-worker.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
 ## Prepare Runtime Environment
@@ -358,6 +367,9 @@ spec:
 
 The runtime environment example after replacing the variables is shown below: 
 
+> If the runtime environment's host cluster type is physical, you must set the spec.cluster of the Environment resource to the corresponding  [physical cluster](#register-physical-cluster) name. If the runtime environment's host cluster type is virtual, you must set the spec.cluster of the Environment resource to the corresponding  [virtual cluster](#register-virtual-cluster) name.
+
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Product
@@ -422,10 +434,13 @@ spec:
 3. Download the  [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to prepare the runtime environment.
 
 ```Shell
+# examples/demo-product.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 ## Deployment
-Submit the Kubernetes Manifest to the product's code repository. 
+Submit the Kubernetes Manifests to the product's code repository, such as deployment, service, and other resources. 
 
 1. Clone the sample example repository to your local machine.
 
@@ -448,22 +463,31 @@ spec:
       paths:
       ...
 ```
-3. Push the Kubernetes Manifests to the product's code repository.
+3. Access [GitLab](installation.md#check-the-installation-results) and configure the GitLab account to have permission for force-push code to the main branch. For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch). 
+
+4. Push the Kubernetes Manifests to the product's code repository.
 ```Shell
 # Replace the variable $deployment-manifest-repo with the code repository storing the Kubernetes Manifests.
 git remote set-url origin $deployment-manifest-repo
 # Push the Kubernetes Manifests to the product's code repository.
 git add .
 git commit -m 'submit the kubernetes manifests.'
-git push origin main
+git push origin main -f
 ```
-## View Deployment Results
 
-After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io`.
+## View Deployment Results
+After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport`.
+
+> Replace the $cluster-ip variable with the public IP of the cluster hosting the runtime environment.
+>
+> Replace the $traefik-httpnodeport variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
 Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only. 
 
-Access [the ArgoCD console](installation.md#check-the-installation-results)  installed in the runtime cluster and click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console. 
+Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console. 
 
-[The ArgoCD console](installation.md#check-the-installation-results) lists ArgoCD applications that are related to products authorized for you, and you will be able to view and manage related resources.
-By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects associated with authorized products. 
+> Replace the $argocdHost variable with the argocdHost address of the cluster hosting the runtime environment. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+>
+> Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+
+The ArgoCD console lists ArgoCD applications that are related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects associated with authorized products. 
