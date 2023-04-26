@@ -1,32 +1,37 @@
 ---
 footerLink: /guide/user-guide/product
-title: 维护产品
+title: Maintain Product
 ---
 
-# 维护产品
+# Maintain Product 
 
-请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-产品对应一个软件系统，包含团队、项目、环境、代码库、制品库、及运行时。产品可以被租户管理员授权使用指定的 Kubernetes 集群。
+A product corresponds to a software system, which includes teams, projects, environments, code repositories, artifact repositories, and runtimes. A product can be authorized by the Tenant Manager for use on specified Kubernetes clusters.
 
-当您使用 GitLab 作为产品提供者时，产品唯一对应一个 GitLab Group，Nautes 会在该 Group 下维护一个用于存储产品元数据的固定名称的代码库（默认为 default.project），同时，Nautes 会利用 GitLab 权限模型来管理用户对不同产品数据的权限。
+When using GitLab as a product provider, each product corresponds to a single GitLab Group. Nautes will maintain a repository with a fixed name (defaulted to `default.project`) under that Group to store the product metadata. At the same time, Nautes will leverage the GitLab permission model to manage user access to different product data.
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护产品。	
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining products.
 
-## 前提条件
+## Prerequisites
 
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考 [注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+### Create Access Token
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+After GitLab installation, you need to register an account and create a  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) with the scopes: api, read_api, read_repository, and write_repository.
 
+The access token will be used as a request header for requesting APIs.
 
-## 创建产品（API）
-1. 通过接口定义 `Product_SaveProduct` 生成 API 请求示例，并添加 access token 作为请求头。
+### Import Certificates
+
+If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+
+## Create Product (API)
+1. Generate an API request example by API definition `Product_SaveProduct` and add the access token as a request header.
+
   ```Shell
-   # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-   # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
+   # Replace the variable $api-server-address with the access address of the Nautes API Server
+   # Replace the variable $gitlab-access-token with the GitLab access token
+   # Replace the variable $product_name with the product name
    curl -X 'POST' \
        'HTTP://$api-server-address/api/v1/products/$product_name' \
        -H 'accept: application/json' \
@@ -35,18 +40,19 @@ title: 维护产品
        -d '{
        "git": {
            "gitlab": {	
-               # group 的名称
+               # group name
                "name": $product_name,  
-               # group 的路径
+               # group path
                "path": $product_name,
-               # group 的可见性，例如：private、public
+               # group visibility：private or public
                "visibility": $product_visibility,
                "description": $product_desc
                }
            }
        }'
   ```
-  替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
   ```Shell
     curl -X 'POST' \
         'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs' \
@@ -65,49 +71,52 @@ title: 维护产品
       }'
   ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增产品。  
-请求成功后，将在 GitLab 中生成和产品同名的 group、以及该 group 中名称为 default.project 的代码库。每个 group 只有一个 default.project 代码库，default.project 代码库用于存储产品配置清单。
+2. Use the curl command or other tools to execute the API request to create a product.    
+    After the request is successful, a group with the same name as the product will be created in GitLab, and a repository named `default.project` will be created in this group to store the product configuration manifest . Each group has only one `default.project` repository.
 
-> GitLab 中的任何账号都可以创建产品。
+> Any account in GitLab can create products.
 
-## 删除产品（API）
-> 在删除产品之前，请先删除与产品关联的所有实体和资源，例如：部署运行时、环境、代码库和项目等，否则将不能执行删除。
-1. 通过接口定义 `Product_DeleteProduct` 生成 API 请求示例，并添加 access token 作为请求头。
+## Delete Product (API)
+> Before deleting a product, please delete all entities and resources associated with the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
+1. Generate an API request example by API definition `Product_DeleteProduct` and add the access token as a request header.
+
 ```Shell
     curl -X 'DELETE' \
         'HTTP://$api-server-address/api/v1/products/$product_name' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
 ```Shell
     curl -X 'DELETE' \
         'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除产品。  
-请求成功后，将删除该产品及其相关资源：GitLab 中的 group 和 default.project 代码库。
-> 只有当您的账号对于 GitLab 的 group 有删除权限时，才可以删除产品。
+2. Use the curl command or other tools to execute the API request to delete a product.    
+After the request is successful, the product and its related resources will be deleted, including the group and the `default.project` repository in GitLab.
+
+> If your account has deletion permission for the GitLab group, you can delete the product.
 
 
 
-## 查询产品列表（API）
-1. 通过接口定义 `Product_ListProducts` ，生成 API 请求示例，并添加 access token 作为请求头。
+## List Products (API)
+1. Generate an API request example by API definition `Product_ListProducts` and add the access token as a request header.
 ```Shell
     curl -X 'GET' \
         'HTTP://$api-server-address/api/v1/products' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
 ```Shell
     curl -X 'GET' \
         'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询产品列表。产品列表的返回值示例如下：
+2. Use the curl command or other tools to execute the API request to list products. The response example for the product list  is shown below:  
+
   ```json
   {
     "items": [
@@ -136,17 +145,19 @@ title: 维护产品
   }
   ```
 
-> 只有当您的账号对于 GitLab 的 group 有查询权限时，才可以查询产品列表。
+> If your account has read permission for the GitLab group, you can retrieve the list of products.
 
-## 查看产品详情（API）
-1. 通过接口定义 `Product_GetProduct` 生成 API 请求示例，并添加 access token 作为请求头。
+## View Product Details (API)
+1. Generate an API request example by API definition `Product_GetProduct` and add the access token as a request header.
+
 ```Shell
     curl -X 'GET' \
         'HTTP://$api-server-address/api/v1/products/$product_name' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'GET' \
         'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs' \
@@ -154,6 +165,6 @@ title: 维护产品
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询产品详情。产品详情的返回值示例与[查看产品列表](#查询产品列表api)类似，不再赘述。
+2. Use the curl command or other tools to execute the API request to retrieve the product details. The response example for retrieving the product details is similar to that of [listing products](#list-products-api).
 
-> 只有当您的账号对于 GitLab 的 group 有查询权限时，才可以查看产品详情。
+> If your account has read permission for the GitLab group, you can retrieve the product details.
