@@ -1,61 +1,69 @@
 ---
 footerLink: /guide/user-guide/code-repo
-title: 维护代码库
+title: Maintain Code Repository
 ---
-# 维护代码库
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+# Maintain Code Repository
 
-代码库是用于存储项目的源代码、流水线配置、部署清单的版本库。只支持 Git。
+Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护代码库。
+A repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-## 前提条件
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining repositories.
 
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+## Prerequisites
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+### Create Access Token
 
-### 创建产品
-由于代码库归属于产品，您需要创建至少一个[产品](product.md)。
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
 
-## 创建和更新代码库（API）
-1. 通过接口定义 `CodeRepo_SaveCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+### Import Certificates
+
+If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+
+### Create Product
+
+Projects belong to products, so you need to create at least one [product](product.md).
+
+## Create and Update Repository(API)
+
+1. Generate an API request example by API definition `CodeRepo_SaveCodeRepo` and add the access token as a request header.
+
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $product_name，代码库所属产品的名称
-	# $coderepo_name，代码库名称
+    # Replace the variable $api-server-address with the access address of the Nautes API Server.
+    # Replace the variable $gitlab-access-token with the GitLab access token.
+    # Replace the variable $product_name with the name of the product to which the repository belongs.
+    # Replace the variable $coderepo_name with the repository name.
     curl -X 'POST' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    	# 代码库关联的项目
+        # The project to which the repository belongs.
         "project": $project,
-        # 代码库 webhook 监听的事件
+        # Events watched by the webhook
         "webhook": {
             "events": ["push_events"]
         },
-        # 是否用于部署运行时
+        # Whether the repository is used for deploying runtime.
         "deployment_runtime": true,
         "pipeline_runtime": false,
         "git": {
             "gitlab": {
-            	# 代码库的名称
+                # repository name
                 "name": $coderepo_name,
-                # 代码库的路径
+                # repository path
                 "path": $coderepo_name,
-                # 代码库的可见性，例如：private、public 
+                # repository visibility：private or public 
                 "visibility": $coderepo_visibility,
                 "description": $coderepo_desc
                 }
             }
     }'
 ```
-替换变量后的请求示例如下：
+
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'POST' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
@@ -80,11 +88,11 @@ title: 维护代码库
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增代码库。  
-	请求成功后，将在指定产品的 `default.project` 代码库中生成代码库的资源文件，并创建代码库。代码库的资源文件示例如下：
+2. Use the curl command or other tools to execute the API request to create a repository.  
+After the request is successful, the resource file for the repository will be generated in the `default.project` repository of the specified product and the repository will be created in GitLab. The example of a resource file for a repository is shown below: 
 
 ```yaml
-	apiVersion: nautes.resource.nautes.io/v1alpha1
+    apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepo
     metadata:
         name: api-server
@@ -103,14 +111,16 @@ title: 维护代码库
             isolation: "default"
 ```
 
-> 请求 API 更新代码库也将更新代码库资源文件。
+> When requesting the API to update a repository, the resource file for the repository will also be updated.
 >
-> 只有当您的账号是 GitLab 的 group 成员、有创建代码库的权限、有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新代码库。
+> If your account is a member of the GitLab group, has permission to create repositories, and has write permission to the `main` branch of the `default.project` repository, you can create or update repositories. 
 
-## 删除代码库（API）
-> 在删除代码库之前，请先删除与代码库关联的所有实体和资源，例如：部署运行时等，否则将不能执行删除。
+## Delete Repository (API)
 
-1. 通过接口定义 `CodeRepo_DeleteCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+> Before deleting a repository, please delete all entities and resources associated with the repository, such as deployment runtimes, otherwise the deletion cannot be performed.
+
+1. Generate an API request example by API definition `CodeRepo_DeleteCodeRepo` and add the access token as a request header.
+
 ```Shell
     curl -X 'DELETE' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
@@ -118,7 +128,8 @@ title: 维护代码库
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'DELETE' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
@@ -126,13 +137,14 @@ title: 维护代码库
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除代码库。  
-	请求成功后，将删除代码库，以及在指定产品的 `default.project`代码库中的代码库资源文件。
+2. Use the curl command or other tools to execute the API request to delete a repository.   
+After the request is successful, the resource file for the repository will be deleted in the `default.project` repository of the specified product and the repository will be deleted in GitLab.
 
-> 只有当您的账号是 GitLab 的 group 成员、有删除代码库的权限、有 `default.project`  代码库的 main 分支的写入权限，才可以删除代码库。
+> If your account is a member of the GitLab group, has permission to delete repositories, and has write permission to the `main` branch of the `default.project` repository, you can delete repositories. 
 
-## 查询代码库列表（API）
-1. 通过接口定义 `CodeRepo_ListCodeRepos` 生成 API 请求示例，并添加 access token 作为请求头。
+## List Repositories（API）
+1. Generate an API request example by API definition `CodeRepo_ListCodeRepos` and add the access token as a request header.
+
 ```Shell
     curl -X 'GET' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos' \
@@ -140,7 +152,8 @@ title: 维护代码库
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
@@ -149,8 +162,8 @@ title: 维护代码库
 ```
 
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询代码库列表。  
-	请求成功后，将返回代码库列表。代码库列表的返回值示例如下：
+2. Use the curl command or other tools to execute the API request to list repositories. The response example  for the repository list is shown below: 
+
 ```yaml
     {
     "items": [
@@ -179,10 +192,12 @@ title: 维护代码库
     ]
 }
 ```
-> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 default.project  代码库的 main 分支的读取权限，才可以查询代码库列表。
+> If your account is a member of the GitLab group, has permission to list repositories, and has write permission to the `main` branch of the `default.project` repository, you can list repositories. 
 
-## 查询代码库详情（API）
-1. 通过接口定义 `CodeRepo_GetCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+## View Repository Details (API)
+
+1. Generate an API request example by API definition `CodeRepo_GetCodeRepo` and add the access token as a request header.
+
 ```Shell
     curl -X 'GET' \
       'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
@@ -190,7 +205,8 @@ title: 维护代码库
       -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'GET' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
@@ -198,16 +214,18 @@ title: 维护代码库
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'     
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询代码库详情。  
-请求成功后，将返回指定产品的代码库详情。代码库详情的返回值示例与[查询代码库列表](#查询代码库列表api)类似，不再赘述。
-> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 default.project  代码库的 main 分支的读取权限，才可以查看代码库详情。
+2. Use the curl command or other tools to execute the API request to retrieve the repository details. The response example for retrieving the repository details is similar to that of [listing repositories](#list-repositoriesapi).
 
-## 强制创建/更新/删除代码库（API）
-为了保证 Nautes 基于产品配置清单能够自动部署产品的运行时环境，产品配置清单需要符合既定规则。因此，提交 API 请求时默认会对产品配置清单启用校验，如果校验不通过，则不能提交请求。 
+> If your account is a member of the GitLab group, has permission to list repositories, and has write permission to the `main` branch of the `default.project` repository, you can retrieve the repository details.
 
-在实际场景中，用户可能需要先提交不符合规则的资源文件，然后再补齐配套的资源。为了兼容类似场景，POST 和 DELETE 类型的 API 接口通过添加 `insecure_skip_check` 查询参数，并设置其属性值为 true，可以强制提交或删除资源文件。 
+## Force Create/Update/Delete Repository (API)
 
-以创建代码库为例，将 project 属性设置为不存在的 project，启用 `insecure_skip_check` 查询参数，可以强制提交代码库的资源文件。 请求示例如下：
+In order to ensure that Nautes can automatically deploy the runtime environment of a product based on the product configuration manifest, the product configuration manifest must adhere to predefined rules.
+Therefore, validation of the product configuration manifest is enabled by default when submitting a request, and the request cannot be submitted if the validation fails.
+
+In certain scenarios, users may need to submit resource files failing to adhere to predefined rules, and subsequently submit accompanying resources later. In order to accommodate similar scenarios, the POST and DELETE types of API requests can be forced to submit or delete resource files by adding the `insecure_skip_check` query parameter and setting its value to `true`.
+
+Taking the creation of a repository as an example, if the project's value is set to a non-existent project, you can forcibly submit a request by adding the `insecure_skip_check` query parameter to submit the repository resource file . The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
