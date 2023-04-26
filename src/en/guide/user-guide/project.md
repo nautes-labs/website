@@ -1,46 +1,53 @@
 ---
 footerLink: /guide/user-guide/project
-title: 维护项目
+title: Maintain Project
 ---
-# 维护项目
+# Maintain Project
 
-请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-通过维护[产品](product.md)和项目，您可以构建和产品的微服务架构一致的管理单元。
+By maintaining [products](product.md) and projects, you can build management units consistent with the microservice architecture of your products.
 
-项目对应一个微服务，每个项目有自己的代码库。您可以使用集群进行项目的集成和部署，也可以使用产品的制品库对项目的制品进行存储和版本管理。 一个产品下可以包含多个项目。
+A project corresponds to a microservice, and each project has its own code repository. You can use a cluster for project integration and deployment, or use the artifact repository of the product to store and version control the project artifacts. A product can contain multiple projects.
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护项目。
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining projects.
 
-## 前提条件
+## Prerequisites
 
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+### Create Access Token
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+After GitLab installation, you need to register an account and create a  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) with the scopes: api, read_api, read_repository, and write_repository.
 
-### 创建产品
-由于项目归属于产品，您需要创建至少一个[产品](product.md)。
+The access token will be used as a request header for requesting APIs.
 
-## 创建和更新项目（API）
-1. 通过接口定义 `Project_SaveProject` 生成 API 请求示例，并添加 access token 作为请求头。
+### Import Certificates
+
+If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+
+### Create Product
+
+Projects belong to products, so you need to create at least one [product](product.md).
+
+## Create and Update Project (API)
+1. Generate an API request example by API definition `Project_SaveProject` and add the access token as a request header.
+
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $product_name，项目所属产品的名称
-	# $project_name，项目名称
+   # Replace the variable $api-server-address with the access address of the Nautes API Server.
+   # Replace the variable $gitlab-access-token with the GitLab access token.
+   # Replace the variable $product_name with the name of the product to which the project belongs.
+   # Replace the variable $project_name with the project name.
     curl -X 'POST' \
       'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-		  # 项目的开发语言
+		  # The programming language of the project
           "language": $project_language
         }'
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'POST' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
@@ -52,8 +59,9 @@ title: 维护项目
         }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增项目。  
-	请求成功后，将在指定产品的 `default.project`  代码库中生成项目的资源文件。项目的资源文件示例如下：
+2. Use the curl command or other tools to execute the API request to create a project.   
+After the request is successful, the resource file for the project will be generated in the `default.project` repository of the specified product. The example of a resource file for a project is shown below: 
+
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: Project
@@ -64,22 +72,25 @@ title: 维护项目
         language: "Go"
         product: "nautes-labs"
 ```
-> 请求 API 更新项目时也将更新项目的资源文件。	
+> When requesting the API to update a project, the resource file for the project will also be updated.
 >
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新项目。
+> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can create or update projects. 
 
 
 
-## 删除项目（API）
-> 在删除项目之前，请先删除与项目关联的所有实体和资源，例如：代码库和部署运行时等，否则将不能执行删除。
-1. 通过接口定义 `Project_DeleteProject` 生成 API 请求示例，并添加 access token 作为请求头。
+## Delete Project (API)
+
+> Before deleting a project, please delete all entities and resources associated with the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
+1. Generate an API request example by API definition `Project_DeleteProject` and add the access token as a request header.
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
       -H 'accept: application/json' \
 	  -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
@@ -87,19 +98,20 @@ title: 维护项目
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除项目。  
-	请求成功后，将删除在指定产品的 `default.project`  代码库中的项目资源文件。
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project`  代码库的 main 分支的写入权限，才可以删除项目。
+2. Use the curl command or other tools to execute the API request to delete a project.  
+After the request is successful, the resource file for the project will be deleted in the `default.project` repository of the specified product. 
 
-## 查询项目列表（API）
-1. 通过接口定义 `Project_ListProjects` 生成 API 请求示例，并添加 access token 作为请求头。
+> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can delete projects. 
+
+## List Projects (API)
+1. Generate an API request example by API definition `Project_ListProjects` and add the access token as a request header.
 ```Shell
     curl -X 'GET' \
     'HTTP://$api-server-address/api/v1/products/$product_name/projects' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
@@ -107,10 +119,10 @@ title: 维护项目
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询项目列表。  
-请求成功后，将返回指定产品的项目列表。项目列表的返回值示例如下：
+2. Use the curl command or other tools to execute the API request to list projects. The response example  for the project list is shown below: 
+
 ```yaml
-	{
+    {
         "items": [
             {
                 "product": "nautes-labs",
@@ -125,17 +137,18 @@ title: 维护项目
         ]
     }
 ```
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project`  代码库的 main 分支的读取权限，才可以查询到产品的项目列表。
+> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can retrieve the list of projects.
 
-## 查询项目详情（API）
-1. 通过接口定义 `Project_GetProject` 生成 API 请求示例，并添加 access token 作为请求头。
+## View Project Details (API)
+1. Generate an API request example by API definition `Project_GetProject` and add the access token as a request header.
+
 ```Shell
     curl -X 'GET' \
     'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
@@ -143,14 +156,15 @@ title: 维护项目
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具（如 Postman、JMeter）执行 API 请求，以查询项目详情。   
-请求成功后，将返回指定产品的项目详情。项目详情的返回值示例与[查询项目列表](#查询项目列表api)类似，不再赘述。
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project`  代码库的 main 分支的读取权限，才可以查询到产品的项目详情。
+2. Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-productsapi).
 
-## 强制创建/更新/删除项目（API ）
-适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
+> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can retrieve the project details.
 
-以创建项目为例，当项目所属产品中存在不合规资源（如环境关联的集群被销毁），启用 `insecure_skip_check` 查询参数并设置其值为 true，可以跳过校验方法并强制提交项目的资源文件。请求示例如下：
+## Force Create/Update/Delete Project (API)
+
+For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](#code-repo.md) section.
+
+Taking the creation of a project as an example, if there are invalid resources (such as a cluster associated with an environment being destroyed) in the product to which the project belongs, you can submit the project's resource file without verification by enabling the `insecure_skip_check` query parameter with its value set to `true`. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
