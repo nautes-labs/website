@@ -16,9 +16,7 @@ Support both [Command Line](deploy-an-application.md#prepare-runtime-environmen
 
 ### Create Access Token
 
-After GitLab installation, you need to register an account and create a  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) with the scopes: api, read_api, read_repository, and write_repository.
-
-The access token will be used as a request header for requesting APIs.
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
 
 ### Import Certificates
 
@@ -74,7 +72,7 @@ After the request is successful, the resource file for the project will be gener
 ```
 > When requesting the API to update a project, the resource file for the project will also be updated.
 >
-> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can create or update projects. 
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update projects. 
 
 
 
@@ -101,7 +99,7 @@ The request example after replacing the variables is shown below:
 2. Use the curl command or other tools to execute the API request to delete a project.  
 After the request is successful, the resource file for the project will be deleted in the `default.project` repository of the specified product. 
 
-> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can delete projects. 
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete projects. 
 
 ## List Projects (API)
 1. Generate an API request example by API definition `Project_ListProjects` and add the access token as a request header.
@@ -137,7 +135,7 @@ The request example after replacing the variables is shown below:
         ]
     }
 ```
-> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can retrieve the list of projects.
+> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the list of projects.
 
 ## View Project Details (API)
 1. Generate an API request example by API definition `Project_GetProject` and add the access token as a request header.
@@ -156,13 +154,13 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-productsapi).
+1. Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-projects-api).
 
-> If your account is a member of the GitLab group and has write access to the `main` branch of the `default.project` repository, you can retrieve the project details.
+> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the project details.
 
 ## Force Create/Update/Delete Project (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](#code-repo.md) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md) section.
 
 Taking the creation of a project as an example, if there are invalid resources (such as a cluster associated with an environment being destroyed) in the product to which the project belongs, you can submit the project's resource file without verification by enabling the `insecure_skip_check` query parameter with its value set to `true`. The request example is shown below:
 
