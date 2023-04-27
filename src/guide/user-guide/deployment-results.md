@@ -6,16 +6,19 @@ title: 查看部署结果
 
 在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语，并且已经创建了至少一个部署运行时，详情参见 [维护部署运行时](deployment-runtime.md)。
 
-您可以通过 ArgoCD 控制台和 Kubectl 命令行两种方式查看项目的部署情况。您只能查看和管理授权产品的项目的相关资源。
+您可以通过 ArgoCD 控制台和 Kubectl 命令行两种方式查看应用的部署情况。您只能查看和管理授权产品的相关资源。
 
 ## 查看 ArgoCD 中的资源
 
-访问安装在部署运行时集群中的 [ArgoCD 控制台](installation.md#查看组件信息) ，并点击右上角的“LOG IN VIA DEX”按钮进行统一认证。如果您在当前浏览器会话中未登录过认证服务器（如 Gitlab），那么您需要先使用账号和密码进行登录，登录成功后页面会自动跳转至 ArgoCD 控制台。在 ArgoCD 控制台中您可以查看和管理被授权产品相关的 ArgoCD Applications，您也可以通过访问“设置/项目”页面来查看被授权产品相关的 ArgoCD Projects。
+使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台。点击 `LOG IN VIA DEX` 进行统一认证，如果在当前浏览器会话中未登录过认证服务器（如 Gitlab），那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
-![directive syntax graph](./../images/quickstart-argocd-2.png) 
+> 替换变量 $argocdHost 为承载运行环境的集群的 argocdHost 地址，详情参考[注册物理集群](deploy-an-application.md#注册物理集群)或者[注册虚拟集群](deploy-an-application.md#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+>
+> 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](deploy-an-application.md#注册物理集群)或者[注册虚拟集群](deploy-an-application.md#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
-您可以通过点击某个 ArgoCD Application 卡片来查看此应用所管理的资源清单，您也可以查看某个资源的YAML、事件、日志等，并对该资源执行同步、重启、删除等操作。
+在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看某个资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。您也可以通过访问“设置/项目”页面来查看被授权产品相关的 ArgoCD Projects。
 
+![directive syntax graph](./../images/quickstart-argocd-2.png)
 
 ## 查看 Kubernetes 中的资源
 您可以通过一个标准的 OICD 客户端进行统一认证以获取 ID Token，并将该 ID Token 作为 Kubectl 的认证凭证，再使用 Kubectl 以认证服务器上的身份访问 Kubernetes。下文描述了如何通过 DEX 官方提供的一个示例客户端进行统一认证并获取 ID Token。
@@ -32,9 +35,9 @@ title: 查看部署结果
  --redirect-uri "http://$ip:5555/callback" > /tmp/dex-client.log 2>&1 &
 ```
 
-指令中的 $client_id 和 $client_secret 是 DEX 颁发的客户端密钥，$dex_url 是 DEX 的服务地址，$dex_ca 是 DEX 服务的 HTTPS 证书，$ip 是运行客户端的服务器IP。
+指令中的 `$client_id` 和 `$client_secret` 是 DEX 颁发的客户端密钥，`$dex_url` 是 DEX 的服务地址，`$dex_ca` 是 DEX 服务的 HTTPS 证书，`$ip` 是运行客户端的服务器IP。
 
-当服务启动后，您可以5555端口访问客户端，填写 Extra scopes 属性值为 groups，并点击 Login 进行统一认证。
+当服务启动后，您可以通过 `5555` 端口访问客户端，填写 `Extra scopes` 属性值为 `groups`，并点击 `Login` 进行统一认证。
 ![directive syntax graph](./../images/quickstart-dex-1.png)
 
 认证成功后会生成如下的 ID Token：

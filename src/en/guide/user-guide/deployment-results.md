@@ -1,26 +1,32 @@
 ---
 footerLink: /guide/user-guide/deployment-results
-title: 查看部署结果
+title: View Deployment Results
 ---
-# 查看部署结果
+# View Deployment Results
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语，并且已经创建了至少一个部署运行时，详情参见 [维护部署运行时](deployment-runtime.md)。
+Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes, and you have created at least one [deployment runtime](deployment-runtime.md).
 
-您可以通过 ArgoCD 控制台和 Kubectl 命令行两种方式查看项目的部署情况。您只能查看和管理授权产品的项目的相关资源。
-
-## 查看 ArgoCD 中的资源
-
-访问安装在部署运行时集群中的 [ArgoCD 控制台](installation.md#查看组件信息) ，并点击右上角的“LOG IN VIA DEX”按钮进行统一认证。如果您在当前浏览器会话中未登录过认证服务器（如 Gitlab），那么您需要先使用账号和密码进行登录，登录成功后页面会自动跳转至 ArgoCD 控制台。在 ArgoCD 控制台中您可以查看和管理被授权产品相关的 ArgoCD Applications，您也可以通过访问“设置/项目”页面来查看被授权产品相关的 ArgoCD Projects。
-
-![directive syntax graph](./../images/quickstart-argocd-2.png) 
-
-您可以通过点击某个 ArgoCD Application 卡片来查看此应用所管理的资源清单，您也可以查看某个资源的YAML、事件、日志等，并对该资源执行同步、重启、删除等操作。
+You can view the deployment information of your applications using both the ArgoCD console and the Kubectl command line. You can only view and manage resources related to authorized products.
 
 
-## 查看 Kubernetes 中的资源
-您可以通过一个标准的 OICD 客户端进行统一认证以获取 ID Token，并将该 ID Token 作为 Kubectl 的认证凭证，再使用 Kubectl 以认证服务器上的身份访问 Kubernetes。下文描述了如何通过 DEX 官方提供的一个示例客户端进行统一认证并获取 ID Token。
+## View Resources in ArgoCD
 
-您可以从[这里](https://github.com/dexidp/dex/tree/master/examples/example-app)获取该客户端的源码，并将源码编译为二进制文件。然后您可以通过以下指令启动这个客户端，客户端启动后会提供一个简单的 WEB UI 进行统一认证并返回认证结果。
+Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console.
+
+> Replace the $argocdHost variable with the argocdHost address of the cluster hosting the runtime environment. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+>
+> Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `30443`.
+
+The ArgoCD console lists ArgoCD applications that are related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects associated with authorized products.
+
+![directive syntax graph](./../images/quickstart-argocd-2.png)
+
+## View Resources in Kubernetes
+
+You can obtain an ID Token for authentication by using a standard OIDC client, and use it as an authentication credential for Kubectl to access Kubernetes as an authenticated user on the server.
+The section describes how to perform unified authentication and obtain an ID Token using an example client provided by DEX.
+
+You can obtain [the source code of the client](https://github.com/dexidp/dex/tree/master/examples/example-app), and compile the source code into a binary file. You can start the client using the following command, and the client will provide an example WEB UI for unified authentication and return the authentication result.
 
 ```shell
 ./example-app \
@@ -32,21 +38,22 @@ title: 查看部署结果
  --redirect-uri "http://$ip:5555/callback" > /tmp/dex-client.log 2>&1 &
 ```
 
-指令中的 $client_id 和 $client_secret 是 DEX 颁发的客户端密钥，$dex_url 是 DEX 的服务地址，$dex_ca 是 DEX 服务的 HTTPS 证书，$ip 是运行客户端的服务器IP。
+The variables `$client_id` and `$client_secret` are the client secrets issued by DEX, `$dex_url` is the service address of DEX, `$dex_ca` is the HTTPS certificate of DEX, and `$ip` is the IP address of the server where the client is running. 
 
-当服务启动后，您可以5555端口访问客户端，填写 Extra scopes 属性值为 groups，并点击 Login 进行统一认证。
+After the service is started, you can access the client on port `5555`, fill in the `Extra scopes` property value with `groups`, and click `Login` for unified authentication. 
+
 ![directive syntax graph](./../images/quickstart-dex-1.png)
 
-认证成功后会生成如下的 ID Token：
+If authentication is successful, an ID Token will be generated, and the example is as shown below:
 
 ```Shell
 eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2OGUyODFmN2FkYTk2NjNmMWI0MTc0NGFhYTUzZDRmYjk0N2Q1YjMifQ.eyJpc3MiOiJodHRwczovL2RleC5ibHV6aW4uaW86OTA4MCIsInN1YiI6IkNnSXhNaElHWjJsMGJHRmkiLCJhdWQiOiJwbGF0Zm9ybSIsImV4cCI6MTY4MDg3Mjc2MiwiaWF0IjoxNjgwNzg2MzYyLCJhdF9oYXNoIjoiWTNNbnRHLTE3SERaWjNVb0hiNWdmUSIsImNfaGFzaCI6IlBGUXNEM1hPSkhNZ1B3RW1LNXl5bEEiLCJlbWFpbCI6ImxpdWp1bmhvbmdAdmlzcHJhY3RpY2UuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImdyb3VwcyI6WyJ5dW50aSIsIm5hdXRlcy1sYWJzIiwidGVrdG9uY2QiLCJkZXYtdGVuYW50IiwieXVudGkvc3ViZ3JvdXAiLCJ5dW50aS9zdWJncm91cC9zdWJzdWJncm91cCJdLCJuYW1lIjoibGl1anVuaG9uZyIsInByZWZlcnJlZF91c2VybmFtZSI6ImxpdWp1bmhvbmcifQ.AYiLwJMcVaJdVdF-j_RZnHCPpg1psF3CJlzlBzvBYcuI_t7slgRaumRmGJEYXHYn2QFxjEZCNnBiOpJDDJoitVTxi1qoZ2nNoxhB3Wtxc1MoqkiPR5wy49yHw5roTnqIuEBy5BMpN_embxB9vK1bwxf414PsYKm1Dhbj8dynpURjpTsLrN5k7zVC7RQxVvglNX4cgYEucvSLqMEdtHNlmtnRsl6DJuItxC0MYwXlp4C9FNWswUjSpargdX4wgqfYy91l66GiI2Xj_zdba0NHLcPean-nmBMObLNhxex4hj8IVcGyiEu9in87y8eisrCBoLEWP9SJ_ZxWiOPoTFr54A
 ```
 
-您可以使用这个 ID Token 替换 Kubeconfig 中的认证信息：
+You can use the ID Token to replace the authentication information in Kubeconfig:
 
 ```yaml
-# 将 ID-Token 替换 kubeconfig 文件中的 users 的配置
+# Replace the configuration of users in the kubeconfig file with the ID Token.
 apiVersion: v1
 clusters:
 ......
@@ -58,19 +65,19 @@ users:
     token: $ID-Token
 ```
 
-如果您的运行时集群是一个虚拟集群，可以通过下面的命令行获取 Kubeconfig 文件。
+If your runtime cluster type is virtual, you can obtain the Kubeconfig file using the command line:
 
 ```Shell
-# 使用虚拟集群名称替换 $VCLUSTER 变量
+# Replace the $VCLUSTER variable with the name of the virtual cluster.
 kubectl get secret vc-$VCLUSTER-vcluster -n $VCLUSTER --template={{.data.config}} | base64 -d
 ```
 
-应用 Kubeconfig 文件后，您可以通过 Kubectl 命令行查看与部署运行时相同名称的 Namespace 中的资源，您拥有该 Namespace 下所有资源的管理权限。
+After applying the Kubeconfig file, you can use the Kubectl command line to view the resources in the Namespace with the same name as the deployment runtime, and you have management permissions for all resources in the Namespace.
 
 ```Shell
-# 应用 Kubeconfig
+Apply the Kubeconfig.
 export KUBECONFIG=/opt/vcluster/kubeconfig-dex.yaml
-# 使用 kubectl 命令行管理命名空间下的资源，以下命令行仅为示例
+# Use the kubectl command line to manage resources in the Namespace. The following command lines are only examples.
 kubectl get deployment -n deployment-runtime-1
 kubectl delete deployment deployment-test -n deployment-runtime-1
 ```
