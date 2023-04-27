@@ -26,7 +26,7 @@ The ArgoCD console lists ArgoCD applications that are related to products author
 You can obtain an ID Token for authentication by using a standard OIDC client, and use it as an authentication credential for Kubectl to access Kubernetes as an authenticated user on the server.
 The section describes how to perform unified authentication and obtain an ID Token using an example client provided by DEX.
 
-You can obtain [the source code of the client](https://github.com/dexidp/dex/tree/master/examples/example-app), and compile the source code into a binary file. You can start the client using the following command, and the client will provide an example WEB UI for unified authentication and return the authentication result.
+You can obtain [the source code of the client](https://github.com/dexidp/dex/tree/master/examples/example-app), and compile the source code into a binary file. You can start the client using the following command, and the client will provide an WEB UI for unified authentication and return the authentication result.
 
 ```shell
 ./example-app \
