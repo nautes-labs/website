@@ -1,48 +1,57 @@
 ---
 footerLink: /guide/user-guide/environment
-title: 维护环境
+title: Maintain Environment
 ---
-# 维护环境
+# Maintain Environment
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-环境是使用集群（目前只支持 Kubernetes集群）来承载产品中各个项目的集成和部署的管理单元。一个产品包含多个环境，如：开发环境、测试环境、预生产环境和生产环境等。
+The environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护环境。
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining environments.
 
-## 前提条件
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+## Prerequisites
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+### Create Access Token
 
-### 创建产品
-由于环境归属于产品，您需要创建至少一个[产品](product.md)。
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
 
-### 注册运行时集群
-由于环境需要关联运行时集群才能负载产品的运行时环境，您需要注册至少一个[运行时集群](deploy-an-application.md#注册运行时集群)。
+### Import Certificates
 
-## 创建和更新环境（API）
-1. 通过接口定义 `Environment_SaveEnvironment`  生成 API 请求示例，并添加 access token 作为请求头。
+If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+
+### Create Product
+
+Environments belong to products, so you need to create at least one [product](product.md).
+
+### Register Runtime Cluster
+
+It is essential to associate the environment with a deployment runtime cluster, you need to register at least one [runtime cluster](deploy-an-application.md).
+
+## Create and Update Environment (API)
+
+1. Generate an API request example by API definition `Environment_SaveEnvironment` and add the access token as a request header.
+
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $product_name，环境所属产品的名称
-	# $environment_name，环境名称    
+    # Replace the variable $api-server-address with the access address of the Nautes API Server.
+    # Replace the variable $gitlab-access-token with the GitLab access token.
+    # Replace the variable $product_name with the name of the product to which the environment belongs.
+    # Replace the variable $environment_name with the environment name.
     curl -X 'POST' \
       'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # 环境关联的运行时集群
+      # Runtime cluster associated with the environment
       "cluster": $cluster_name,
-      # 环境类型
+      # Environment type
       "env_type": $env_type
     }'
 ```
-替换变量后的请求示例如下：
+
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'POST' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
@@ -55,8 +64,9 @@ title: 维护环境
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增环境。  
-请求成功后，将在指定产品的 `default.project` 代码库中生成环境的资源文件。环境的资源文件示例如下：
+2. Use the curl command or other tools to execute the API request to create a environment.
+After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
+
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: Environment
@@ -69,18 +79,20 @@ title: 维护环境
         product: "nautes-labs"
 ```
 
-> 相同产品内，相同的运行时集群不能重复关联不同的环境。  
+> Within the same product, the same runtime cluster cannot be associated with different environments.
 >
-> 当环境已经负载了产品的部署运行时环境，暂不支持变更环境的关联集群。  
+> If the environment has already hosted the deployment runtime environment of a product, it is not currently supported to change the associated cluster of the environment.
 >
-> 请求 API 更新环境也将更新环境的资源文件。
+> When requesting the API to update a environment, the resource file for the environment will also be updated.
 >
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新环境。  
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update environments. 
 
-## 删除环境（API）
-> 在删除环境之前，请先删除与环境关联的所有相关实体和资源，例如：部署运行时等，否则将不能执行删除。
+## Delete Environment (API)
 
-1. 通过接口定义 `Environment_DeleteEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
+> Before deleting an environment, please delete all entities and resources associated with the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
+
+1. Generate an API request example by API definition `Environment_DeleteEnvironment` and add the access token as a request header.
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
@@ -88,7 +100,8 @@ title: 维护环境
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
@@ -96,13 +109,14 @@ title: 维护环境
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除环境。  
-请求成功后，将删除在指定产品的 `default.project`  代码库中的环境资源文件。  
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以删除环境。 
+2. Use the curl command or other tools to execute the API request to delete a environment.   
+After the request is successful, the resource file for the environment will be deleted in the `default.project` repository of the specified product.
+
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete environments. 
 
 
-## 查询环境列表（API）
-1. 通过接口定义 `Environment_ListEnvironments` 生成 API 请求示例，并添加 access token 作为请求头。
+## List Environments (API)
+1. Generate an API request example by API definition `Environment_ListEnvironments` and add the access token as a request header.
 
 ```Shell
     curl -X 'GET' \
@@ -111,7 +125,7 @@ title: 维护环境
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
 
 ```Shell
     curl -X 'GET' \
@@ -121,8 +135,7 @@ title: 维护环境
 ```
 
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询环境列表。  
-请求成功后，将返回环境列表。环境列表的返回值示例如下：
+2. Use the curl command or other tools to execute the API request to list environments. The response example  for the environment list is shown below: 
 
 ```yaml
 {
@@ -137,10 +150,11 @@ title: 维护环境
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查询环境列表。
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can list environments. 
 
-## 查询环境详情（API）
-1. 通过接口定义 `Environment_GetEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
+## View Environment Details (API)
+
+1. Generate an API request example by API definition `Environment_GetEnvironment` and add the access token as a request header.
 
 ```Shell
     curl -X 'GET' \
@@ -149,7 +163,8 @@ title: 维护环境
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:  
+
 ```Shell
     curl -X 'GET' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
@@ -157,14 +172,15 @@ title: 维护环境
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询环境详情。  
-    请求成功后，将返回指定产品的环境详情。环境详情的返回值示例与[查询环境列表](#查询环境列表)类似，不再赘述。
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查看环境详情。
+2. Use the curl command or other tools to execute the API request to retrieve the environment details. The response example for retrieving the environment details is similar to that of [listing environments](#list-environments-api).
 
-## 强制创建/更新/删除环境（API）
-适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can retrieve the environment details.
 
-以创建环境为例，将 cluster 属性设置为不存在的 cluster，启用 `insecure_skip_check` 查询参数并设置其值为 true，可以强制提交环境的资源文件。 请求示例如下：
+## Force Create/Update/Delete Environment (API)
+
+For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md) section.
+
+Taking creating an environment as an example, if the cluster's value is set to a non-existent cluster, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`  to submit the environment resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
