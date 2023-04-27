@@ -192,7 +192,7 @@ The request example after replacing the variables is shown below:
     ]
 }
 ```
-> If your account is a member of the GitLab group, has permission to list repositories, and has write permission to the `main` branch of the `default.project` repository, you can list repositories. 
+> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `main` branch of the `default.project` repository, you can list repositories. 
 
 ## View Repository Details (API)
 
@@ -216,7 +216,7 @@ The request example after replacing the variables is shown below:
 
 2. Use the curl command or other tools to execute the API request to retrieve the repository details. The response example for retrieving the repository details is similar to that of [listing repositories](#list-repositoriesapi).
 
-> If your account is a member of the GitLab group, has permission to list repositories, and has write permission to the `main` branch of the `default.project` repository, you can retrieve the repository details.
+> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `main` branch of the `default.project` repository, you can retrieve the repository details.
 
 ## Force Create/Update/Delete Repository (API)
 
