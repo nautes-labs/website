@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the  [Main Proces
 
 A deployment runtime defines the configuration declaration used to deploy projects, such as the storage location of deployment manifests and the target environment to deploy to, etc. 
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining environments.
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining deployment runtimes.
 
 ## Prerequisites
 
@@ -85,7 +85,7 @@ The request example after replacing the variables is shown below:
     }'    
 ```
 
-2. Use the curl command or other tools to execute the API request to create a deployment runtime.
+2. Use the curl command or other tools to execute the API request to create a deployment runtime.  
 After the request is successful, the resource file for the deployment runtime will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
 
 ```yaml
@@ -131,7 +131,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. Use the curl command or other tools to execute the API request to delete a deployment runtime.
+2. Use the curl command or other tools to execute the API request to delete a deployment runtime.  
 After the request is successful, the resource file for the deployment runtime will be deleted in the `default.project` repository of the specified product , and the deployment runtime environment will be destroyed.
 
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete deployment runtimes. 
