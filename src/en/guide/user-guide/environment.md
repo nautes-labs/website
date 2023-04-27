@@ -150,7 +150,7 @@ The request example after replacing the variables is shown below:
 }
 ```
 
-> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can list environments. 
+> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can list environments. 
 
 ## View Environment Details (API)
 
@@ -174,7 +174,7 @@ The request example after replacing the variables is shown below:
 
 2. Use the curl command or other tools to execute the API request to retrieve the environment details. The response example for retrieving the environment details is similar to that of [listing environments](#list-environments-api).
 
-> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can retrieve the environment details.
+> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the environment details.
 
 ## Force Create/Update/Delete Environment (API)
 
