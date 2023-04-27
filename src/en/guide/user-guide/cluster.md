@@ -12,7 +12,7 @@ Support both [Command Line](deploy-an-application.md#register-runtime-cluster)  
 
 ## Prerequisites
 
-### Create access token
+### Create Access Token
 You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](deploy-an-application.md#register-a-gitlab-account).
 
 
@@ -97,7 +97,7 @@ The request example after replacing the variables is shown below:
 2. Use the curl command or other tools to execute the API request to register a physical cluster.    
 After the request is successful, the physical cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster. For the example of the physical cluster resource file, refer to the physical cluster property example  in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) section.
 
-> If your account is a member of the tenant configuration repository and has write access to the `main` branch, you can register runtime clusters.
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
 
 ## Register Virtual Cluster（API）
@@ -229,7 +229,7 @@ curl -X 'POST' \
 4. Use the curl command or other tools to execute the API request to register a virtual cluster. 
 After the request is successful, the virtual cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster. For the example of the virtual cluster resource file, refer to the virtual cluster property example  in the  [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
 
-> If your account is a member of the tenant configuration repository and has write access to the `main` branch, you can register runtime clusters.
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
 
 ## Delete Physical Cluster（API）
@@ -260,7 +260,7 @@ The request example after replacing the variables is shown below:
 2. Use the curl command or other tools to execute the API request.  
 After the request is successful, the physical cluster and the cluster resource file in the tenant configuration repository will be deleted.
 
-> If your account is a member of the tenant configuration repository and has write access to the `main` branch, you can delete runtime clusters.
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
 
 ## Delete Virtual Cluster（API）
 > Please ensure that a virtual cluster has been successfully registered. 
@@ -291,4 +291,4 @@ After the request is successful, the virtual cluster and the cluster resource fi
 4. Use the curl command or other tools to execute the API request.  
 After the request is successful, the host cluster and the cluster resource file in the tenant configuration repository will be deleted.
 
-> If your account is a member of the tenant configuration repository and has write access to the `main` branch, you can delete runtime clusters.
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
