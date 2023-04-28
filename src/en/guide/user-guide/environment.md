@@ -135,7 +135,7 @@ The request example after replacing the variables is shown below:
 ```
 
 
-2. Use the curl command or other tools to execute the API request to list environments. The response example  for the environment list is shown below: 
+2. Use the curl command or other tools to execute the API request to list environments. The response example for the environment list is shown below: 
 
 ```yaml
 {
