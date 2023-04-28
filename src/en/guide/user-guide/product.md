@@ -115,7 +115,7 @@ The request example after replacing the variables is shown below:
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
-2. Use the curl command or other tools to execute the API request to list products. The response example for the product list  is shown below:  
+2. Use the curl command or other tools to execute the API request to list products. The response example for the product list is shown below:  
 
   ```json
   {
