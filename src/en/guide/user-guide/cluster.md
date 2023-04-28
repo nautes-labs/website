@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the  [Main Proces
 
 Runtime clusters are used to host the runtime environment for applications. The supported cluster types include physical clusters and virtual clusters.
 
-Support both [Command Line](deploy-an-application.md#register-runtime-cluster)  and  API for registering runtime clusters. 
+Support both [Command Line](deploy-an-application.md#register-runtime-cluster)  and API for registering runtime clusters. 
 
 ## Prerequisites
 
@@ -95,7 +95,7 @@ The request example after replacing the variables is shown below:
 ```
 
 2. Use the curl command or other tools to execute the API request to register a physical cluster.    
-After the request is successful, the physical cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster. For the example of the physical cluster resource file, refer to the physical cluster property example  in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) section.
+After the request is successful, the physical cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster. For the example of the physical cluster resource file, refer to the physical cluster property example in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) section.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
@@ -172,7 +172,7 @@ curl -X 'POST' \
 ```
 
 2. Use the curl command or other tools to execute the API request to register a host cluster. 
-After the request is successful, the host cluster will be registered to the tenant management cluster, and components such as traefik  will be installed in the host cluster. For the example of the host cluster resource file, refer to the host cluster property example in the [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
+After the request is successful, the host cluster will be registered to the tenant management cluster, and components such as traefik will be installed in the host cluster. For the example of the host cluster resource file, refer to the host cluster property example in the [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
 3. Generate an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
@@ -227,7 +227,7 @@ curl -X 'POST' \
 ```
 
 4. Use the curl command or other tools to execute the API request to register a virtual cluster. 
-After the request is successful, the virtual cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster. For the example of the virtual cluster resource file, refer to the virtual cluster property example  in the  [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
+After the request is successful, the virtual cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster. For the example of the virtual cluster resource file, refer to the virtual cluster property example in the  [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
