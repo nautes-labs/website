@@ -51,7 +51,7 @@ The request example after replacing the variables is shown below:
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer  xxxxxxxxxxxxxxxxxxxx'\
+      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
       -d '{
           "language": "Go"
         }'
@@ -117,7 +117,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. Use the curl command or other tools to execute the API request to list projects. The response example  for the project list is shown below: 
+2. Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below: 
 
 ```yaml
     {
@@ -169,7 +169,7 @@ Taking the creation of a project as an example, if there are invalid resources (
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/cluster-operator?insecure_skip_check=true ' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer  xxxxxxxxxxxxxxxxxxxx'\
+      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
       -d '{
           "language": "Go"
         }'
