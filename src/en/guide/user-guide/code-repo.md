@@ -162,7 +162,7 @@ The request example after replacing the variables is shown below:
 ```
 
 
-2. Use the curl command or other tools to execute the API request to list repositories. The response example  for the repository list is shown below: 
+2. Use the curl command or other tools to execute the API request to list repositories. The response example for the repository list is shown below: 
 
 ```yaml
     {
