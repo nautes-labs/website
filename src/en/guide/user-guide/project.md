@@ -4,7 +4,7 @@ title: Maintain Project
 ---
 # Maintain Project
 
-Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
 By maintaining [products](product.md) and projects, you can build management units consistent with the microservice architecture of your products.
 
@@ -20,31 +20,35 @@ You need to create an access token to use as a request header for requesting API
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
 
 ### Create Product
 
 Projects belong to products, so you need to create at least one [product](product.md).
 
 ## Create and Update Project (API)
-1. Generate an API request example by API definition `Project_SaveProject` and add the access token as a request header.
+
+### Compose project creation request
+
+Compose an API request example by API definition `Project_SaveProject` and add the access token as a request header.
 
 ```Shell
-   # Replace the variable $api-server-address with the access address of the Nautes API Server.
-   # Replace the variable $gitlab-access-token with the GitLab access token.
-   # Replace the variable $product_name with the name of the product to which the project belongs.
-   # Replace the variable $project_name with the project name.
+    # Replace the variable $api-server-address with the access address of the Nautes API Server.
+    # Replace the variable $gitlab-access-token with the GitLab access token.
+    # Replace the variable $product_name with the name of the product to which the project belongs.
+    # Replace the variable $project_name with the project name.
     curl -X 'POST' \
       'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-		  # The programming language of the project
-          "language": $project_language
+            # The programming language of the project
+            "language": $project_language
         }'
 ```
-The request example after replacing the variables is shown below:  
+
+The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -57,8 +61,11 @@ The request example after replacing the variables is shown below:
         }'
 ```
 
-2. Use the curl command or other tools to execute the API request to create a project.   
-After the request is successful, the resource file for the project will be generated in the `default.project` repository of the specified product. The example of a resource file for a project is shown below: 
+### Execute project creation request
+
+Use the curl command or other tools to execute the API request to create a project.
+
+After the request is successful, the resource file for the project will be generated in the `default.project` repository of the specified product. The example of a resource file for a project is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -70,24 +77,27 @@ After the request is successful, the resource file for the project will be gener
         language: "Go"
         product: "nautes-labs"
 ```
+
 > When requesting the API to update a project, the resource file for the project will also be updated.
 >
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update projects. 
 
-
-
 ## Delete Project (API)
 
 > Before deleting a project, please delete all entities and resources associated with the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
-1. Generate an API request example by API definition `Project_DeleteProject` and add the access token as a request header.
+
+### Compose project deletion request
+
+Compose an API request example by API definition `Project_DeleteProject` and add the access token as a request header.
 
 ```Shell
     curl -X 'DELETE' \
       'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
       -H 'accept: application/json' \
-	  -H 'Authorization: Bearer $gitlab-access-token' 
+      -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-The request example after replacing the variables is shown below:  
+
+The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
@@ -96,20 +106,29 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. Use the curl command or other tools to execute the API request to delete a project.  
-After the request is successful, the resource file for the project will be deleted in the `default.project` repository of the specified product. 
+### Execute project deletion request
 
-> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete projects. 
+Use the curl command or other tools to execute the API request to delete a project.
+
+After the request is successful, the resource file for the project will be deleted in the `default.project` repository of the specified product.
+
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete projects.
 
 ## List Projects (API)
-1. Generate an API request example by API definition `Project_ListProjects` and add the access token as a request header.
+
+### Compose project list request
+
+Compose an API request example by API definition `Project_ListProjects` and add the access token as a request header.
+
 ```Shell
     curl -X 'GET' \
     'HTTP://$api-server-address/api/v1/products/$product_name/projects' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-The request example after replacing the variables is shown below:  
+
+The request example after replacing the variables is shown below:
+
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
@@ -117,7 +136,9 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below: 
+### Execute project list request
+
+Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below:
 
 ```yaml
     {
@@ -135,10 +156,14 @@ The request example after replacing the variables is shown below:
         ]
     }
 ```
+
 > If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the list of projects.
 
 ## View Project Details (API)
-1. Generate an API request example by API definition `Project_GetProject` and add the access token as a request header.
+
+### Compose project details request
+
+Compose an API request example by API definition `Project_GetProject` and add the access token as a request header.
 
 ```Shell
     curl -X 'GET' \
@@ -146,7 +171,9 @@ The request example after replacing the variables is shown below:
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
-The request example after replacing the variables is shown below:  
+
+The request example after replacing the variables is shown below:
+
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
@@ -154,7 +181,9 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-1. Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-projects-api).
+### Execute project details request
+
+Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-projects-api).
 
 > If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the project details.
 
