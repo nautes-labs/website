@@ -100,6 +100,7 @@ The request example after replacing the variables is shown below:
 ### Execute physical cluster registration request
 
 Use the curl command or other tools to execute the API request to register a physical cluster.
+
 After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
@@ -183,6 +184,7 @@ curl -X 'POST' \
 ### Execute host cluster registration request
 
 Use the curl command or other tools to execute the API request to register a host cluster.
+
 After the request is successful, the host cluster's resource file will be written to the tenant configuration repository, and the host cluster will be registered in the tenant management cluster based on the resource file. Upon successful registration, components such as Traefik will be installed in the host cluster.
 
 ### Compose virtual cluster registration request
