@@ -30,7 +30,7 @@ access token 将作为请求 API 的请求头。
 
 ## 创建和更新项目（API）
 
-### 生成创建项目的 API 请求
+### 生成创建/更新项目的 API 请求
 
 通过接口定义 `Project_SaveProject` 生成 API 请求示例，并添加 access token 作为请求头。
 
@@ -63,7 +63,7 @@ access token 将作为请求 API 的请求头。
         }'
 ```
 
-### 执行创建项目的 API 请求
+### 执行创建/更新项目的 API 请求
 
 使用 curl 命令或者其他工具执行 API 请求，以新增项目。
 

@@ -28,7 +28,7 @@ Projects belong to products, so you need to create at least one [product](produc
 
 ## Create and Update Project (API)
 
-### Compose project creation request
+### Compose project creation or update request
 
 Compose an API request example by API definition `Project_SaveProject` and add the access token as a request header.
 
@@ -61,7 +61,7 @@ The request example after replacing the variables is shown below:
         }'
 ```
 
-### Execute project creation request
+### Execute project creation or update request
 
 Use the curl command or other tools to execute the API request to create a project.
 
