@@ -24,7 +24,7 @@ title: 注册运行时集群
 
 ### 生成注册物理集群的 API 请求
 
-通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `Cluster_SaveCluster` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
@@ -99,7 +99,8 @@ title: 注册运行时集群
 
 ### 执行注册物理集群的 API 请求
 
-使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。  
+使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。
+
 请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为部署运行时集群。注册成功后，将在物理集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
 
 > 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
@@ -110,7 +111,7 @@ title: 注册运行时集群
 
 ### 生成注册宿主集群的 API 请求
 
-通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `Cluster_SaveCluster` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
@@ -182,12 +183,13 @@ curl -X 'POST' \
 
 ### 执行注册宿主集群的 API 请求
 
-使用 curl 命令或者其他工具执行 API 请求，以注册宿主集群。  
+使用 curl 命令或者其他工具执行 API 请求，以注册宿主集群。
+
 请求成功后，将向租户配置库写入宿主集群的资源文件，并根据资源文件向租户管理集群注册宿主集群。注册成功后，将在宿主集群中安装 Traefik 等组件。
 
 ### 生成注册虚拟集群的 API 请求
 
-通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `Cluster_SaveCluster` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
@@ -242,7 +244,8 @@ curl -X 'POST' \
 
 ### 执行注册虚拟集群的 API 请求
 
-使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。  
+使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。
+
 请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为部署运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
 
 > 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
@@ -275,10 +278,11 @@ curl -X 'POST' \
 
 ### 执行删除物理集群的 API 请求
 
-使用 curl 命令或者其他工具执行 API 请求。  
+使用 curl 命令或者其他工具执行 API 请求。
+
 请求成功后，将删除物理集群，以及在租户配置库的集群资源文件。
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。 
+> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。
 
 ## 删除虚拟集群（API）
 

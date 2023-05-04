@@ -45,7 +45,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
       # Cluster usage: host or worker
       "usage": $usage,
       # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the cluster IP.
-      "argocdHost": "argocd.$cluster_name.$cluster_ip.nip.io",
+      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # Traefik configuration
       "traefik": {
         "http_node_port": "30080",
@@ -99,7 +99,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute physical cluster registration request
 
-Use the curl command or other tools to execute the API request to register a physical cluster.  
+Use the curl command or other tools to execute the API request to register a physical cluster.
 After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
@@ -182,7 +182,7 @@ curl -X 'POST' \
 
 ### Execute host cluster registration request
 
-Use the curl command or other tools to execute the API request to register a host cluster.  
+Use the curl command or other tools to execute the API request to register a host cluster.
 After the request is successful, the host cluster's resource file will be written to the tenant configuration repository, and the host cluster will be registered in the tenant management cluster based on the resource file. Upon successful registration, components such as Traefik will be installed in the host cluster.
 
 ### Compose virtual cluster registration request
@@ -242,7 +242,8 @@ curl -X 'POST' \
 
 ### Execute virtual cluster registration request
 
-Use the curl command or other tools to execute the API request to register a virtual cluster.  
+Use the curl command or other tools to execute the API request to register a virtual cluster.
+
 After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
@@ -275,7 +276,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute physical cluster deletion request
 
-Use the curl command or other tools to execute the API request.  
+Use the curl command or other tools to execute the API request.
 
 After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the physical cluster will be cleaned up.
 
@@ -285,7 +286,7 @@ After the request is successful, the cluster resource file in the tenant configu
 
 > Please ensure that a virtual cluster has been successfully registered.
 >
-> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.  
+> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.
 
 ### Compose virtual cluster deletion request
 
@@ -300,7 +301,7 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
 
 ### Execute virtual cluster deletion request
 
-Use the curl command or other tools to execute the API request.  
+Use the curl command or other tools to execute the API request.
 
 After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the virtual cluster will be destroyed.
 
@@ -317,8 +318,7 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
 
 ### Execute host cluster deletion request
 
-Use the curl command or other tools to execute the API request.  
-After the request is successful, the host cluster and the cluster resource file in the tenant configuration repository will be deleted.
+Use the curl command or other tools to execute the API request.
 
 After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the host cluster will be cleaned up.
 

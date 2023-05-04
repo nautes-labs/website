@@ -16,10 +16,10 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。  
+如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。
 
 ### 准备服务器
-您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。  
+您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。
 
 下文将以阿里云为例描述如何准备服务器并安装一个 K3s 集群。
 
@@ -499,7 +499,7 @@ git push origin main -f
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
 > 替换变量 $argocdHost 为承载运行环境的集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
-> 
+>
 > 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。

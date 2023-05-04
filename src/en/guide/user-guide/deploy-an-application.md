@@ -22,14 +22,13 @@ If you want to access Nautes API Server using the HTTPS protocol, please downloa
 
 You need to prepare a server for installing the Kubernetes cluster. If you already have a Kubernetes cluster (with a public IP), you can skip this step.
 
-The following will describe how to prepare a server and install a K3s cluster using Alibaba Cloud as an example.  
+The following will describe how to prepare a server and install a K3s cluster using Alibaba Cloud as an example.
 
 Create an ECS cloud server. For more details, refer to [Elastic Compute Service (ECS)](https://help.aliyun.com/document_detail/25422.html). After the server is successfully installed, install K3s on the server using the following command:
 
 ```Shell
 # Replace $PUBLIC_IP with the public IP of the server.
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server
-mkdir -p ${HOME}/.kube
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh k3s.sh -s - server --disable servicelb --disable traefik --disable metrics-server --kube-apiserver-arg=oidc-issuer-url=https://dex.bluzin.io:9080 --kube-apiserver-arg=oidc-client-id=platform --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt --kube-apiserver-arg=oidc-groups-claim=groups -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/k3s-config
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
 export KUBECONFIG=${HOME}/.kube/config
@@ -43,15 +42,15 @@ Using Alibaba Cloud as an example, this section describes the process of deployi
 
 ## Register Runtime Cluster
 
-Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can function as a runtime environment for hosting applications.  
+Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can function as a runtime environment for hosting applications.
 
-The supported cluster types include physical clusters and virtual clusters.  
+The supported cluster types include physical clusters and virtual clusters.
 
 When higher performance, isolation, and reliability are required for your application's runtime environment, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
 
 ### Register Physical Cluster
 
-1. Clone the command-line repository to your local machine.  
+1. Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
@@ -90,7 +89,7 @@ spec:
     "$kubeconfig"
 ```
 
-The physical cluster property example after replacing the variables is shown below: 
+The physical cluster property example after replacing the variables is shown below:
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -140,7 +139,7 @@ nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-tok
 
 When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
 
-1. Clone the command-line repository to your local machine.  
+1. Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
@@ -277,11 +276,11 @@ nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-toke
 
 ## Prepare Runtime Environment
 
-Preparing the runtime environment refers to initializing a basic environment for deploying a product in the runtime cluster, including resources such as namespaces, serviceAccounts, secrets, etc.  
+Preparing the runtime environment refers to initializing a basic environment for deploying a product in the runtime cluster, including resources such as namespaces, serviceAccounts, secrets, etc.
 
 The following sections describe the entities related to creating a runtime environment through the command-line, including a product, a project, a code repository, an environment, and a deployment runtime.
 
-1. Clone the command-line repository to your local machine.  
+1. Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
@@ -376,9 +375,9 @@ spec:
     - project-demo-$suffix
 ```
 
-The runtime environment example after replacing the variables is shown below: 
+The runtime environment example after replacing the variables is shown below:
 
-> If the runtime environment's host cluster type is physical, you must set the spec.cluster of the Environment resource to the corresponding  [physical cluster](#register-physical-cluster) name. If the runtime environment's host cluster type is virtual, you must set the spec.cluster of the Environment resource to the corresponding  [virtual cluster](#register-virtual-cluster) name.
+> If the runtime environment's host cluster type is physical, you must set the spec.cluster of the Environment resource to the corresponding [physical cluster](#register-physical-cluster) name. If the runtime environment's host cluster type is virtual, you must set the spec.cluster of the Environment resource to the corresponding [virtual cluster](#register-virtual-cluster) name.
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -475,7 +474,7 @@ spec:
       ...
 ```
 
-3. Access [GitLab](installation.md#check-the-installation-results) and configure the GitLab account to have permission for force-push code to the main branch. For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).  
+3. Access [GitLab](installation.md#check-the-installation-results) and configure the GitLab account to have permission for force-push code to the main branch. For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
 4. Push the Kubernetes Manifests to the product's code repository.
 
