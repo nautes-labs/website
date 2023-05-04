@@ -1,5 +1,5 @@
 ---
-terLink: /guide/user-guide/cluster
+footerLink: /guide/user-guide/cluster
 title: 注册运行时集群
 ---
 # 注册运行时集群
@@ -13,14 +13,18 @@ title: 注册运行时集群
 ## 前提条件
 
 ### 创建 access token
+
 您需要创建一个 access token，作为请求 API 的请求头。详情参考 [注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
 
-
 ### 导入证书
+
 如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
 
 ## 注册物理集群（API）
-1. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+
+### 生成注册物理集群的 API 请求
+
+通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
@@ -40,8 +44,8 @@ title: 注册运行时集群
       "cluster_type": $cluster_type,
       # 集群用途：host或worker
       "usage": $usage,
-      # argocd 域名，使用物理集群的 IP 替换变量 $cluster_ip
-      "argocdHost": "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
+      # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为集群IP
+      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # traefik 配置
       "traefik": {
         "http_node_port": "30080",
@@ -93,13 +97,20 @@ title: 注册运行时集群
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。  
-    请求成功后，将向租户管理集群注册物理集群作为部署运行时集群，并在物理集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。物理集群的资源文件示例参见 [注册物理集群](deploy-an-application.md#注册物理集群) 章节中的物理集群属性示例。
+### 执行注册物理集群的 API 请求
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。 
+使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。  
+请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为部署运行时集群。注册成功后，将在物理集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
+
+> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
 
 ## 注册虚拟集群（API）
-1. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+
+注册虚拟集群时需要先将物理集群注册为宿主集群，再在宿主集群上注册虚拟集群。
+
+### 生成注册宿主集群的 API 请求
+
+通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
@@ -111,7 +122,7 @@ title: 注册运行时集群
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-	  # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
+      # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
       "api_server": $api_server,
       # 集群种类：目前只支持 kubernetes
       "cluster_kind": "kubernetes",
@@ -169,9 +180,15 @@ curl -X 'POST' \
 }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以注册宿主集群。  
-    请求成功后，将向租户管理集群注册宿主集群，并向宿主集群中安装 traefik 等组件。宿主集群的资源文件示例参见  [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 章节中的宿主集群属性示例 。
-3. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+### 执行注册宿主集群的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以注册宿主集群。  
+请求成功后，将向租户配置库写入宿主集群的资源文件，并根据资源文件向租户管理集群注册宿主集群。注册成功后，将在宿主集群中安装 Traefik 等组件。
+
+### 生成注册虚拟集群的 API 请求
+
+通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
@@ -182,7 +199,7 @@ curl -X 'POST' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-	  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+      # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
       "api_server": $api_server,
       # 集群种类：目前只支持 kubernetes
       "cluster_kind": "kubernetes",
@@ -192,8 +209,8 @@ curl -X 'POST' \
       "usage": $usage,
       # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
       "host_cluster": $host_cluster,
-      # argocd 域名，使用宿主集群的IP替换变量 $cluster_ip
-      "argocd_host": "argocd.cluster-demo-$suffix.$cluster_ip.nip.io",
+      # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为宿主集群IP
+      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # 虚拟集群配置：virtual类型集群才有此属性
       "vcluster": {
          # API SERVER 端口号
@@ -203,6 +220,7 @@ curl -X 'POST' \
 ```
 
 替换变量后的请求示例如下：
+
 ```Shell
 curl -X 'POST' \
   'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
@@ -222,17 +240,22 @@ curl -X 'POST' \
 }'
 ```
 
-4. 使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。  
-请求成功后，将向租户管理集群注册虚拟集群作为部署运行时集群，并在虚拟集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。虚拟集群的资源文件示例参见  [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 章节中的虚拟集群属性示例 。
+### 执行注册虚拟集群的 API 请求
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。 
+使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。  
+请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为部署运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
+
+> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
 
 ## 删除物理集群（API）
-> 请确保已成功注册物理集群。 
->
-> 在删除集群之前请先删除产品配置清单。详情参考 [删除产品配置清单（命令行）](clean-environment.md#删除运行环境) ，或者 [维护部署运行时](deployment-runtime.md) 、[维护环境](environment.md)、 [维护代码库](code-repo.md)、[维护项目](project.md)、[维护产品 ](product.md)中的删除章节（API）。
 
-1. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。
+> 请确保已成功注册物理集群。
+>
+> 在删除集群之前请先删除产品配置清单。详情参考 [删除产品配置清单（命令行）](clean-environment.md#删除运行环境) ，或者 [维护部署运行时](deployment-runtime.md) 、[维护环境](environment.md)、 [维护代码库](code-repo.md)、[维护项目](project.md)、[维护产品](product.md)中的删除章节（API）。
+
+### 生成删除物理集群的 API 请求
+
+通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'DELETE' \
@@ -250,17 +273,23 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求。  
+### 执行删除物理集群的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求。  
 请求成功后，将删除物理集群，以及在租户配置库的集群资源文件。
 
 > 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。 
 
 ## 删除虚拟集群（API）
-> 请确保已成功注册虚拟集群。 
+
+> 请确保已成功注册虚拟集群。
 >
 > 在删除集群之前请先删除产品配置清单。
 
-1. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求示例与[删除物理集群](#删除物理集群api)类似：
+### 生成删除虚拟集群的 API 请求
+
+通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求示例与[删除物理集群](#删除物理集群api)类似：
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
@@ -268,10 +297,15 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求。
+### 执行删除虚拟集群的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求。
 请求成功后，将删除虚拟集群，以及在租户配置库中的集群资源文件。
 
-3. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求示例与[删除物理集群](#删除物理集群api)类似：
+### 生成删除宿主集群的 API 请求
+
+通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求示例与[删除物理集群](#删除物理集群api)类似：
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
@@ -279,6 +313,9 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-4. 使用 curl 命令或者其他工具执行 API 请求。
+### 执行删除宿主集群的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求。
+
 请求成功后，将删除宿主集群，以及在租户配置库中的集群资源文件。
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。 
+> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。
