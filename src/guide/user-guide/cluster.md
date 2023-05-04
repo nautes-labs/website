@@ -213,7 +213,7 @@ curl -X 'POST' \
       "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # 虚拟集群配置：virtual类型集群才有此属性
       "vcluster": {
-         # API SERVER 端口号
+        # API SERVER 端口号
         "https_node_port": $api_server_port,
       }
     }'

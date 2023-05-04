@@ -240,7 +240,7 @@ spec:
   # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
   hostCluster: "$host-cluster"
   # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为宿主集群IP
-  argocdHost:   "argocd.$cluster_name.$cluster_ip.nip.io",
+  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号

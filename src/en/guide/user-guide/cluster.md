@@ -4,24 +4,27 @@ title: Register Runtime Cluster
 ---
 # Register Runtime Cluster
 
-Before starting this section, please ensure that you have read the  [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
 Runtime clusters are used to host the runtime environment for applications. The supported cluster types include physical clusters and virtual clusters.
 
-Support both [Command Line](deploy-an-application.md#register-runtime-cluster)  and API for registering runtime clusters. 
+Support both [Command Line](deploy-an-application.md#register-runtime-cluster) and API for registering runtime clusters.
 
 ## Prerequisites
 
 ### Create Access Token
-You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](deploy-an-application.md#register-a-gitlab-account).
 
+You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](deploy-an-application.md#register-a-gitlab-account).
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol,  you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
 
 ## Register Physical Cluster（API）
-1. Generate an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
+
+### Compose physical cluster registration request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
@@ -41,8 +44,8 @@ If you want to access Nautes API Server using the HTTPS protocol,  you need to [
       "cluster_type": $cluster_type,
       # Cluster usage: host or worker
       "usage": $usage,
-      # ArgoCD domain. Replace the variable $cluster_ip with the IP of the physical cluster.
-      "argocdHost": "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
+      # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the cluster IP.
+      "argocdHost": "argocd.$cluster_name.$cluster_ip.nip.io",
       # Traefik configuration
       "traefik": {
         "http_node_port": "30080",
@@ -94,14 +97,20 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-2. Use the curl command or other tools to execute the API request to register a physical cluster.    
-After the request is successful, the physical cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster. For the example of the physical cluster resource file, refer to the physical cluster property example in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) section.
+### Execute physical cluster registration request
+
+Use the curl command or other tools to execute the API request to register a physical cluster.  
+After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
-
 ## Register Virtual Cluster（API）
-1. Generate an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
+
+When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
+
+### Compose host cluster registration request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
@@ -171,9 +180,14 @@ curl -X 'POST' \
 }'
 ```
 
-2. Use the curl command or other tools to execute the API request to register a host cluster. 
-After the request is successful, the host cluster will be registered to the tenant management cluster, and components such as traefik will be installed in the host cluster. For the example of the host cluster resource file, refer to the host cluster property example in the [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
-3. Generate an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
+### Execute host cluster registration request
+
+Use the curl command or other tools to execute the API request to register a host cluster.  
+After the request is successful, the host cluster's resource file will be written to the tenant configuration repository, and the host cluster will be registered in the tenant management cluster based on the resource file. Upon successful registration, components such as Traefik will be installed in the host cluster.
+
+### Compose virtual cluster registration request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
@@ -195,11 +209,11 @@ After the request is successful, the host cluster will be registered to the tena
       "usage": $usage,
       # Host cluster: the property is only available for virtual type clusters. Replace the parameter with the name of the host cluster.
       "host_cluster": $host_cluster,
-      # ArgoCD domain. Replace the variable $cluster_ip with the IP of the host cluster.
-      "argocd_host": "argocd.cluster-demo-$suffix.$cluster_ip.nip.io",
+      # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the host cluster IP.
+      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # Virtual cluster configuration: the property is only available for virtual type clusters.
       "vcluster": {
-         # API SERVER port 
+        # API SERVER port 
         "https_node_port": $api_server_port,
       }
     }'
@@ -226,20 +240,22 @@ curl -X 'POST' \
 }'
 ```
 
-4. Use the curl command or other tools to execute the API request to register a virtual cluster. 
-After the request is successful, the virtual cluster will be registered as a deployment runtime cluster to the tenant management cluster, and components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster. For the example of the virtual cluster resource file, refer to the virtual cluster property example in the  [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section.
+### Execute virtual cluster registration request
+
+Use the curl command or other tools to execute the API request to register a virtual cluster.  
+After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
-
 
 ## Delete Physical Cluster（API）
 
 > Please ensure that a physical cluster has been successfully registered.
 >
-> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.  For more information, refer to the [Delete Product Configuration Manifest (Command-Line)](clean-environment.md#delete-runtime-environment)  section or the deletion sections (API) in [Maintain Deployment Runtime](deployment-runtime.md), [Maintain Environment](environment.md), [Maintain Code Repository](code-repo.md), [Maintain Project](project.md), [Maintain Product](product.md).
+> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted. For more information, refer to the [Delete Product Configuration Manifest (Command-Line)](clean-environment.md#delete-runtime-environment) section or the deletion sections (API) in [Maintain Deployment Runtime](deployment-runtime.md), [Maintain Environment](environment.md), [Maintain Code Repository](code-repo.md), [Maintain Project](project.md), [Maintain Product](product.md).
 
+### Compose physical cluster deletion request
 
-1. Generate an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header.
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header.
 
 ```Shell
     curl -X 'DELETE' \
@@ -257,17 +273,23 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. Use the curl command or other tools to execute the API request.  
-After the request is successful, the physical cluster and the cluster resource file in the tenant configuration repository will be deleted.
+### Execute physical cluster deletion request
+
+Use the curl command or other tools to execute the API request.  
+
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the physical cluster will be cleaned up.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
 
 ## Delete Virtual Cluster（API）
-> Please ensure that a virtual cluster has been successfully registered. 
+
+> Please ensure that a virtual cluster has been successfully registered.
 >
 > Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.  
 
-1. Generate an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
+### Compose virtual cluster deletion request
+
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
 
 ```Shell
     curl -X 'DELETE' \
@@ -276,10 +298,15 @@ After the request is successful, the physical cluster and the cluster resource f
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. Use the curl command or other tools to execute the API request.  
-After the request is successful, the virtual cluster and the cluster resource file in the tenant configuration repository will be deleted.
+### Execute virtual cluster deletion request
 
-3. Generate an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
+Use the curl command or other tools to execute the API request.  
+
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the virtual cluster will be destroyed.
+
+### Compose host cluster deletion request
+
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
 
 ```Shell
     curl -X 'DELETE' \
@@ -288,7 +315,11 @@ After the request is successful, the virtual cluster and the cluster resource fi
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-4. Use the curl command or other tools to execute the API request.  
+### Execute host cluster deletion request
+
+Use the curl command or other tools to execute the API request.  
 After the request is successful, the host cluster and the cluster resource file in the tenant configuration repository will be deleted.
+
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the host cluster will be cleaned up.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
