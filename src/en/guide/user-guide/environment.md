@@ -30,7 +30,7 @@ It is essential to associate the environment with a deployment runtime cluster, 
 
 ## Create and Update Environment (API)
 
-### Compose environment creation or update request
+### Compose Environment Creation or Update Request
 
 Compose an API request example by API definition `Environment_SaveEnvironment` and add the access token as a request header.
 
@@ -66,7 +66,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute environment creation or update request
+### Execute Environment Creation or Update Request
 
 Use the curl command or other tools to execute the API request to create a environment.
 
@@ -96,7 +96,7 @@ After the request is successful, the resource file for the environment will be g
 
 > Before deleting an environment, please delete all entities and resources associated with the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
 
-### Compose environment deletion request
+### Compose Environment Deletion Request
 
 Compose an API request example by API definition `Environment_DeleteEnvironment` and add the access token as a request header.
 
@@ -116,7 +116,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute environment deletion request
+### Execute Environment Deletion Request
 
 Use the curl command or other tools to execute the API request to delete a environment.
 
@@ -126,7 +126,7 @@ After the request is successful, the resource file for the environment will be d
 
 ## List Environments (API)
 
-### Compose environment list request
+### Compose Environment List Request
 
 Compose an API request example by API definition `Environment_ListEnvironments` and add the access token as a request header.
 
@@ -146,7 +146,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute environment list request
+### Execute Environment List Request
 
 Use the curl command or other tools to execute the API request to list environments. The response example for the environment list is shown below:
 
@@ -167,7 +167,7 @@ Use the curl command or other tools to execute the API request to list environme
 
 ## View Environment Details (API)
 
-### Compose environment details request
+### Compose Environment Details Request
 
 Compose an API request example by API definition `Environment_GetEnvironment` and add the access token as a request header.
 
@@ -187,7 +187,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute environment details request
+### Execute Environment Details Request
 
 Use the curl command or other tools to execute the API request to retrieve the environment details. The response example for retrieving the environment details is similar to that of [listing environments](#execute-environment-list-request).
 
