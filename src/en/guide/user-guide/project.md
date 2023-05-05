@@ -28,7 +28,7 @@ Projects belong to products, so you need to create at least one [product](produc
 
 ## Create and Update Project (API)
 
-### Compose project creation or update request
+### Compose Project Creation or Update Request
 
 Compose an API request example by API definition `Project_SaveProject` and add the access token as a request header.
 
@@ -61,7 +61,7 @@ The request example after replacing the variables is shown below:
         }'
 ```
 
-### Execute project creation or update request
+### Execute Project Creation or Update Request
 
 Use the curl command or other tools to execute the API request to create a project.
 
@@ -86,7 +86,7 @@ After the request is successful, the resource file for the project will be gener
 
 > Before deleting a project, please delete all entities and resources associated with the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
 
-### Compose project deletion request
+### Compose Project Deletion Request
 
 Compose an API request example by API definition `Project_DeleteProject` and add the access token as a request header.
 
@@ -106,7 +106,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute project deletion request
+### Execute Project Deletion Request
 
 Use the curl command or other tools to execute the API request to delete a project.
 
@@ -116,7 +116,7 @@ After the request is successful, the resource file for the project will be delet
 
 ## List Projects (API)
 
-### Compose project list request
+### Compose Project List Request
 
 Compose an API request example by API definition `Project_ListProjects` and add the access token as a request header.
 
@@ -136,7 +136,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute project list request
+### Execute Project List Request
 
 Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below:
 
@@ -161,7 +161,7 @@ Use the curl command or other tools to execute the API request to list projects.
 
 ## View Project Details (API)
 
-### Compose project details request
+### Compose Project Details Request
 
 Compose an API request example by API definition `Project_GetProject` and add the access token as a request header.
 
@@ -181,7 +181,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute project details request
+### Execute Project Details Request
 
 Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-projects-api).
 
