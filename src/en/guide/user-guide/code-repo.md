@@ -2,6 +2,7 @@
 footerLink: /guide/user-guide/code-repo
 title: Maintain Code Repository
 ---
+
 # Maintain Code Repository
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
