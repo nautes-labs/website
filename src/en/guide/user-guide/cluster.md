@@ -22,7 +22,7 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ## Register Physical Cluster（API）
 
-### Compose physical cluster registration request
+### Compose Physical Cluster Registration Request
 
 Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
@@ -97,7 +97,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute physical cluster registration request
+### Execute Physical Cluster Registration Request
 
 Use the curl command or other tools to execute the API request to register a physical cluster.
 
@@ -109,7 +109,7 @@ After the request is successful, the physical cluster's resource file will be wr
 
 When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
 
-### Compose host cluster registration request
+### Compose Host Cluster Registration Request
 
 Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
@@ -181,13 +181,13 @@ curl -X 'POST' \
 }'
 ```
 
-### Execute host cluster registration request
+### Execute Host Cluster Registration Request
 
 Use the curl command or other tools to execute the API request to register a host cluster.
 
 After the request is successful, the host cluster's resource file will be written to the tenant configuration repository, and the host cluster will be registered in the tenant management cluster based on the resource file. Upon successful registration, components such as Traefik will be installed in the host cluster.
 
-### Compose virtual cluster registration request
+### Compose Virtual Cluster Registration Request
 
 Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
@@ -242,7 +242,7 @@ curl -X 'POST' \
 }'
 ```
 
-### Execute virtual cluster registration request
+### Execute Virtual Cluster Registration Request
 
 Use the curl command or other tools to execute the API request to register a virtual cluster.
 
@@ -256,7 +256,7 @@ After the request is successful, the virtual cluster's resource file will be wri
 >
 > Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted. For more information, refer to the [Delete Product Configuration Manifest (Command-Line)](clean-environment.md#delete-runtime-environment) section or the deletion sections (API) in [Maintain Deployment Runtime](deployment-runtime.md), [Maintain Environment](environment.md), [Maintain Code Repository](code-repo.md), [Maintain Project](project.md), [Maintain Product](product.md).
 
-### Compose physical cluster deletion request
+### Compose Physical Cluster Deletion Request
 
 Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header.
 
@@ -276,7 +276,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute physical cluster deletion request
+### Execute Physical Cluster Deletion Request
 
 Use the curl command or other tools to execute the API request.
 
@@ -290,7 +290,7 @@ After the request is successful, the cluster resource file in the tenant configu
 >
 > Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.
 
-### Compose virtual cluster deletion request
+### Compose Virtual Cluster Deletion Request
 
 Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
 
@@ -301,13 +301,13 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute virtual cluster deletion request
+### Execute Virtual Cluster Deletion Request
 
 Use the curl command or other tools to execute the API request.
 
 After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the virtual cluster will be destroyed.
 
-### Compose host cluster deletion request
+### Compose Host Cluster Deletion Request
 
 Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
 
@@ -318,7 +318,7 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute host cluster deletion request
+### Execute Host Cluster Deletion Request
 
 Use the curl command or other tools to execute the API request.
 
