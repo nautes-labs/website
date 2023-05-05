@@ -26,7 +26,7 @@ title: 维护部署运行时
 
 ### 创建代码库
 
-由于部署运行时需要监听代码库中的 Kubernetes  资源清单，您需要创建至少一个属于指定产品的[代码库](code-repo.md)。
+由于部署运行时需要监听代码库中的 Kubernetes 资源清单，您需要创建至少一个属于指定产品的[代码库](code-repo.md)。
 
 ### 创建环境
 
@@ -34,13 +34,15 @@ title: 维护部署运行时
 
 ## 创建和更新部署运行时（API）
 
-1. 通过接口定义 `Deploymentruntime_SaveDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+### 生成创建/更新部署运行时的 API 请求
+
+通过接口定义 `Deploymentruntime_SaveDeploymentRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-    # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
+    # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $product_name 为部署运行时所属产品的名称
-    # 替换变量 $deploymentruntime_name 为部署运行时的名称    
+    # 替换变量 $deploymentruntime_name 为部署运行时的名称
     curl -X 'POST' \
     'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$deploymentruntime_name' \
     -H 'accept: application/json' \
@@ -82,10 +84,13 @@ title: 维护部署运行时
             "path": "manifests/development"
         },
         "destination": "env-dev"
-    }'    
+    }' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增部署运行时。  
+### 执行创建/更新部署运行时的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以新增部署运行时。
+
 请求成功后，将在指定产品的 `default.project` 代码库中生成部署运行时的资源文件。部署运行时的资源文件示例如下：
 
 ```yaml
@@ -109,11 +114,13 @@ title: 维护部署运行时
 >
 > 请求 API 更新部署运行时也将更新部署运行时的资源文件。
 >
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新部署运行时。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以创建或者更新部署运行时。
 
 ## 删除部署运行时（API）
 
-1. 通过接口定义 `Deploymentruntime_DeleteDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+### 生成删除部署运行时的 API 请求
+
+通过接口定义 `Deploymentruntime_DeleteDeploymentRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'DELETE' \
@@ -131,14 +138,19 @@ title: 维护部署运行时
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除部署运行时。
-请求成功后，将删除在指定产品的 `default.project`  代码库中的部署运行时的资源文件，同时销毁在运行时集群的部署运行时环境。
+### 执行删除部署运行时的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以删除部署运行时。
+
+请求成功后，将删除在指定产品的 `default.project` 代码库中的部署运行时的资源文件，并且销毁运行时集群中的部署运行时环境。
 
 > 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以删除部署运行时。
 
-## 查询部署运行时列表（API） 
+## 查询部署运行时列表（API）
 
-1. 通过接口定义 `Deploymentruntime_ListDeploymentRuntimes` 生成 API 请求示例，并添加 access token 作为请求头。
+### 生成查询部署运行时列表的 API 请求
+
+通过接口定义 `Deploymentruntime_ListDeploymentRuntimes` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
 curl -X 'GET' \
@@ -156,7 +168,9 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询部署运行时列表。部署运行时列表的返回值示例如下：  
+### 执行查询部署运行时列表的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以查询部署运行时列表。部署运行时列表的返回值示例如下：
 
 ```yaml
 {
@@ -176,10 +190,13 @@ curl -X 'GET' \
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查询部署运行时列表。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查询部署运行时列表。
 
-## 查看部署运行时详情（API）  
-1. 通过接口定义 `Deploymentruntime_GetDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+## 查看部署运行时详情（API）
+
+### 生成查看部署运行时详情的 API 请求
+
+通过接口定义 `Deploymentruntime_GetDeploymentRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
 curl -X 'GET' \
@@ -197,15 +214,17 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查看部署运行时详情。部署运行时详情的返回值示例与[查询部署运行时列表](#查询部署运行时列表api)类似。
+### 执行查看部署运行时详情的 API 请求
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查看部署运行时详情。
+使用 curl 命令或者其他工具执行 API 请求，以查看部署运行时详情。部署运行时详情的返回值示例与[查询部署运行时列表](#执行查询部署运行时列表的-api-请求)类似。
+
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查看部署运行时详情。
 
 ## 强制创建/更新/删除部署运行时（API）
 
 适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
 
-以创建部署运行时为例，将 destination 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 true，可以强制提交部署运行时的资源文件。请求示例如下：
+以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 
 ```Shell
     curl -X 'POST' \
