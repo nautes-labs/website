@@ -26,7 +26,7 @@ Projects belong to products, so you need to create at least one [product](produc
 
 ## Create and Update Repository(API)
 
-### Compose repository creation or update request
+### Compose Repository Creation or Update Request
 
 Compose an API request example by API definition `CodeRepo_SaveCodeRepo` and add the access token as a request header.
 
@@ -90,7 +90,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute repository creation or update request
+### Execute Repository Creation or Update Request
 
 Use the curl command or other tools to execute the API request to create a repository.
 
@@ -124,7 +124,7 @@ After the request is successful, the resource file for the repository will be ge
 
 > Before deleting a repository, please delete all entities and resources associated with the repository, such as deployment runtimes, otherwise the deletion cannot be performed.
 
-### Compose repository deletion request
+### Compose Repository Deletion Request
 
 Compose an API request example by API definition `CodeRepo_DeleteCodeRepo` and add the access token as a request header.
 
@@ -144,7 +144,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute repository deletion request
+### Execute Repository Deletion Request
 
 Use the curl command or other tools to execute the API request to delete a repository.
 
@@ -154,7 +154,7 @@ After the request is successful, the resource file for the repository will be de
 
 ## List Repositories（API）
 
-### Compose repository list request
+### Compose Repository List Request
 
 Compose an API request example by API definition `CodeRepo_ListCodeRepos` and add the access token as a request header.
 
@@ -174,7 +174,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute repository list request
+### Execute Repository List Request
 
 Use the curl command or other tools to execute the API request to list repositories. The response example for the repository list is shown below:
 
@@ -211,7 +211,7 @@ Use the curl command or other tools to execute the API request to list repositor
 
 ## View Repository Details (API)
 
-### Compose repository details request
+### Compose Repository Details Request
 
 Compose an API request example by API definition `CodeRepo_GetCodeRepo` and add the access token as a request header.
 
@@ -231,7 +231,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute repository details request
+### Execute Repository Details Request
 
 Use the curl command or other tools to execute the API request to retrieve the repository details. The response example for retrieving the repository details is similar to that of [listing repositories](#list-repositoriesapi).
 
