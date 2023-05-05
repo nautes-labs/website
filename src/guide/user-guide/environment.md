@@ -30,13 +30,15 @@ title: 维护环境
 
 ## 创建和更新环境（API）
 
-1. 通过接口定义 `Environment_SaveEnvironment`  生成 API 请求示例，并添加 access token 作为请求头。
+### 生成创建/更新环境的 API 请求
+
+通过接口定义 `Environment_SaveEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-    # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
+    # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $product_name 为环境所属产品的名称
-    # 替换变量 $environment_name 为环境名称    
+    # 替换变量 $environment_name 为环境名称
     curl -X 'POST' \
       'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
       -H 'accept: application/json' \
@@ -64,7 +66,9 @@ title: 维护环境
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增环境。  
+### 执行创建/更新环境的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以新增环境。
 请求成功后，将在指定产品的 `default.project` 代码库中生成环境的资源文件。环境的资源文件示例如下：
 
 ```yaml
@@ -79,19 +83,21 @@ title: 维护环境
         product: "nautes-labs"
 ```
 
-> 相同产品内，相同的运行时集群不能重复关联不同的环境。  
+> 相同产品内，相同的运行时集群不能重复关联不同的环境。
 >
-> 当环境已经承载了产品的部署运行时环境，暂不支持变更环境的关联集群。  
+> 当环境已经承载了产品的部署运行时环境，暂不支持变更环境的关联集群。
 >
 > 请求 API 更新环境也将更新环境的资源文件。
 >
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新环境。  
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以创建或者更新环境。
 
 ## 删除环境（API）
 
 > 在删除环境之前，请先删除与环境关联的所有相关实体和资源，例如：部署运行时等，否则将不能执行删除。
 
-1. 通过接口定义 `Environment_DeleteEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
+### 生成删除环境的 API 请求
+
+通过接口定义 `Environment_DeleteEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'DELETE' \
@@ -109,14 +115,19 @@ title: 维护环境
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除环境。  
-请求成功后，将删除在指定产品的 `default.project`  代码库中的环境资源文件。  
+### 执行删除环境的 API 请求
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以删除环境。
+使用 curl 命令或者其他工具执行 API 请求，以删除环境。
+
+请求成功后，将删除在指定产品的 `default.project` 代码库中的环境资源文件。
+
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以删除环境。
 
 ## 查询环境列表（API）
 
-1. 通过接口定义 `Environment_ListEnvironments` 生成 API 请求示例，并添加 access token 作为请求头。
+### 生成查询环境列表的 API 请求
+
+通过接口定义 `Environment_ListEnvironments` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'GET' \
@@ -134,7 +145,9 @@ title: 维护环境
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询环境列表。环境列表的返回值示例如下：
+### 执行查询环境列表的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以查询环境列表。环境列表的返回值示例如下：
 
 ```yaml
 {
@@ -149,11 +162,13 @@ title: 维护环境
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查询环境列表。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查询环境列表。
 
 ## 查询环境详情（API）
 
-1. 通过接口定义 `Environment_GetEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
+### 生成查看环境详情的 API 请求
+
+通过接口定义 `Environment_GetEnvironment` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'GET' \
@@ -171,15 +186,17 @@ title: 维护环境
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询环境详情。环境详情的返回值示例与[查询环境列表](#查询环境列表)类似。
+### 执行查看环境详情的 API 请求
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查看环境详情。
+使用 curl 命令或者其他工具执行 API 请求，以查询环境详情。环境详情的返回值示例与[查询环境列表](#执行查询环境列表的-api-请求)类似。
+
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查看环境详情。
 
 ## 强制创建/更新/删除环境（API）
 
 适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
 
-以创建环境为例，将 cluster 属性设置为不存在的 cluster，启用 `insecure_skip_check` 查询参数并设置其值为 true，可以强制提交环境的资源文件。 请求示例如下：
+以创建环境为例，将 cluster 属性设置为不存在的 cluster，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交环境的资源文件。 请求示例如下：
 
 ```Shell
     curl -X 'POST' \
