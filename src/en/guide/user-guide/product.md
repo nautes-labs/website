@@ -27,7 +27,7 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ## Create Product (API)
 
-### Compose product creation request
+### Compose Product Creation Request
 
 Compose an API request example by API definition `Product_SaveProduct` and add the access token as a request header.
 
@@ -75,7 +75,7 @@ The request example after replacing the variables is shown below:
       }'
 ```
 
-### Execute product creation request
+### Execute Product Creation Request
 
 Use the curl command or other tools to execute the API request to create a product.
 
@@ -87,7 +87,7 @@ After the request is successful, a group with the same name as the product will 
 
 > Before deleting a product, please delete all entities and resources associated with the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
 
-### Compose product deletion request
+### Compose Product Deletion Request
 
 Compose an API request example by API definition `Product_DeleteProduct` and add the access token as a request header.
 
@@ -107,7 +107,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute product deletion request
+### Execute Product Deletion Request
 
 Use the curl command or other tools to execute the API request to delete a product.
 
@@ -117,7 +117,7 @@ After the request is successful, the product and its related resources will be d
 
 ## List Products (API)
 
-### Compose product list request
+### Compose Product List Request
 
 Compose an API request example by API definition `Product_ListProducts` and add the access token as a request header.
 
@@ -137,7 +137,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute product list request
+### Execute Product List Request
 
 Use the curl command or other tools to execute the API request to list products. The response example for the product list is shown below:
 
@@ -173,7 +173,7 @@ Use the curl command or other tools to execute the API request to list products.
 
 ## View Product Details (API)
 
-### Compose product details request
+### Compose Product Details Request
 
 Compose an API request example by API definition `Product_GetProduct` and add the access token as a request header.
 
@@ -193,7 +193,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute product details request
+### Execute Product Details Request
 
 Use the curl command or other tools to execute the API request to retrieve the product details. The response example for retrieving the product details is similar to that of [listing products](#list-products-api).
 
