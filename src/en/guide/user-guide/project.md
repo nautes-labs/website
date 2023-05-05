@@ -189,7 +189,7 @@ Use the curl command or other tools to execute the API request to retrieve the p
 
 ## Force Create/Update/Delete Project (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md#force-createupdatedelete-repository-api) section.
 
 Taking the creation of a project as an example, if there are invalid resources (such as a cluster associated with an environment being destroyed) in the product to which the project belongs, you can submit the project's resource file without verification by enabling the `insecure_skip_check` query parameter with its value set to `true`. The request example is shown below:
 
