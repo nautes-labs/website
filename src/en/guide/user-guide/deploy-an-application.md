@@ -87,7 +87,7 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster, and replace the IP address in the `server` property with the public IP of the server.
+  # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster.
   kubeconfig: |
     "$kubeconfig"
 ```

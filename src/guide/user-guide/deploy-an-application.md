@@ -85,7 +85,7 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量，并修改 server 的 IP 地址为服务器的公网 IP
+  # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
   kubeconfig: |
     "$kubeconfig"
 ```
