@@ -9,23 +9,27 @@ title: 部署一个应用
 ## 前提条件
 
 ### 注册 GitLab 账号
+
 GitLab 安装完成后，您需要注册一个账号，并创建 [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) ，设置 access token 的权限范围：api、read_api、read_repository 和 write_repository。
 
 此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
 
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。  
+如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。
 
 ### 准备服务器
-您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。  
+您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。
 
 下文将以阿里云为例描述如何准备服务器并安装一个 K3s 集群。
 
 创建 ECS 云服务器，详情参考 [云服务器 ECS](https://help.aliyun.com/document_detail/25422.html)。服务器安装成功后，在服务器上安装 K3s，命令如下：
+
 ```Shell
-# 根据实际情况，替换 $PUBLIC_IP 为服务器的公网 IP
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server
+# 替换 $PUBLIC_IP 为服务器的公网 IP
+# 替换 $DEX_SERVER 为安装机 /opt/nautes/out/service 目录下的 oauth_url
+# 下载安装机 /opt/nautes/out/pki 目录下的 ca.crt 证书，并存储到服务器的 /etc/ssl/certs/ 目录
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server --kube-apiserver-arg=oidc-issuer-url=$DEX_SERVER --kube-apiserver-arg=oidc-client-id=nautes --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt --kube-apiserver-arg=oidc-groups-claim=groups -p ${HOME}/.kube
 mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/k3s-config
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
@@ -47,12 +51,14 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 当您的应用的运行时环境需要更高的性能、隔离性和可靠性时，建议使用[物理集群](#注册物理集群)。而对于其他环境，例如开发测试环境和试用环境等，可以使用[虚拟集群](#注册虚拟集群)。
 
 ### 注册物理集群
+
 1. 将命令行程序的代码库克隆到本地。
+
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`cluster_ip` 和 `$kubeconfig`。
 ```Shell
 # 查看物理集群的 kubeconfig
 cat ${HOME}/.kube/config
@@ -73,8 +79,8 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "worker"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster_ip
-  argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
+  # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为集群IP
+  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io",
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -85,6 +91,7 @@ spec:
 ```
 
 替换变量后的物理集群属性示例如下：
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -130,11 +137,17 @@ nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-tok
 ```
 
 ### 注册虚拟集群
+
+注册虚拟集群时需要先将物理集群注册为宿主集群，再在宿主集群上注册虚拟集群。
+
 1. 将命令行程序的代码库克隆到本地。
+
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
+
 2. 替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+
 ```Shell
 # 查看宿主集群的 kubeconfig
 cat ${HOME}/.kube/config
@@ -163,7 +176,9 @@ spec:
   kubeconfig: |
     "$kubeconfig"
 ```
+
 替换变量后的宿主集群属性示例如下：
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -208,6 +223,7 @@ nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-
 ```
 
 4. 替换位于相对路径 `examples/demo-cluster-virtual-worker.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+
 ```yaml
 # 虚拟集群
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -225,14 +241,16 @@ spec:
   usage: "worker"
   # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
   hostCluster: "$host-cluster"
-  # argocd 域名，使用宿主集群的IP替换变量 $cluster_ip
-  argocdHost: "argocd.cluster-demo-$suffix.$cluster_ip.nip.io"
+  # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为宿主集群IP
+  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
 ```
+
 替换变量后的虚拟集群属性示例如下：
+
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
@@ -256,6 +274,7 @@ spec:
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
 ```
+
 ## 准备运行环境
 
 准备运行环境是指在运行时集群中初始化一个用于部署产品的基础环境，包括 namespace、serviceAccount、secret 等资源。
@@ -263,11 +282,13 @@ nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-toke
 下文将描述通过命令行提交创建运行环境的相关实体，包括产品、项目、代码库、环境以及部署运行时等。
 
 1. 将命令行程序的代码库克隆到本地。
+
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
 2. 替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+
 ```yaml
 # 产品
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -420,21 +441,26 @@ spec:
 ```
 
 3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备运行环境 。
+
 ```Shell
 # examples/demo-product.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
+
 ## 部署
+
 将 Kubernetes 资源清单提交至产品的代码库，例如：deployment、service 等资源。
 
 1. 克隆部署示例的代码库到本地。
+
 ```Shell
 git clone https://github.com/lanbingcloud/demo-user-deployments.git
 ```
 
 2. 修改本地代码库中 Ingress 资源的域名：/deployment/test/devops-sample-svc.yaml
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -448,9 +474,11 @@ spec:
       paths:
       ...
 ```
+
 3. 访问 [GitLab](installation.md#查看安装结果)，设置 GitLab 账号有向 main 分支强制推送代码的权限，详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 4. 推送 Kubernetes 资源清单至产品的代码库。
+
 ```Shell
 # 替换变量 $deployment-manifest-repo 为存储 Kubernetes 资源清单的代码库
 git remote set-url origin $deployment-manifest-repo
@@ -459,6 +487,7 @@ git add .
 git commit -m '提交 Kubernetes 资源清单'
 git push origin main -f
 ```
+
 ## 查看部署结果
 
 部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport` ，可以访问示例应用的 Web 界面。
@@ -472,8 +501,7 @@ git push origin main -f
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
 > 替换变量 $argocdHost 为承载运行环境的集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
-> 
+>
 > 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。
-

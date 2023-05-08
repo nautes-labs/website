@@ -1,57 +1,62 @@
 ---
 footerLink: /guide/user-guide/cluster
-title: 注册运行时集群
+title: Register Runtime Cluster
 ---
-# 注册运行时集群
+# Register Runtime Cluster
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-运行时集群用于承载应用的运行时环境。集群形态支持物理集群和虚拟集群。
+Runtime clusters are used to host the runtime environment for applications. The supported cluster types include physical clusters and virtual clusters.
 
-支持通过 [命令行](deploy-an-application.md#注册运行时集群) 和 API 两种方式注册运行时集群。
+Support both [Command Line](deploy-an-application.md#register-runtime-cluster) and API for registering runtime clusters.
 
-## 前提条件
+## Prerequisites
 
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+### Create Access Token
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](deploy-an-application.md#register-a-gitlab-account).
 
-## 注册物理集群（API）
-1. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+### Import Certificates
+
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
+
+## Register Physical Cluster（API）
+
+### Compose Physical Cluster Registration Request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $cluster_name，集群名称    
+    # Replace the variable $api-server-address with the access address of the Nautes API Server
+    # Replace the variable $gitlab-access-token with the GitLab access token
+    # Replace the variable $cluster_name with the cluster name
     curl -X 'POST' \
       'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # 集群的 API SERVER URL
+      # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
       "api_server": $api_server,
-      # 集群种类：目前只支持 kubernetes
+      # Cluster kind. Currently only supports Kubernetes.
       "cluster_kind": "kubernetes",
-      # 集群类型：virtual或physical
+      # Cluster type: virtual or physical
       "cluster_type": $cluster_type,
-      # 集群用途：host或worker
+      # Cluster usage: host or worker
       "usage": $usage,
-      # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为集群IP
+      # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the cluster IP.
       "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
-      # traefik 配置
+      # Traefik configuration
       "traefik": {
         "http_node_port": "30080",
         "https_node_port": "30443"
       },
-      # 集群的 kubeconfig 文件内容：$kubeconfig 替换为物理集群的 kubeconfig
+      # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster.
       "kubeconfig": $kubeconfig
     }'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below: 
 
 ```Shell
     curl -X 'POST' \
@@ -92,40 +97,51 @@ title: 注册运行时集群
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。  
-请求成功后，将向租户管理集群注册物理集群作为部署运行时集群，并在物理集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。物理集群的资源文件示例参见 [注册物理集群](deploy-an-application.md#注册物理集群)。
+### Execute Physical Cluster Registration Request
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。 
+Use the curl command or other tools to execute the API request to register a physical cluster.
 
-## 注册虚拟集群（API）
-1. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
+
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
+
+## Register Virtual Cluster（API）
+
+When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
+
+### Compose Host Cluster Registration Request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
 
 ```Shell
-curl -X 'POST' \
-  'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token' \
-  -d '{
-  # 集群的 API SERVER URL
-  "api_server": $api_server,
-  # 集群种类：目前只支持 kubernetes
-  "cluster_kind": "kubernetes",
-  # 集群类型：virtual或physical
-  "cluster_type": $cluster_type,
-  # 集群用途：host或worker
-  "usage": $usage,
-  # traefik 配置
-  "traefik": {
-    "http_node_port": "30080",
-    "https_node_port": "30443"
-  },
-  # 集群的 kubeconfig 文件内容：$kubeconfig 替换为宿主集群的 kubeconfig 
-  "kubeconfig": $kubeconfig
-}'
+    # Replace the variable $api-server-address with the access address of the Nautes API Server
+    # Replace the variable $gitlab-access-token with the GitLab access token
+    # Replace the variable $cluster_name with the cluster name
+    curl -X 'POST' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer $gitlab-access-token' \
+      -d '{
+      # Cluster API SERVER URL. Replace the variable with the address of the host cluster.
+      "api_server": $api_server,
+      # Cluster kind. Currently only supports Kubernetes.
+      "cluster_kind": "kubernetes",
+      # Cluster type: virtual or physical
+      "cluster_type": $cluster_type,
+      # Cluster usage: host or worker
+      "usage": $usage,
+      # Traefik configuration
+      "traefik": {
+        "http_node_port": "30080",
+        "https_node_port": "30443"
+      },
+      # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster.
+      "kubeconfig": $kubeconfig
+    }'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below: 
 
 ```Shell
 curl -X 'POST' \
@@ -165,38 +181,48 @@ curl -X 'POST' \
 }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以注册宿主集群。  
-请求成功后，将向租户管理集群注册宿主集群，并向宿主集群中安装 traefik 等组件。宿主集群的资源文件示例参见 [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 的步骤2。
+### Execute Host Cluster Registration Request
 
-3. 通过接口定义 `Cluster_SaveCluster`  生成 API 请求示例，并添加 access token 作为请求头。
+Use the curl command or other tools to execute the API request to register a host cluster.
+
+After the request is successful, the host cluster's resource file will be written to the tenant configuration repository, and the host cluster will be registered in the tenant management cluster based on the resource file. Upon successful registration, components such as Traefik will be installed in the host cluster.
+
+### Compose Virtual Cluster Registration Request
+
+Compose an API request example by API definition `Cluster_SaveCluster` and add the access token as a request header.
+
 ```Shell
-curl -X 'POST' \
-  'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token' \
-  -d '{
-  # 集群的 API SERVER URL
-  "api_server": $api_server,
-  # 集群种类：目前只支持 kubernetes
-  "cluster_kind": "kubernetes",
-  # 集群类型：virtual或physical
-  "cluster_type": $cluster_type,
-  # 集群用途：host或worker
-  "usage": $usage,
-  # 所属宿主集群：virtual类型集群才有此属性，替换 $host_cluster 为宿主集群的名称
-  "host_cluster": $host_cluster,
-  # argocd 域名：替换 $cluster_name 为集群名称,替换 $cluster_ip 为集群IP
-  "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
-  # 虚拟集群配置：virtual类型集群才有此属性
-  "vcluster": {
-     # API SERVER 端口号
-    "https_node_port": $api_server_port,
-  }
-}'
+    # Replace the variable $api-server-address with the access address of the Nautes API Server
+    # Replace the variable $gitlab-access-token with the GitLab access token
+    # Replace the variable $cluster_name with the cluster name
+    curl -X 'POST' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer $gitlab-access-token' \
+      -d '{
+      # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
+      "api_server": $api_server,
+      # Cluster kind: Currently only supports Kubernetes
+      "cluster_kind": "kubernetes",
+      # Cluster type: virtual or physical
+      "cluster_type": $cluster_type,
+      # Cluster usage: host or worker
+      "usage": $usage,
+      # Host cluster: the property is only available for virtual type clusters. Replace the parameter with the name of the host cluster.
+      "host_cluster": $host_cluster,
+      # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the host cluster IP.
+      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
+      # Virtual cluster configuration: the property is only available for virtual type clusters.
+      "vcluster": {
+        # API SERVER port 
+        "https_node_port": $api_server_port,
+      }
+    }'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below: 
+
 ```Shell
 curl -X 'POST' \
   'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
@@ -216,17 +242,23 @@ curl -X 'POST' \
 }'
 ```
 
-4. 使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。  
-请求成功后，将向租户管理集群注册虚拟集群作为部署运行时集群，并在虚拟集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。虚拟集群的资源文件示例参见 [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 的步骤4 。
+### Execute Virtual Cluster Registration Request
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。 
+Use the curl command or other tools to execute the API request to register a virtual cluster.
 
-## 删除物理集群（API）
-> 请确保物理集群注册成功。
+After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
+
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
+
+## Delete Physical Cluster（API）
+
+> Please ensure that a physical cluster has been successfully registered.
 >
-> 在删除集群之前请先删除产品配置清单。详情参考 [删除产品配置清单（命令行）](clean-environment.md#删除运行环境) ，或者 [维护部署运行时](deployment-runtime.md) 、[维护环境](environment.md)、 [维护代码库](code-repo.md)、[维护项目](project.md)、[维护产品 ](product.md)中的删除章节（API）。
+> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted. For more information, refer to the [Delete Product Configuration Manifest (Command-Line)](clean-environment.md#delete-runtime-environment) section or the deletion sections (API) in [Maintain Deployment Runtime](deployment-runtime.md), [Maintain Environment](environment.md), [Maintain Code Repository](code-repo.md), [Maintain Project](project.md), [Maintain Product](product.md).
 
-1. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。
+### Compose Physical Cluster Deletion Request
+
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header.
 
 ```Shell
     curl -X 'DELETE' \
@@ -235,7 +267,7 @@ curl -X 'POST' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below: 
 
 ```Shell
     curl -X 'DELETE' \
@@ -244,18 +276,24 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求。  
-请求成功后，将删除物理集群，以及在租户配置库的集群资源文件。
+### Execute Physical Cluster Deletion Request
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。 
+Use the curl command or other tools to execute the API request.
 
-## 删除虚拟集群（API）
-> 请确保虚拟集群注册成功。
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the physical cluster will be cleaned up.
+
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
+
+## Delete Virtual Cluster（API）
+
+> Please ensure that a virtual cluster has been successfully registered.
 >
-> 在删除集群之前请先删除产品配置清单。
+> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted.
 
-1. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求的格式与[删除物理集群](#删除物理集群api)相同。
-请求示例如下：
+### Compose Virtual Cluster Deletion Request
+
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
@@ -263,10 +301,16 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求。请求成功后，将删除虚拟集群。
+### Execute Virtual Cluster Deletion Request
 
-3. 通过接口定义 `Cluster_DeleteCluster` 生成 API 请求示例，并添加 access token 作为请求头。API请求的格式与[删除物理集群](#删除物理集群api)相同。
-请求示例如下：
+Use the curl command or other tools to execute the API request.
+
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the virtual cluster will be destroyed.
+
+### Compose Host Cluster Deletion Request
+
+Compose an API request example by API definition `Cluster_DeleteCluster` and add the access token as a request header. The API request example is similar to [Delete Physical Cluster](#delete-physical-clusterapi):
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
@@ -274,6 +318,10 @@ curl -X 'POST' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-4. 使用 curl 命令或者其他工具执行 API 请求。请求成功后，将删除宿主集群。
+### Execute Host Cluster Deletion Request
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。 
+Use the curl command or other tools to execute the API request.
+
+After the request is successful, the cluster resource file in the tenant configuration repository will be deleted, and the host cluster will be cleaned up.
+
+> If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can delete runtime clusters.
