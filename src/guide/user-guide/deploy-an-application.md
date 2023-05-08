@@ -71,7 +71,7 @@ kind: Cluster
 spec:
   # 集群名称
   name: "host-worker-$suffix"
-  # 集群的 API SERVER URL。使用物理集群的 server 的IP为服务器的公网IP
+  # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
   clusterKind: "kubernetes"
