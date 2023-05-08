@@ -21,11 +21,11 @@ In Nautes, a tenant management cluster and deployment runtime clusters are essen
 Each tenant can have multiple deployment runtime clusters, which serve as the actual infrastructures for hosting IT system runtime environments. These clusters can be either virtual or physical. 
 
 Different stages of the IT system lifecycle require corresponding environments, such as: development, testing, pre-production, and production environments.
-Environments need to run on deployment runtime clusters, it is essential to associate the environment with the deployment runtime cluster to ensure that the IT system is deployed to the correct runtime environment.  
+Environments need to run on deployment runtime clusters, and it is essential to relate the environment to the deployment runtime cluster to ensure that the IT system is deployed to the correct runtime environment.
 
 In Nautes, for IT systems adopting a microservices architecture, a "Product" refers to an IT system, while a "Project" refers to a microservice. Therefore, each Product contains multiple Projects, each with its own independent code repository. 
 
-When a product is ready for testing or utilization, it is typically deployed to the deployment runtime cluster associated with the corresponding environment based on the deployment configuration, resulting in a deployment runtime environment. Each product can have multiple deployment runtime environments, such as functional testing or customer demonstration environments created in different clusters with the same deployment configuration. Additionally, multiple products' deployment runtime environments can be hosted on the same cluster. 
+When a product is ready for testing or utilization, it is typically deployed to the deployment runtime cluster related to the corresponding environment based on the deployment configuration, resulting in a deployment runtime environment. Each product can have multiple deployment runtime environments, such as functional testing or customer demonstration environments created in different clusters with the same deployment configuration. Additionally, multiple products' deployment runtime environments can be hosted on the same cluster. 
 
 Nautes uses Kubernetes resource files to define environments, projects, code repositories, and deployment runtimes and stores these resource files in the product's GitLab repository, collectively referred to as the "product configuration manifest." Nautes watches the product configuration manifest and implements automated deployment to the deployment runtime cluster, creating or updating the product's deployment runtime environment. 
 
