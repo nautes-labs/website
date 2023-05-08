@@ -315,7 +315,7 @@ spec:
   name: env-demo-$suffix
   # The product to which the environment belongs
   product: demo-$suffix
-  # Runtime cluster associated with the environment
+  # Runtime cluster related to the environment
   cluster: $runtime-cluster
   # Environment type
   envType: dev
@@ -506,4 +506,4 @@ Access the ArgoCD console installed on the runtime cluster by using a browser to
 >
 > Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
-The ArgoCD console lists ArgoCD applications that are related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects associated with authorized products.
+The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
