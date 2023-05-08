@@ -26,8 +26,10 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 创建 ECS 云服务器，详情参考 [云服务器 ECS](https://help.aliyun.com/document_detail/25422.html)。服务器安装成功后，在服务器上安装 K3s，命令如下：
 
 ```Shell
-# 根据实际情况，替换 $PUBLIC_IP 为服务器的公网 IP
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server
+# 替换 $PUBLIC_IP 为服务器的公网 IP
+# 替换 $DEX_SERVER 为安装机 /opt/nautes/out/service 目录下的 oauth_url
+# 下载安装机 /opt/nautes/out/pki 目录下的 ca.crt 证书，并存储到服务器的 /etc/ssl/certs/ 目录
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server --kube-apiserver-arg=oidc-issuer-url=$DEX_SERVER --kube-apiserver-arg=oidc-client-id=nautes --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt --kube-apiserver-arg=oidc-groups-claim=groups -p ${HOME}/.kube
 mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/k3s-config
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
@@ -56,7 +58,7 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`cluster_ip` 和 `$kubeconfig`。
 ```Shell
 # 查看物理集群的 kubeconfig
 cat ${HOME}/.kube/config
@@ -69,7 +71,7 @@ kind: Cluster
 spec:
   # 集群名称
   name: "host-worker-$suffix"
-  # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
+  # 集群的 API SERVER URL。使用物理集群的 server 的IP为服务器的公网IP
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
   clusterKind: "kubernetes"
@@ -83,7 +85,7 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
+  # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量，并修改 server 的 IP 地址为服务器的公网 IP
   kubeconfig: |
     "$kubeconfig"
 ```

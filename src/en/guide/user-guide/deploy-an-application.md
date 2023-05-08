@@ -28,7 +28,10 @@ Create an ECS cloud server. For more details, refer to [Elastic Compute Service 
 
 ```Shell
 # Replace $PUBLIC_IP with the public IP of the server.
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh k3s.sh -s - server --disable servicelb --disable traefik --disable metrics-server --kube-apiserver-arg=oidc-issuer-url=https://dex.bluzin.io:9080 --kube-apiserver-arg=oidc-client-id=platform --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt --kube-apiserver-arg=oidc-groups-claim=groups -p ${HOME}/.kube
+# Replace $DEX_SERVER with the oauth_url located at /opt/nautes/out/service directory of the installation machine.
+# Download the ca.crt located at /opt/nautes/out/pki directory of the installation machine, and upload it to the /etc/ssl/certs/ directory of the server.
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.21.14+k3s1 INSTALL_K3S_EXEC="--tls-san $PUBLIC_IP" sh -s - server --disable servicelb --disable traefik --disable metrics-server --kube-apiserver-arg=oidc-issuer-url=$DEX_SERVER --kube-apiserver-arg=oidc-client-id=nautes --kube-apiserver-arg=oidc-ca-file=/etc/ssl/certs/ca.crt --kube-apiserver-arg=oidc-groups-claim=groups -p ${HOME}/.kube
+mkdir -p ${HOME}/.kube
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/k3s-config
 /bin/cp -f /etc/rancher/k3s/k3s.yaml ${HOME}/.kube/config
 export KUBECONFIG=${HOME}/.kube/config
@@ -56,7 +59,7 @@ When higher performance, isolation, and reliability are required for your applic
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+2. Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, `$cluster_ip` and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the physical cluster.
