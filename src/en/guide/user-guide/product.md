@@ -7,9 +7,9 @@ title: Maintain Product
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-A product corresponds to a software system, which includes teams, projects, environments, code repositories, artifact repositories, and runtimes. A product can be authorized by the Tenant Manager for use on specified Kubernetes clusters.
+A product corresponds to a software system, which includes teams, projects, environments, code repositories, artifact repositories, and runtimes. The tenant manager can authorize the product to use designated Kubernetes clusters.
 
-When using GitLab as a product provider, each product corresponds to a single GitLab Group. Nautes will maintain a repository with a fixed name (defaulted to `default.project`) under that Group to store the product metadata. At the same time, Nautes will leverage the GitLab permission model to manage user access to different product data.
+When using GitLab as a product provider, each product corresponds to a single GitLab Group. Nautes will maintain a repository with a fixed name (defaulted to `default.project`) under that Group to store the product metadata. Nautes will leverage the GitLab permission model to manage user access to different product data.
 
 Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining products.
 
@@ -27,7 +27,7 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ## Create Product (API)
 
-### Compose Product Creation Request
+### Compose Create Product Request
 
 Compose an API request example by API definition `Product_SaveProduct` and add the access token as a request header.
 
@@ -75,7 +75,7 @@ The request example after replacing the variables is shown below:
       }'
 ```
 
-### Execute Product Creation Request
+### Execute Create Product Request
 
 Use the curl command or other tools to execute the API request to create a product.
 
@@ -85,9 +85,9 @@ After the request is successful, a group with the same name as the product will 
 
 ## Delete Product (API)
 
-> Before deleting a product, please delete all entities and resources associated with the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
+> Before deleting a product, please delete all entities and resources related with the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
 
-### Compose Product Deletion Request
+### Compose Delete Product Request
 
 Compose an API request example by API definition `Product_DeleteProduct` and add the access token as a request header.
 
@@ -107,7 +107,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Product Deletion Request
+### Execute Delete Product Request
 
 Use the curl command or other tools to execute the API request to delete a product.
 
@@ -117,7 +117,7 @@ After the request is successful, the product and its related resources will be d
 
 ## List Products (API)
 
-### Compose Product List Request
+### Compose List Products Request
 
 Compose an API request example by API definition `Product_ListProducts` and add the access token as a request header.
 
@@ -137,7 +137,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Product List Request
+### Execute List Products Request
 
 Use the curl command or other tools to execute the API request to list products. The response example for the product list is shown below:
 
@@ -169,11 +169,11 @@ Use the curl command or other tools to execute the API request to list products.
   }
 ```
 
-> If your account has read permission for the GitLab group, you can retrieve the list of products.
+> If your account has read permission for the GitLab group, you can list products authorized for you.
 
 ## View Product Details (API)
 
-### Compose Product Details Request
+### Compose View Product Details Request
 
 Compose an API request example by API definition `Product_GetProduct` and add the access token as a request header.
 
@@ -193,7 +193,7 @@ The request example after replacing the variables is shown below:
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Product Details Request
+### Execute View Product Details Request
 
 Use the curl command or other tools to execute the API request to retrieve the product details. The response example for retrieving the product details is similar to that of [listing products](#list-products-api).
 
