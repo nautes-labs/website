@@ -195,6 +195,6 @@ The request example after replacing the variables is shown below:
 
 ### Execute View Product Details Request
 
-Use the curl command or other tools to execute the API request to retrieve the product details. The response example for retrieving the product details is similar to that of [listing products](#list-products-api).
+Use the curl command or other tools to execute the API request to view the product details. The response example for viewing the product details is similar to that of [listing products](#list-products-api).
 
-> If your account has read permission for the GitLab group, you can retrieve the product details.
+> If your account has read permission for the GitLab group, you can view the details of products authorized for you.
