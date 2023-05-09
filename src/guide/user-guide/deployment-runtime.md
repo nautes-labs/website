@@ -14,7 +14,7 @@ title: 维护部署运行时
 
 ### 创建 access token
 
-您需要创建一个 access token，作为请求 API 的请求头。详情参考 [创建 access token](product.md#创建-access-token)。 
+您需要创建一个 access token，作为请求 API 的请求头。详情参考 [创建 access token](product.md#创建-access-token)。
 
 ### 导入证书
 
@@ -22,15 +22,15 @@ title: 维护部署运行时
 
 ### 创建产品
 
-由于部署运行时归属于产品，您需要创建至少一个[产品](product.md)。
+由于部署运行时归属于产品，您需要创建至少一个[产品](product.md#创建产品api)。
 
 ### 创建代码库
 
-由于部署运行时需要监听代码库中的 Kubernetes 资源清单，您需要创建至少一个属于指定产品的[代码库](code-repo.md)。
+由于部署运行时需要监听代码库中的 Kubernetes 资源清单，您需要创建至少一个属于指定产品的[代码库](code-repo.md#创建和更新代码库api)。
 
 ### 创建环境
 
-由于部署运行时需要向环境关联的运行时集群下发部署，您需要创建至少一个属于指定产品的[环境](environment.md)。
+由于部署运行时需要向环境关联的运行时集群下发部署，您需要创建至少一个属于指定产品的[环境](environment.md#创建和更新环境api)。
 
 ## 创建和更新部署运行时（API）
 
