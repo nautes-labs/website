@@ -222,7 +222,7 @@ curl -X 'GET' \
 
 ## 强制创建/更新/删除部署运行时（API）
 
-适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
+适用于需要跳过 API 校验的特殊场景，详情参见[准备运行环境](main-process.md#准备运行环境)。
 
 以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 

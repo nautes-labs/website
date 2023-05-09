@@ -14,7 +14,7 @@ Support both [Command Line](deploy-an-application.md#prepare-runtime-environmen
 
 ### Create Access Token
 
-You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md#create-access-token).
 
 ### Import Certificates
 
@@ -22,19 +22,19 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ### Create Product
 
-Deployment runtimes belong to products, so you need to create at least one [product](product.md).
+Deployment runtimes belong to products, so you need to create at least one [product](product.md#create-product-api).
 
 ### Create Repository
 
-Deployment runtimes need to watch the Kubernetes Manifests in the repositories, so you need to create at least one repository related to the specified [product](product.md).
+Deployment runtimes need to watch the Kubernetes Manifests in the repositories, so you need to create at least one repository related to the specified [product](product.md#create-product-api).
 
 ### Create Environment
 
-Deployment runtimes need to deploy to the runtime cluster associated with the environment, so you need to create at least one environment related to the specified [product](product.md).
+Deployment runtimes need to deploy to the runtime cluster related to the environment, so you need to create at least one environment related to the specified [product](product.md#create-product-api).
 
 ## Create and Update Deployment-Runtime (API)
 
-### Compose Deployment-Runtime Creation or Update Request
+### Compose Create and Update Deployment-Runtime Request
 
 Compose an API request example by API definition `Deploymentruntime_SaveDeploymentRuntime` and add the access token as a request header.
 
@@ -87,7 +87,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute Deployment-Runtime Creation or Update Request
+### Execute Create and Update Deployment-Runtime Request
 
 Use the curl command or other tools to execute the API request to create a deployment runtime.
 
@@ -118,7 +118,7 @@ After the request is successful, the resource file for the deployment runtime wi
 
 ## Delete Deployment-Runtime (API)
 
-### Compose Deployment-Runtime Deletion Request
+### Compose Delete Deployment-Runtime Request
 
 1. Compose an API request example by API definition `Deploymentruntime_DeleteDeploymentRuntime` and add the access token as a request header.
 
@@ -138,7 +138,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Deployment-Runtime Deletion Request
+### Execute Delete Deployment-Runtime Request
 
 Use the curl command or other tools to execute the API request to delete a deployment runtime.
 
@@ -146,9 +146,9 @@ After the request is successful, the resource file for the deployment runtime wi
 
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete deployment runtimes.
 
-## List Deployment-Runtime (API)
+## List Deployment-Runtimes (API)
 
-### Compose Deployment-Runtime List Request
+### Compose List Deployment-Runtimes Request
 
 Compose an API request example by API definition `Deploymentruntime_ListDeploymentRuntimes` and add the access token as a request header.
 
@@ -168,7 +168,7 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Deployment-Runtime List Request
+### Execute List Deployment-Runtimes Request
 
 Use the curl command or other tools to execute the API request to list deployment runtimes. The response example for the deployment runtime list is shown below:
 
@@ -190,11 +190,11 @@ Use the curl command or other tools to execute the API request to list deploymen
 }
 ```
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can list deployment runtimes.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can list deployment runtimes.
 
 ## View Deployment-Runtime Details (API)
 
-### Compose Deployment-Runtime Details Request
+### Compose View Deployment-Runtime Details Request
 
 Compose an API request example by API definition `Deploymentruntime_GetDeploymentRuntime` and add the access token as a request header.
 
@@ -214,17 +214,17 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Deployment-Runtime Details Request
+### Execute View Deployment-Runtime Details Request
 
-Use the curl command or other tools to execute the API request to retrieve the deployment runtime details. The response example for retrieving the deployment runtime details is similar to that of [listing deployment runtimes](#execute-deployment-runtime-list-request).
+Use the curl command or other tools to execute the API request to view the deployment runtime details. The response example for viewing the deployment runtime details is similar to that of [listing deployment runtimes](#execute-list-deployment-runtimes-request).
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the deployment runtime details.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of deployment runtimes.
 
 ## Force Create/Update/Delete Deployment-Runtime (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
 
-Taking creating a deployment runtime as an example, if the destination's value fails to adhere to predefined rules, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
+Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
