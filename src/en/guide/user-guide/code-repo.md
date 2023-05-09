@@ -234,7 +234,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute View Repository Details Request
 
-Use the curl command or other tools to execute the API request to view the repository details. The response example for viewing the repository details is similar to that of [listing repositories](#list-repositoriesapi).
+Use the curl command or other tools to execute the API request to view the repository details. The response example for viewing the repository details is similar to that of [listing repositories](#execute-list-repositories-request).
 
 > If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `default.project` repository, you can view the details of repositories authorized for you.
 
