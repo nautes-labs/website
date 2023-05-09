@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 By maintaining [products](product.md) and projects, you can build management units consistent with the microservice architecture of your products.
 
-A project corresponds to a microservice, and each project has its own code repository. You can use a cluster for project integration and deployment, or use the artifact repository of the product to store and version control the project artifacts. A product can contain multiple projects.
+A project corresponds to a microservice, and each project have its own code repositories. You can integrate and deploy projects using Kubernetes clusters, and store versioned artifacts in artifact repositories. A product can contain multiple projects.
 
 Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining projects.
 
@@ -16,7 +16,7 @@ Support both [Command Line](deploy-an-application.md#prepare-runtime-environmen
 
 ### Create Access Token
 
-You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md#create-access-token).
 
 ### Import Certificates
 
@@ -24,11 +24,11 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ### Create Product
 
-Projects belong to products, so you need to create at least one [product](product.md).
+Projects belong to products, so you need to create at least one [product](product.md#create-product-api).
 
 ## Create and Update Project (API)
 
-### Compose Project Creation or Update Request
+### Compose Create and Update Project Request
 
 Compose an API request example by API definition `Project_SaveProject` and add the access token as a request header.
 
@@ -61,7 +61,7 @@ The request example after replacing the variables is shown below:
         }'
 ```
 
-### Execute Project Creation or Update Request
+### Execute Create and Update Project Request
 
 Use the curl command or other tools to execute the API request to create a project.
 
@@ -84,9 +84,9 @@ After the request is successful, the resource file for the project will be gener
 
 ## Delete Project (API)
 
-> Before deleting a project, please delete all entities and resources associated with the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
+> Before deleting a project, please delete all entities and resources related to the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
 
-### Compose Project Deletion Request
+### Compose Delete Project Request
 
 Compose an API request example by API definition `Project_DeleteProject` and add the access token as a request header.
 
@@ -106,7 +106,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Project Deletion Request
+### Execute Delete Project Request
 
 Use the curl command or other tools to execute the API request to delete a project.
 
@@ -116,7 +116,7 @@ After the request is successful, the resource file for the project will be delet
 
 ## List Projects (API)
 
-### Compose Project List Request
+### Compose List Projects Request
 
 Compose an API request example by API definition `Project_ListProjects` and add the access token as a request header.
 
@@ -136,7 +136,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Project List Request
+### Execute List Projects Request
 
 Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below:
 
@@ -157,11 +157,11 @@ Use the curl command or other tools to execute the API request to list projects.
     }
 ```
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the list of projects.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can list projects authorized for you.
 
 ## View Project Details (API)
 
-### Compose Project Details Request
+### Compose View Project Details Request
 
 Compose an API request example by API definition `Project_GetProject` and add the access token as a request header.
 
@@ -181,17 +181,17 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Project Details Request
+### Execute View Project Details Request
 
-Use the curl command or other tools to execute the API request to retrieve the project details. The response example for retrieving the project details is similar to that of [listing projects](#list-projects-api).
+Use the curl command or other tools to execute the API request to view the project details. The response example for viewing the project details is similar to that of [listing projects](#list-projects-api).
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the project details.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of projects authorized for you.
 
 ## Force Create/Update/Delete Project (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md#force-createupdatedelete-repository-api) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md##prepare-runtime-environment) section.
 
-Taking the creation of a project as an example, if there are invalid resources (such as a cluster associated with an environment being destroyed) in the product to which the project belongs, you can submit the project's resource file without verification by enabling the `insecure_skip_check` query parameter with its value set to `true`. The request example is shown below:
+Taking the creation of a project as an example, if there are invalid resources (such as a cluster related to an environment that has been destroyed) in the product to which the project belongs, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the project resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
