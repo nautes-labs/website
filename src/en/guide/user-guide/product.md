@@ -85,7 +85,7 @@ After the request is successful, a group with the same name as the product will 
 
 ## Delete Product (API)
 
-> Before deleting a product, please delete all entities and resources related with the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
+> Before deleting a product, please delete all entities and resources related to the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
 
 ### Compose Delete Product Request
 
