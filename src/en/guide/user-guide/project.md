@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 By maintaining [products](product.md) and projects, you can build management units consistent with the microservice architecture of your products.
 
-A project corresponds to a microservice, and each project have its own code repositories. You can integrate and deploy projects using Kubernetes clusters, and store versioned artifacts in artifact repositories. A product can contain multiple projects.
+A project corresponds to a microservice, and each project has its own code repositories. You can integrate and deploy projects using Kubernetes clusters, and store versioned artifacts in artifact repositories. A product can contain multiple projects.
 
 Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining projects.
 
