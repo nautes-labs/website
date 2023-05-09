@@ -14,7 +14,7 @@ Support both [Command Line](deploy-an-application.md#prepare-runtime-environmen
 
 ### Create Access Token
 
-You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md#create-access-token).
 
 ### Import Certificates
 
@@ -22,15 +22,15 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ### Create Product
 
-Environments belong to products, so you need to create at least one [product](product.md).
+Environments belong to products, so you need to create at least one [product](product.md#create-product-api).
 
 ### Register Runtime Cluster
 
-It is essential to associate the environment with a deployment runtime cluster, you need to register at least one [runtime cluster](deploy-an-application.md).
+An environment needs to be related to a runtime cluster in order to host the product's runtime environment, so you need to register at least one [physical runtime cluster](cluster.md#register-physical-clusterapi) or one [virtual runtime cluster](cluster.md#register-virtual-clusterapi).
 
 ## Create and Update Environment (API)
 
-### Compose Environment Creation or Update Request
+### Compose Create and Update Environment Request
 
 Compose an API request example by API definition `Environment_SaveEnvironment` and add the access token as a request header.
 
@@ -45,7 +45,7 @@ Compose an API request example by API definition `Environment_SaveEnvironment` a
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # Runtime cluster associated with the environment
+      # Runtime cluster related to the environment
       "cluster": $cluster_name,
       # Environment type
       "env_type": $env_type
@@ -66,7 +66,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute Environment Creation or Update Request
+### Execute Create and Update Environment Request
 
 Use the curl command or other tools to execute the API request to create a environment.
 
@@ -84,9 +84,9 @@ After the request is successful, the resource file for the environment will be g
         product: "nautes-labs"
 ```
 
-> Within the same product, the same runtime cluster cannot be associated with different environments.
+> Within the same product, the same runtime cluster cannot be related to different environments.
 >
-> If the environment has already hosted the deployment runtime environment of a product, it is not currently supported to change the associated cluster of the environment.
+> If the environment has already hosted the deployment runtime environment of a product, it is not currently supported to change the related cluster of the environment.
 >
 > When requesting the API to update a environment, the resource file for the environment will also be updated.
 >
@@ -94,9 +94,9 @@ After the request is successful, the resource file for the environment will be g
 
 ## Delete Environment (API)
 
-> Before deleting an environment, please delete all entities and resources associated with the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
+> Before deleting an environment, please delete all entities and resources related to the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
 
-### Compose Environment Deletion Request
+### Compose Delete Environment Request
 
 Compose an API request example by API definition `Environment_DeleteEnvironment` and add the access token as a request header.
 
@@ -116,7 +116,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Environment Deletion Request
+### Execute Delete Environment Request
 
 Use the curl command or other tools to execute the API request to delete a environment.
 
@@ -126,7 +126,7 @@ After the request is successful, the resource file for the environment will be d
 
 ## List Environments (API)
 
-### Compose Environment List Request
+### Compose List Environments Request
 
 Compose an API request example by API definition `Environment_ListEnvironments` and add the access token as a request header.
 
@@ -146,7 +146,7 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Environment List Request
+### Execute List Environments Request
 
 Use the curl command or other tools to execute the API request to list environments. The response example for the environment list is shown below:
 
@@ -163,11 +163,11 @@ Use the curl command or other tools to execute the API request to list environme
 }
 ```
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can list environments.
+> If your account is a member of the GitLab group and has read permission to `default.project` repository, you can list environments.
 
 ## View Environment Details (API)
 
-### Compose Environment Details Request
+### Compose View Environment Details Request
 
 Compose an API request example by API definition `Environment_GetEnvironment` and add the access token as a request header.
 
@@ -187,17 +187,17 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-### Execute Environment Details Request
+### Execute View Environment Details Request
 
-Use the curl command or other tools to execute the API request to retrieve the environment details. The response example for retrieving the environment details is similar to that of [listing environments](#execute-environment-list-request).
+Use the curl command or other tools to execute the API request to view the environment details. The response example for viewing the environment details is similar to that of [listing environments](#execute-environment-list-request).
 
-> If your account is a member of the GitLab group and has read permission to the `main` branch of the `default.project` repository, you can retrieve the environment details.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the environment details.
 
 ## Force Create/Update/Delete Environment (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Force Create/Update/Delete Code Repository](code-repo.md#force-createupdatedelete-repository-api) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md##prepare-runtime-environment) section.
 
-Taking creating an environment as an example, if the cluster's value is set to a non-existent cluster, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` to submit the environment resource file. The request example is shown below:
+Taking creating an environment as an example, if the value of the `cluster` property is set to a non-existent cluster, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the environment resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
