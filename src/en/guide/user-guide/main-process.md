@@ -49,6 +49,7 @@ After the product is created successfully, a group with the same name as the pro
 After the product configuration manifest is created successfully, relevant resources will be automatically installed in the deployment runtime cluster according to the product configuration manifest, enabling the deployment runtime cluster to watch the GitLab repository of the product and automatically deploy to the cluster. 
 
 > In order to ensure that Nautes can automatically deploy the runtime environment of a product based on the product configuration manifest, the product configuration manifest must conform to the predefined rules. Therefore, validation of the product configuration manifest is enabled by default when submitting a request, and the request cannot be submitted if the validation fails.
+> 
 > In certain scenarios, users may need to submit resource files failing to conform to the predefined rules, and subsequently submit the related resources later. In order to satisfy similar scenarios, the POST and DELETE types of API requests can be forced to submit or delete resource files by adding the `insecure_skip_check` query parameter and setting its value to `true`.
 
 ## Deployment
