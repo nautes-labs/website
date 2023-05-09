@@ -15,7 +15,7 @@ Support both [Command Line](deploy-an-application.md#prepare-runtime-environmen
 
 ### Create Access Token
 
-You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md).
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md#create-access-token).
 
 ### Import Certificates
 
@@ -23,11 +23,11 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ### Create Product
 
-Projects belong to products, so you need to create at least one [product](product.md).
+Projects belong to products, so you need to create at least one [product](product.md#create-product-api).
 
 ## Create and Update Repository(API)
 
-### Compose Repository Creation or Update Request
+### Compose Create and Update Repository Request
 
 Compose an API request example by API definition `CodeRepo_SaveCodeRepo` and add the access token as a request header.
 
@@ -91,7 +91,7 @@ The request example after replacing the variables is shown below:
     }'
 ```
 
-### Execute Repository Creation or Update Request
+### Execute Create and Update Repository Request
 
 Use the curl command or other tools to execute the API request to create a repository.
 
@@ -123,9 +123,9 @@ After the request is successful, the resource file for the repository will be ge
 
 ## Delete Repository (API)
 
-> Before deleting a repository, please delete all entities and resources associated with the repository, such as deployment runtimes, otherwise the deletion cannot be performed.
+> Before deleting a repository, please delete all entities and resources related to the repository, such as deployment runtimes, otherwise the deletion cannot be performed.
 
-### Compose Repository Deletion Request
+### Compose Delete Repository Request
 
 Compose an API request example by API definition `CodeRepo_DeleteCodeRepo` and add the access token as a request header.
 
@@ -145,7 +145,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Repository Deletion Request
+### Execute Delete Repository Request
 
 Use the curl command or other tools to execute the API request to delete a repository.
 
@@ -155,7 +155,7 @@ After the request is successful, the resource file for the repository will be de
 
 ## List Repositories（API）
 
-### Compose Repository List Request
+### Compose List Repositories Request
 
 Compose an API request example by API definition `CodeRepo_ListCodeRepos` and add the access token as a request header.
 
@@ -175,7 +175,7 @@ The request example after replacing the variables is shown below:
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Repository List Request
+### Execute List Repositories Request
 
 Use the curl command or other tools to execute the API request to list repositories. The response example for the repository list is shown below:
 
@@ -208,11 +208,11 @@ Use the curl command or other tools to execute the API request to list repositor
 }
 ```
 
-> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `main` branch of the `default.project` repository, you can list repositories.
+> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `default.project` repository, you can list repositories authorized for you.
 
 ## View Repository Details (API)
 
-### Compose Repository Details Request
+### Compose View Repository Details Request
 
 Compose an API request example by API definition `CodeRepo_GetCodeRepo` and add the access token as a request header.
 
@@ -232,20 +232,17 @@ The request example after replacing the variables is shown below:
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-### Execute Repository Details Request
+### Execute View Repository Details Request
 
-Use the curl command or other tools to execute the API request to retrieve the repository details. The response example for retrieving the repository details is similar to that of [listing repositories](#list-repositoriesapi).
+Use the curl command or other tools to execute the API request to view the repository details. The response example for viewing the repository details is similar to that of [listing repositories](#list-repositoriesapi).
 
-> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `main` branch of the `default.project` repository, you can retrieve the repository details.
+> If your account is a member of the GitLab group, has permission to list repositories, and has read permission to the `default.project` repository, you can view the details of repositories authorized for you.
 
 ## Force Create/Update/Delete Repository (API)
 
-In order to ensure that Nautes can automatically deploy the runtime environment of a product based on the product configuration manifest, the product configuration manifest must adhere to predefined rules.
-Therefore, validation of the product configuration manifest is enabled by default when submitting a request, and the request cannot be submitted if the validation fails.
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md##prepare-runtime-environment) section.
 
-In certain scenarios, users may need to submit resource files failing to adhere to predefined rules, and subsequently submit accompanying resources later. In order to accommodate similar scenarios, the POST and DELETE types of API requests can be forced to submit or delete resource files by adding the `insecure_skip_check` query parameter and setting its value to `true`.
-
-Taking the creation of a repository as an example, if the project's value is set to a non-existent project, you can forcibly submit a request by adding the `insecure_skip_check` query parameter to submit the repository resource file . The request example is shown below:
+Taking the creation of a repository as an example, if the value of the `project` property is set to a non-existent project, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the repository resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
