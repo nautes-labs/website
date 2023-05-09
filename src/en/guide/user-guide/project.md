@@ -183,7 +183,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute View Project Details Request
 
-Use the curl command or other tools to execute the API request to view the project details. The response example for viewing the project details is similar to that of [listing projects](#list-projects-api).
+Use the curl command or other tools to execute the API request to view the project details. The response example for viewing the project details is similar to that of [listing projects](#execute-list-projects-request).
 
 > If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of projects authorized for you.
 

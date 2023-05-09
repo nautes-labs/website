@@ -26,7 +26,7 @@ access token 将作为请求 API 的请求头。
 
 ### 创建产品
 
-由于项目归属于产品，您需要创建至少一个[产品](product.md)。
+由于项目归属于产品，您需要创建至少一个[产品](product.md#创建产品api)。
 
 ## 创建和更新项目（API）
 
@@ -159,7 +159,7 @@ access token 将作为请求 API 的请求头。
     }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project` 代码库的 main 分支的读取权限，才可以查询到产品的项目列表。
+> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project` 代码库的读取权限，才可以查询到产品的项目列表。
 
 ## 查询项目详情（API）
 
@@ -187,7 +187,7 @@ access token 将作为请求 API 的请求头。
 
 使用 curl 命令或者其他工具执行 API 请求，以查询项目详情。项目详情的返回值示例与[查询项目列表](#查询项目列表api)类似。
 
-> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project` 代码库的 main 分支的读取权限，才可以查询到产品的项目详情。
+> 只有当您的账号是 GitLab 的 group 成员，同时有 `default.project` 代码库的读取权限，才可以查询到产品的项目详情。
 
 ## 强制创建/更新/删除项目（API ）
 
