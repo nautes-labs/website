@@ -191,11 +191,11 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to view the environment details. The response example for viewing the environment details is similar to that of [listing environments](#execute-environment-list-request).
 
-> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the environment details.
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of environments.
 
 ## Force Create/Update/Delete Environment (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md##prepare-runtime-environment) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
 
 Taking creating an environment as an example, if the value of the `cluster` property is set to a non-existent cluster, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the environment resource file. The request example is shown below:
 
