@@ -190,7 +190,7 @@ curl -X 'GET' \
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查询部署运行时列表。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查询部署运行时列表。
 
 ## 查看部署运行时详情（API）
 
@@ -218,7 +218,7 @@ curl -X 'GET' \
 
 使用 curl 命令或者其他工具执行 API 请求，以查看部署运行时详情。部署运行时详情的返回值示例与[查询部署运行时列表](#执行查询部署运行时列表的-api-请求)类似。
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查看部署运行时详情。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查看部署运行时详情。
 
 ## 强制创建/更新/删除部署运行时（API）
 
