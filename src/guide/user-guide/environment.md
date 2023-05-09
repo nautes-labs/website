@@ -162,7 +162,7 @@ title: 维护环境
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查询环境列表。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查询环境列表。
 
 ## 查询环境详情（API）
 
@@ -190,7 +190,7 @@ title: 维护环境
 
 使用 curl 命令或者其他工具执行 API 请求，以查询环境详情。环境详情的返回值示例与[查询环境列表](#执行查询环境列表的-api-请求)类似。
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的读取权限，才可以查看环境详情。
+> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查看环境详情。
 
 ## 强制创建/更新/删除环境（API）
 

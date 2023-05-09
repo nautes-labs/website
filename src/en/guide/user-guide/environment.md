@@ -189,7 +189,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute View Environment Details Request
 
-Use the curl command or other tools to execute the API request to view the environment details. The response example for viewing the environment details is similar to that of [listing environments](#execute-environment-list-request).
+Use the curl command or other tools to execute the API request to view the environment details. The response example for viewing the environment details is similar to that of [listing environments](#execute-list-environments-request).
 
 > If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of environments.
 
