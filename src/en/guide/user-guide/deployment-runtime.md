@@ -1,65 +1,75 @@
 ---
 footerLink: /guide/user-guide/deployment-runtime
-title: 维护部署运行时
+title: Maintain Deployment-Runtime
 ---
-# 维护部署运行时
+# Maintain Deployment-Runtime
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-定义用于部署项目的配置声明，如：部署清单的存储位置、部署到的目标环境等。
+A deployment runtime defines the configuration declaration used to deploy projects, such as the storage location of deployment manifests and the target environment to deploy to, etc.
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护部署运行时。
+Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining deployment runtimes.
 
-## 前提条件
+## Prerequisites
 
-### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+### Create Access Token
 
-### 导入证书
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+You need to create an access token to use as a request header for requesting APIs. For more information, refer to [Create Access Token](product.md#create-access-token).
 
-### 创建产品
-由于部署运行时归属于产品，您需要创建至少一个[产品](product.md)。
+### Import Certificates
 
-### 创建代码库
-由于部署运行时需要监听代码库中的 Kubernetes  资源清单，您需要创建至少一个属于指定产品的[代码库](code-repo.md)。
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
 
-### 创建环境
-由于部署运行时需要向环境关联的运行时集群下发部署，您需要创建至少一个属于指定产品的[环境](cluster.md)。
+### Create Product
 
-## 创建和更新部署运行时（API）
-1. 通过接口定义 `Deploymentruntime_SaveDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+Deployment runtimes belong to products, so you need to create at least one [product](product.md#create-product-api).
+
+### Create Repository
+
+Deployment runtimes need to watch the Kubernetes Manifests in the repositories, so you need to create at least one repository related to the specified [product](product.md#create-product-api).
+
+### Create Environment
+
+Deployment runtimes need to deploy to the runtime cluster related to the environment, so you need to create at least one environment related to the specified [product](product.md#create-product-api).
+
+## Create and Update Deployment-Runtime (API)
+
+### Compose Create and Update Deployment-Runtime Request
+
+Compose an API request example by API definition `Deploymentruntime_SaveDeploymentRuntime` and add the access token as a request header.
+
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $product_name，部署运行时所属产品的名称
-	# $deploymentruntime_name，部署运行时的名称    
+    # Replace the variable $api-server-address with the access address of the Nautes API Server.
+    # Replace the variable $gitlab-access-token with the GitLab access token.
+    # Replace the variable $product_name with the name of the product to which the deployment runtime belongs.
+    # Replace the variable $deploymentruntime_name with the deployment runtime name.
     curl -X 'POST' \
     'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$deploymentruntime_name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    	# 部署运行时关联的项目
+        # The project to which the deployment runtime belongs
         "projects_ref": [
             $project
         ],
         "manifest_source": {
-        	# 部署运行时监听的代码库名称
+            # The source coderepo of the deployment runtime
             "code_repo": $coderepo_name,
-            # 部署运行时监听的代码库版本
+             # The revision or branch of the source coderepo 
             "target_revision": $coderepo_target_revision,
-            # 部署运行时监听的代码库路径
+             # The relative path of the source coderepo 
             "path": $coderepo_path
         },
-        # 部署运行时下发部署的目标环境
+        # The target environment of the deployment runtime
         "destination": $destination
-    }'    
+    }'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:
+
 ```Shell
-	curl -X 'POST' \
+    curl -X 'POST' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
@@ -74,11 +84,15 @@ title: 维护部署运行时
             "path": "manifests/development"
         },
         "destination": "env-dev"
-    }'    
+    }'
 ```
 
-4. 使用 curl 命令或者其他工具执行 API 请求，以新增部署运行时。  
-请求成功后，将在指定产品的 `default.project` 代码库中生成部署运行时的资源文件。部署运行时的资源文件示例如下：
+### Execute Create and Update Deployment-Runtime Request
+
+Use the curl command or other tools to execute the API request to create a deployment runtime.
+
+After the request is successful, the resource file for the deployment runtime will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
+
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: DeploymentRuntime
@@ -96,14 +110,18 @@ title: 维护部署运行时
             - "api-server"
 ```
 
->  当部署运行时已经部署到某个运行时集群，暂不支持变更部署运行时的 `destination` 。
+> If the deployment runtime is deployed to a runtime cluster, changing the destination of the deployment runtime is not supported.
 >
->  请求 API 更新部署运行时也将更新部署运行时的资源文件。
+> When requesting the API to update a deployment runtime, the resource file for the deployment runtime will also be updated.
 >
->  只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新部署运行时。    
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update deployment runtimes.
 
-## 删除部署运行时（API）
-1. 通过接口定义 `Deploymentruntime_DeleteDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+## Delete Deployment-Runtime (API)
+
+### Compose Delete Deployment-Runtime Request
+
+1. Compose an API request example by API definition `Deploymentruntime_DeleteDeploymentRuntime` and add the access token as a request header.
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$deploymentruntime_name' \
@@ -111,7 +129,8 @@ title: 维护部署运行时
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:
+
 ```Shell
     curl -X 'DELETE' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
@@ -119,14 +138,19 @@ title: 维护部署运行时
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除部署运行时。   
-请求成功后，将删除在指定产品的 `default.project`  代码库中的部署运行时的资源文件，同时销毁在运行时集群的部署运行时环境。
+### Execute Delete Deployment-Runtime Request
 
+Use the curl command or other tools to execute the API request to delete a deployment runtime.
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以删除部署运行时。 
+After the request is successful, the resource file for the deployment runtime will be deleted in the `default.project` repository of the specified product , and the deployment runtime environment will be destroyed.
 
-## 查询部署运行时列表（API） 
-1. 通过接口定义 `Environment_ListEnvironments` 生成 API 请求示例，并添加 access token 作为请求头。
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete deployment runtimes.
+
+## List Deployment-Runtimes (API)
+
+### Compose List Deployment-Runtimes Request
+
+Compose an API request example by API definition `Deploymentruntime_ListDeploymentRuntimes` and add the access token as a request header.
 
 ```Shell
 curl -X 'GET' \
@@ -135,7 +159,7 @@ curl -X 'GET' \
   -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:
 
 ```Shell
 curl -X 'GET' \
@@ -144,8 +168,9 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询部署运行时列表。  
-请求成功后，将返回部署运行时列表。部署运行时列表的返回值示例如下：  
+### Execute List Deployment-Runtimes Request
+
+Use the curl command or other tools to execute the API request to list deployment runtimes. The response example for the deployment runtime list is shown below:
 
 ```yaml
 {
@@ -165,10 +190,13 @@ curl -X 'GET' \
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project`  代码库的 main 分支的读取权限，才可以查询环境列表。
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can list deployment runtimes.
 
-## 查看部署运行时详情（API）  
-1. 通过接口定义 `Deploymentruntime_GetDeploymentRuntime`  生成 API 请求示例，并添加 access token 作为请求头。
+## View Deployment-Runtime Details (API)
+
+### Compose View Deployment-Runtime Details Request
+
+Compose an API request example by API definition `Deploymentruntime_GetDeploymentRuntime` and add the access token as a request header.
 
 ```Shell
 curl -X 'GET' \
@@ -177,7 +205,8 @@ curl -X 'GET' \
   -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
-替换变量后的请求示例如下：
+The request example after replacing the variables is shown below:
+
 ```Shell
 curl -X 'GET' \
   'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
@@ -185,15 +214,17 @@ curl -X 'GET' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查看部署运行时详情。  
-请求成功后，将返回指定产品的部署运行时详情。部署运行时详情的返回值示例与[查询部署运行时列表](#查询部署运行时列表)类似，不再赘述。
+### Execute View Deployment-Runtime Details Request
 
+Use the curl command or other tools to execute the API request to view the deployment runtime details. The response example for viewing the deployment runtime details is similar to that of [listing deployment runtimes](#execute-list-deployment-runtimes-request).
 
-## 强制创建/更新/删除部署运行时（API）
+> If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can view the details of deployment runtimes.
 
-适用于需要跳过 API 校验的特殊场景，详情参见[强制创建/更新/删除代码库](code-repo.md#强制创建更新删除代码库api)。
+## Force Create/Update/Delete Deployment-Runtime (API)
 
-以创建部署运行时为例，将 destination 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 true，可以强制提交部署运行时的资源文件。请求示例如下：
+For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
+
+Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
