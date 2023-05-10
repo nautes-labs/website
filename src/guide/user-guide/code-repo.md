@@ -12,30 +12,37 @@ title: 维护代码库
 ## 前提条件
 
 ### 创建 access token
-您需要创建一个 access token，作为请求 API 的请求头。详情参考[注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+
+您需要创建一个 access token，作为请求 API 的请求头。详情参考 [创建 access token](product.md#创建-access-token)。
 
 ### 导入证书
+
 如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
 
 ### 创建产品
-由于代码库归属于产品，您需要创建至少一个[产品](product.md)。
+
+由于代码库归属于产品，您需要创建至少一个[产品](product.md#创建产品api)。
 
 ## 创建和更新代码库（API）
-1. 通过接口定义 `CodeRepo_SaveCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+
+### 生成创建/更新代码库 API 请求
+
+通过接口定义 `CodeRepo_SaveCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+
 ```Shell
-	# 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-	# 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-	# $product_name，代码库所属产品的名称
-	# $coderepo_name，代码库名称
+    # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
+    # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
+    # 替换变量 $product_name 为代码库所属产品的名称
+    # 替换变量 $coderepo_name 为代码库名称
     curl -X 'POST' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    	# 代码库关联的项目
+        # 代码库关联的项目
         "project": $project,
-        # 代码库 webhook 监听的事件
+        # 代码库的 webhook 事件
         "webhook": {
             "events": ["push_events"]
         },
@@ -44,7 +51,7 @@ title: 维护代码库
         "pipeline_runtime": false,
         "git": {
             "gitlab": {
-            	# 代码库的名称
+                # 代码库的名称
                 "name": $coderepo_name,
                 # 代码库的路径
                 "path": $coderepo_name,
@@ -55,7 +62,9 @@ title: 维护代码库
             }
     }'
 ```
+
 替换变量后的请求示例如下：
+
 ```Shell
     curl -X 'POST' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
@@ -80,11 +89,14 @@ title: 维护代码库
     }'
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以新增代码库。  
-	请求成功后，将在指定产品的 `default.project` 代码库中生成代码库的资源文件，并创建代码库。代码库的资源文件示例如下：
+### 执行创建/更新代码库的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以新增代码库。
+
+请求成功后，将在指定产品的 `default.project` 代码库中生成代码库的资源文件，并创建代码库。代码库的资源文件示例如下：
 
 ```yaml
-	apiVersion: nautes.resource.nautes.io/v1alpha1
+    apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepo
     metadata:
         name: api-server
@@ -105,12 +117,16 @@ title: 维护代码库
 
 > 请求 API 更新代码库也将更新代码库资源文件。
 >
-> 只有当您的账号是 GitLab 的 group 成员、有创建代码库的权限、有 `default.project`  代码库的 main 分支的写入权限，才可以创建或者更新代码库。
+> 只有当您的账号是 GitLab 的 group 成员、有创建代码库的权限、有 `default.project` 代码库的 main 分支的写入权限，才可以创建或者更新代码库。
 
 ## 删除代码库（API）
+
 > 在删除代码库之前，请先删除与代码库关联的所有实体和资源，例如：部署运行时等，否则将不能执行删除。
 
-1. 通过接口定义 `CodeRepo_DeleteCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+### 生成删除代码库的 API 请求
+
+通过接口定义 `CodeRepo_DeleteCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+
 ```Shell
     curl -X 'DELETE' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
@@ -119,6 +135,7 @@ title: 维护代码库
 ```
 
 替换变量后的请求示例如下：
+
 ```Shell
     curl -X 'DELETE' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
@@ -126,13 +143,20 @@ title: 维护代码库
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以删除代码库。  
-	请求成功后，将删除代码库，以及在指定产品的 `default.project`代码库中的代码库资源文件。
+### 执行删除代码库的 API 请求
 
-> 只有当您的账号是 GitLab 的 group 成员、有删除代码库的权限、有 `default.project`  代码库的 main 分支的写入权限，才可以删除代码库。
+使用 curl 命令或者其他工具执行 API 请求，以删除代码库。
+
+请求成功后，将删除代码库，以及在指定产品的 `default.project`代码库中的代码库资源文件。
+
+> 只有当您的账号是 GitLab 的 group 成员、有删除代码库的权限、有 `default.project` 代码库的 main 分支的写入权限，才可以删除代码库。
 
 ## 查询代码库列表（API）
-1. 通过接口定义 `CodeRepo_ListCodeRepos` 生成 API 请求示例，并添加 access token 作为请求头。
+
+### 生成查询代码库列表的 API 请求
+
+通过接口定义 `CodeRepo_ListCodeRepos` 生成 API 请求示例，并添加 access token 作为请求头。
+
 ```Shell
     curl -X 'GET' \
     'HTTP://$api-server-address/api/v1/products/$product_name/coderepos' \
@@ -141,6 +165,7 @@ title: 维护代码库
 ```
 
 替换变量后的请求示例如下：
+
 ```Shell
     curl -X 'GET' \
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
@@ -148,9 +173,10 @@ title: 维护代码库
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
+### 执行查询代码库列表的 API 请求
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询代码库列表。  
-	请求成功后，将返回代码库列表。代码库列表的返回值示例如下：
+使用 curl 命令或者其他工具执行 API 请求，以查询代码库列表。代码库列表的返回值示例如下：
+
 ```yaml
     {
     "items": [
@@ -179,10 +205,15 @@ title: 维护代码库
     ]
 }
 ```
-> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 default.project  代码库的 main 分支的读取权限，才可以查询代码库列表。
+
+> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 `default.project` 代码库的读取权限，才可以查询代码库列表。
 
 ## 查询代码库详情（API）
-1. 通过接口定义 `CodeRepo_GetCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+
+### 生成查看代码库详情的 API 请求
+
+通过接口定义 `CodeRepo_GetCodeRepo` 生成 API 请求示例，并添加 access token 作为请求头。
+
 ```Shell
     curl -X 'GET' \
       'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
@@ -191,21 +222,23 @@ title: 维护代码库
 ```
 
 替换变量后的请求示例如下：
+
 ```Shell
     curl -X 'GET' \
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
       -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'     
+      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
-2. 使用 curl 命令或者其他工具执行 API 请求，以查询代码库详情。  
-请求成功后，将返回指定产品的代码库详情。代码库详情的返回值示例与[查询代码库列表](#查询代码库列表api)类似，不再赘述。
-> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 default.project  代码库的 main 分支的读取权限，才可以查看代码库详情。
+### 执行查看代码库详情的 API 请求
+
+使用 curl 命令或者其他工具执行 API 请求，以查询代码库详情。代码库详情的返回值示例与[查询代码库列表](#查询代码库列表api)类似。
+
+> 只有当您的账号是 GitLab 的 group 成员、有查询代码库的权限、有 `default.project` 代码库的读取权限，才可以查看代码库详情。
 
 ## 强制创建/更新/删除代码库（API）
-为了保证 Nautes 基于产品配置清单能够自动部署产品的运行时环境，产品配置清单需要符合既定规则。因此，提交 API 请求时默认会对产品配置清单启用校验，如果校验不通过，则不能提交请求。 
 
-在实际场景中，用户可能需要先提交不符合规则的资源文件，然后再补齐配套的资源。为了兼容类似场景，POST 和 DELETE 类型的 API 接口通过添加 `insecure_skip_check` 查询参数，并设置其属性值为 true，可以强制提交或删除资源文件。 
+适用于需要跳过 API 校验的特殊场景，详情参见[准备运行环境](main-process.md#准备运行环境)。
 
 以创建代码库为例，将 project 属性设置为不存在的 project，启用 `insecure_skip_check` 查询参数，可以强制提交代码库的资源文件。 请求示例如下：
 
@@ -233,3 +266,4 @@ title: 维护代码库
       }
     }'
 ```
+[xx](#创建和更新代码库api)
