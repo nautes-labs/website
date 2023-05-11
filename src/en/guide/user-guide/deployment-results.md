@@ -39,6 +39,8 @@ You can obtain [the source code of the client](https://github.com/dexidp/dex/tre
 
 The variables `$client_id` and `$client_secret` are the client secrets issued by DEX, `$dex_url` is the service address of DEX, `$dex_ca` is the HTTPS certificate of DEX, and `$ip` is the IP address of the server where the client is running.
 
+In order to access the client WEB UI, you also need to add an inbound rule for port `5555`. Visit the [ArgoCD of the Tenant Management Cluster](installation.md#check-the-installation-results) and add the redirect URI of the client under the `data.staticClients.id[0].redirectURIs` path in the `dex` ConfigMap of the `nautes` Application.
+
 After the service is started, you can access the client on port `5555`, fill in the `Extra scopes` with `groups`, and click `Login` for unified authentication.
 
 ![directive syntax graph](./../images/quickstart-dex-1.png)

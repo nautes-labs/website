@@ -37,6 +37,8 @@ title: 查看部署结果
 
 指令中的 `$client_id` 和 `$client_secret` 是 DEX 颁发的客户端密钥，`$dex_url` 是 DEX 的服务地址，`$dex_ca` 是 DEX 服务的 HTTPS 证书，`$ip` 是运行客户端的服务器IP。
 
+为了能够访问客户端界面，您还需要开放入方向 `5555` 端口，并访问[租户管理集群的 ArgoCD](installation.md#查看安装结果)，在 `nautes` Application 的 `dex` Configmap 的  `data.staticClients.id[0].redirectURIs` 路径下，添加客户端的回调地址。
+
 当服务启动后，您可以通过 `5555` 端口访问客户端，填写 `Extra scopes` 属性值为 `groups`，并点击 `Login` 进行统一认证。
 ![directive syntax graph](./../images/quickstart-dex-1.png)
 
