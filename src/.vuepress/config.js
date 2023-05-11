@@ -49,7 +49,7 @@ module.exports = {
           },
           {
             text: 'API',
-            link: '/api/',
+            link: '/api/introduction',
           },
           {
             text: 'GitHub',
@@ -57,6 +57,35 @@ module.exports = {
           }
         ],
         sidebar: {
+          '/api/': [
+            {
+              title: '概述',
+              collapsable: false,
+              children: [
+                '/api/introduction',
+              ],
+            },
+            {
+              title: '产品 API',
+              collapsable: false,
+              children: [
+                '/api/user/product',
+                '/api/user/environment',
+                '/api/user/project',
+                '/api/user/coderepo',
+                '/api/user/coderepobinding',
+                '/api/user/deploymentruntime',
+                '/api/user/projectpipelineruntime',
+              ],
+            },
+            {
+              title: '租户 API',
+              collapsable: false,
+              children: [
+                '/api/tadmin/cluster',
+              ],
+            },
+          ],
           '/guide/': [
             {
               title: '快速入门',
@@ -95,7 +124,7 @@ module.exports = {
           },
           {
             text: 'API',
-            link: '/en/api/',
+            link: '/en/api/introduction',
           },
           {
             text: 'GitHub',
@@ -103,6 +132,35 @@ module.exports = {
           },
         ],
         sidebar: {
+          '/en/api/': [
+            {
+              title: 'Overview',
+              collapsable: false,
+              children: [
+                '/en/api/introduction',
+              ],
+            },
+            {
+              title: 'Product API',
+              collapsable: false,
+              children: [
+                '/en/api/user/product',
+                '/en/api/user/environment',
+                '/en/api/user/project',
+                '/en/api/user/coderepo',
+                '/en/api/user/coderepobinding',
+                '/en/api/user/deploymentruntime',
+                '/en/api/user/projectpipelineruntime',
+              ],
+            },
+            {
+              title: 'Tenant API',
+              collapsable: false,
+              children: [
+                '/en/api/tadmin/cluster',
+              ],
+            },
+          ],
           '/en/guide/': [
             {
               title: 'Getting Started',
