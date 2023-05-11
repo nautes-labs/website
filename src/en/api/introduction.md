@@ -7,7 +7,7 @@ title: Introduction
 
 ## Version Repository
 
-Nautes follow the best practices of GitOps, with the version repository as the single trusted data source and storing management data in a declarative form in the version repository. Nautes uses three types of version repositories to store its data, including platform configuration repository (not yet implemented), tenant configuration repository, and user product repository, each providing corresponding REST API as the entry point for repository operations. All three types of repositories consist of Git repositories and secret vaults.
+Nautes follow the best practices of GitOps, with the version repository as the only trusted data source and storing management data in a declarative form in the version repository. Nautes uses three types of version repositories to store its data, including platform configuration repository (not yet implemented), tenant configuration repository, and user product repository, each providing corresponding REST API as the entry point for repository operations. All three types of repositories consist of Git repositories and secret vaults.
 
 ### Platform Configuration Repository
 
