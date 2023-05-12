@@ -4,21 +4,23 @@ title: Code Repository Binding
 ---
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="coderepobinding-api">CodeRepoBinding API v0.3.0</h1>
+<h1 id="code-repository-binding-api">Code Repository Binding API v0.3.0</h1>
+
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
 
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
-<h1 id="coderepobinding-api-coderepobinding">CodeRepoBinding</h1>
+<h1 id="code-repository-binding-api-coderepobinding">CodeRepoBinding</h1>
 
-## CodeRepoBinding_ListCodeRepoBindings
+## ListCodeRepoBindings
 
-<a id="opIdCodeRepoBinding_ListCodeRepoBindings"></a>
+<a id="opIdListCodeRepoBindings"></a>
 
 `GET /api/v1/products/{product_name}/coderepobindings`
 
-<h3 id="coderepobinding_listcoderepobindings-parameters">Parameters</h3>
+<h3 id="listcoderepobindings-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -32,19 +34,19 @@ title: Code Repository Binding
 {
   "items": [
     {
-      "coderepo": "string",
-      "name": "string",
-      "permissions": "string",
       "product": "string",
+      "name": "string",
       "projects": [
         "string"
-      ]
+      ],
+      "permissions": "string",
+      "coderepo": "string"
     }
   ]
 }
 ```
 
-<h3 id="coderepobinding_listcoderepobindings-responses">Responses</h3>
+<h3 id="listcoderepobindings-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -55,48 +57,13 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## CodeRepoBinding_DeleteCodeRepoBinding
+## GetCodeRepoBinding
 
-<a id="opIdCodeRepoBinding_DeleteCodeRepoBinding"></a>
-
-`DELETE /api/v1/products/{product_name}/coderepobindings/{coderepo_binding_name}`
-
-<h3 id="coderepobinding_deletecoderepobinding-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|product_name|path|string|true|none|
-|coderepo_binding_name|path|string|true|none|
-|insecure_skip_check|query|boolean|false|none|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="coderepobinding_deletecoderepobinding-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.coderepobinding.v1.DeleteReply](#schemaapi.coderepobinding.v1.deletereply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## CodeRepoBinding_GetCodeRepoBinding
-
-<a id="opIdCodeRepoBinding_GetCodeRepoBinding"></a>
+<a id="opIdGetCodeRepoBinding"></a>
 
 `GET /api/v1/products/{product_name}/coderepobindings/{coderepo_binding_name}`
 
-<h3 id="coderepobinding_getcoderepobinding-parameters">Parameters</h3>
+<h3 id="getcoderepobinding-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -109,17 +76,17 @@ BearerAuth
 
 ```json
 {
-  "coderepo": "string",
-  "name": "string",
-  "permissions": "string",
   "product": "string",
+  "name": "string",
   "projects": [
     "string"
-  ]
+  ],
+  "permissions": "string",
+  "coderepo": "string"
 }
 ```
 
-<h3 id="coderepobinding_getcoderepobinding-responses">Responses</h3>
+<h3 id="getcoderepobinding-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -130,9 +97,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## CodeRepoBinding_SaveCodeRepoBinding
+## SaveCodeRepoBinding
 
-<a id="opIdCodeRepoBinding_SaveCodeRepoBinding"></a>
+<a id="opIdSaveCodeRepoBinding"></a>
 
 `POST /api/v1/products/{product_name}/coderepobindings/{coderepo_binding_name}`
 
@@ -140,16 +107,16 @@ BearerAuth
 
 ```json
 {
-  "coderepo": "string",
-  "permissions": "string",
   "product": "string",
   "projects": [
     "string"
-  ]
+  ],
+  "permissions": "string",
+  "coderepo": "string"
 }
 ```
 
-<h3 id="coderepobinding_savecoderepobinding-parameters">Parameters</h3>
+<h3 id="savecoderepobinding-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -168,11 +135,46 @@ BearerAuth
 }
 ```
 
-<h3 id="coderepobinding_savecoderepobinding-responses">Responses</h3>
+<h3 id="savecoderepobinding-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.coderepobinding.v1.SaveReply](#schemaapi.coderepobinding.v1.savereply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteCodeRepoBinding
+
+<a id="opIdDeleteCodeRepoBinding"></a>
+
+`DELETE /api/v1/products/{product_name}/coderepobindings/{coderepo_binding_name}`
+
+<h3 id="deletecoderepobinding-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|product_name|path|string|true|none|
+|coderepo_binding_name|path|string|true|none|
+|insecure_skip_check|query|boolean|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deletecoderepobinding-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.coderepobinding.v1.DeleteReply](#schemaapi.coderepobinding.v1.deletereply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -212,13 +214,13 @@ Represents a response to a DeleteRequest message.
 
 ```json
 {
-  "coderepo": "string",
-  "name": "string",
-  "permissions": "string",
   "product": "string",
+  "name": "string",
   "projects": [
     "string"
-  ]
+  ],
+  "permissions": "string",
+  "coderepo": "string"
 }
 
 ```
@@ -227,11 +229,11 @@ Represents a response to a DeleteRequest message.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|coderepo|string|false|none|Authorized Code Repository.|
-|name|string|false|none|CodeRepoBinding resource name.|
-|permissions|string|false|none|Authorization Permissions, readwrite or readonly.|
 |product|string|false|none|The Code repo is authorized to this product or projects under it.|
+|name|string|false|none|CodeRepoBinding resource name.|
 |projects|[string]|false|none|If the project list is empty, it means that the code repo is authorized to the product. If the project list has values, it means that the code repo is authorized to the specified projects.|
+|permissions|string|false|none|Authorization Permissions, readwrite or readonly.|
+|coderepo|string|false|none|Authorized Code Repository.|
 
 <h2 id="tocS_api.coderepobinding.v1.ListsReply">api.coderepobinding.v1.ListsReply</h2>
 <!-- backwards compatibility -->
@@ -244,13 +246,13 @@ Represents a response to a DeleteRequest message.
 {
   "items": [
     {
-      "coderepo": "string",
-      "name": "string",
-      "permissions": "string",
       "product": "string",
+      "name": "string",
       "projects": [
         "string"
-      ]
+      ],
+      "permissions": "string",
+      "coderepo": "string"
     }
   ]
 }
@@ -296,12 +298,12 @@ Define the SaveReply message, which includes the msg field.
 
 ```json
 {
-  "coderepo": "string",
-  "permissions": "string",
   "product": "string",
   "projects": [
     "string"
-  ]
+  ],
+  "permissions": "string",
+  "coderepo": "string"
 }
 
 ```
@@ -310,8 +312,8 @@ Define the SaveReply message, which includes the msg field.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|coderepo|string|false|none|Authorized Code Repository.|
-|permissions|string|false|none|Authorization Permissions, readwrite or readonly.|
 |product|string|false|none|The Code repo is authorized to this product or projects under it.|
 |projects|[string]|false|none|If the project list is empty, it means that the code repo is authorized to the product. If the project list has values, it means that the code repo is authorized to the specified projects.|
+|permissions|string|false|none|Authorization Permissions, readwrite or readonly.|
+|coderepo|string|false|none|Authorized Code Repository.|
 

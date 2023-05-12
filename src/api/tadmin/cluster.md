@@ -6,50 +6,17 @@ title: 集群
 
 <h1 id="cluster-api">Cluster API v0.3.0</h1>
 
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
+
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
 <h1 id="cluster-api-cluster">Cluster</h1>
 
-## Cluster_DeleteCluster
+## SaveCluster
 
-<a id="opIdCluster_DeleteCluster"></a>
-
-`DELETE /api/v1/clusters/{cluster_name}`
-
-<h3 id="cluster_deletecluster-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|cluster_name|path|string|true|ClusterName is the name of the cluster.|
-|product_name|query|string|false|ProductName is the name of the product.|
-|insecure_skip_check|query|boolean|false|InsecureSkipCheck specifies whether to skip security checks.|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="cluster_deletecluster-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.DeleteReply](#schemaapi.cluster.v1.deletereply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## Cluster_SaveCluster
-
-<a id="opIdCluster_SaveCluster"></a>
+<a id="opIdSaveCluster"></a>
 
 `POST /api/v1/clusters/{cluster_name}`
 
@@ -58,23 +25,23 @@ BearerAuth
 ```json
 {
   "api_server": "string",
-  "argocd_host": "string",
   "cluster_kind": "string",
   "cluster_type": "string",
+  "usage": "string",
   "host_cluster": "string",
-  "kubeconfig": "string",
+  "argocd_host": "string",
+  "vcluster": {
+    "https_node_port": "string"
+  },
   "traefik": {
     "http_node_port": "string",
     "https_node_port": "string"
   },
-  "usage": "string",
-  "vcluster": {
-    "https_node_port": "string"
-  }
+  "kubeconfig": "string"
 }
 ```
 
-<h3 id="cluster_savecluster-parameters">Parameters</h3>
+<h3 id="savecluster-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -92,11 +59,46 @@ BearerAuth
 }
 ```
 
-<h3 id="cluster_savecluster-responses">Responses</h3>
+<h3 id="savecluster-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.SaveReply](#schemaapi.cluster.v1.savereply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteCluster
+
+<a id="opIdDeleteCluster"></a>
+
+`DELETE /api/v1/clusters/{cluster_name}`
+
+<h3 id="deletecluster-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cluster_name|path|string|true|ClusterName is the name of the cluster.|
+|product_name|query|string|false|ProductName is the name of the product.|
+|insecure_skip_check|query|boolean|false|InsecureSkipCheck specifies whether to skip security checks.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deletecluster-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.DeleteReply](#schemaapi.cluster.v1.deletereply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -159,19 +161,19 @@ SaveReply represents a response to a save request.
 ```json
 {
   "api_server": "string",
-  "argocd_host": "string",
   "cluster_kind": "string",
   "cluster_type": "string",
+  "usage": "string",
   "host_cluster": "string",
-  "kubeconfig": "string",
+  "argocd_host": "string",
+  "vcluster": {
+    "https_node_port": "string"
+  },
   "traefik": {
     "http_node_port": "string",
     "https_node_port": "string"
   },
-  "usage": "string",
-  "vcluster": {
-    "https_node_port": "string"
-  }
+  "kubeconfig": "string"
 }
 
 ```
@@ -183,14 +185,14 @@ Body represents the body of the save request.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |api_server|string|false|none|apiServer specifies the API server address of the cluster.|
-|argocd_host|string|false|none|argocdHost specifies the ArgoCD host name.|
 |cluster_kind|string|false|none|clusterKind specifies the kind of the cluster.|
 |cluster_type|string|false|none|clusterType specifies the type of the cluster. It can be "physical" or "virtual".|
-|host_cluster|string|false|none|hostCluster specifies the host cluster name if the cluster is a virtual cluster.|
-|kubeconfig|string|false|none|kubeconfig specifies the Kubeconfig file of the cluster.|
-|traefik|[api.cluster.v1.Traefik](#schemaapi.cluster.v1.traefik)|false|none|Traefik represents the configuration for the Traefik ingress controller.|
 |usage|string|false|none|usage specifies the usage of the cluster. It can be "host" or "worker".|
+|host_cluster|string|false|none|hostCluster specifies the host cluster name if the cluster is a virtual cluster.|
+|argocd_host|string|false|none|argocdHost specifies the ArgoCD host name.|
 |vcluster|[api.cluster.v1.Vcluster](#schemaapi.cluster.v1.vcluster)|false|none|Vcluster represents the configuration for the virtual cluster.|
+|traefik|[api.cluster.v1.Traefik](#schemaapi.cluster.v1.traefik)|false|none|Traefik represents the configuration for the Traefik ingress controller.|
+|kubeconfig|string|false|none|kubeconfig specifies the Kubeconfig file of the cluster.|
 
 <h2 id="tocS_api.cluster.v1.Traefik">api.cluster.v1.Traefik</h2>
 <!-- backwards compatibility -->

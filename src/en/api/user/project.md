@@ -6,19 +6,21 @@ title: Project
 
 <h1 id="project-api">Project API v0.3.0</h1>
 
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
+
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
 <h1 id="project-api-project">Project</h1>
 
-## Project_ListProjects
+## ListProjects
 
-<a id="opIdProject_ListProjects"></a>
+<a id="opIdListProjects"></a>
 
 `GET /api/v1/products/{product_name}/projects`
 
-<h3 id="project_listprojects-parameters">Parameters</h3>
+<h3 id="listprojects-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -32,15 +34,15 @@ title: Project
 {
   "items": [
     {
-      "language": "string",
+      "product": "string",
       "name": "string",
-      "product": "string"
+      "language": "string"
     }
   ]
 }
 ```
 
-<h3 id="project_listprojects-responses">Responses</h3>
+<h3 id="listprojects-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -51,48 +53,13 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Project_DeleteProject
+## GetProject
 
-<a id="opIdProject_DeleteProject"></a>
-
-`DELETE /api/v1/products/{product_name}/projects/{project_name}`
-
-<h3 id="project_deleteproject-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|product_name|path|string|true|The name of the product the project belongs to.|
-|project_name|path|string|true|The name of the project being deleted.|
-|insecureSkipCheck|query|boolean|false|Whether or not to skip validation.|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="project_deleteproject-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.project.v1.DeleteReply](#schemaapi.project.v1.deletereply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## Project_GetProject
-
-<a id="opIdProject_GetProject"></a>
+<a id="opIdGetProject"></a>
 
 `GET /api/v1/products/{product_name}/projects/{project_name}`
 
-<h3 id="project_getproject-parameters">Parameters</h3>
+<h3 id="getproject-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -105,13 +72,13 @@ BearerAuth
 
 ```json
 {
-  "language": "string",
+  "product": "string",
   "name": "string",
-  "product": "string"
+  "language": "string"
 }
 ```
 
-<h3 id="project_getproject-responses">Responses</h3>
+<h3 id="getproject-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -122,9 +89,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Project_SaveProject
+## SaveProject
 
-<a id="opIdProject_SaveProject"></a>
+<a id="opIdSaveProject"></a>
 
 `POST /api/v1/products/{product_name}/projects/{project_name}`
 
@@ -136,7 +103,7 @@ BearerAuth
 }
 ```
 
-<h3 id="project_saveproject-parameters">Parameters</h3>
+<h3 id="saveproject-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -155,11 +122,46 @@ BearerAuth
 }
 ```
 
-<h3 id="project_saveproject-responses">Responses</h3>
+<h3 id="saveproject-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.project.v1.SaveReply](#schemaapi.project.v1.savereply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteProject
+
+<a id="opIdDeleteProject"></a>
+
+`DELETE /api/v1/products/{product_name}/projects/{project_name}`
+
+<h3 id="deleteproject-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|product_name|path|string|true|The name of the product the project belongs to.|
+|project_name|path|string|true|The name of the project being deleted.|
+|insecureSkipCheck|query|boolean|false|Whether or not to skip validation.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deleteproject-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.project.v1.DeleteReply](#schemaapi.project.v1.deletereply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -199,9 +201,9 @@ Defines the SaveReply message which is used to return a message after deleting a
 
 ```json
 {
-  "language": "string",
+  "product": "string",
   "name": "string",
-  "product": "string"
+  "language": "string"
 }
 
 ```
@@ -212,9 +214,9 @@ Defines the GetReply message which is used to return a specific project.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|language|string|false|none|The language used in the project.|
-|name|string|false|none|The name of the project.|
 |product|string|false|none|The name of the product the project belongs to.|
+|name|string|false|none|The name of the project.|
+|language|string|false|none|The language used in the project.|
 
 <h2 id="tocS_api.project.v1.ListsReply">api.project.v1.ListsReply</h2>
 <!-- backwards compatibility -->
@@ -227,9 +229,9 @@ Defines the GetReply message which is used to return a specific project.
 {
   "items": [
     {
-      "language": "string",
+      "product": "string",
       "name": "string",
-      "product": "string"
+      "language": "string"
     }
   ]
 }

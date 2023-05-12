@@ -6,15 +6,17 @@ title: 产品
 
 <h1 id="product-api">Product API v0.3.0</h1>
 
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
+
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
 <h1 id="product-api-product">Product</h1>
 
-## Product_ListProducts
+## ListProducts
 
-<a id="opIdProduct_ListProducts"></a>
+<a id="opIdListProducts"></a>
 
 `GET /api/v1/products`
 
@@ -26,25 +28,25 @@ title: 产品
 {
   "items": [
     {
+      "name": "string",
       "git": {
-        "github": {
-          "description": "string",
-          "path": "string",
-          "visibility": "string"
-        },
         "gitlab": {
-          "description": "string",
           "path": "string",
-          "visibility": "string"
+          "visibility": "string",
+          "description": "string"
+        },
+        "github": {
+          "path": "string",
+          "visibility": "string",
+          "description": "string"
         }
-      },
-      "name": "string"
+      }
     }
   ]
 }
 ```
 
-<h3 id="product_listproducts-responses">Responses</h3>
+<h3 id="listproducts-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -55,46 +57,13 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Product_DeleteProduct
+## GetProduct
 
-<a id="opIdProduct_DeleteProduct"></a>
-
-`DELETE /api/v1/products/{product_name}`
-
-<h3 id="product_deleteproduct-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|product_name|path|string|true|The name of the product to delete|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="product_deleteproduct-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.product.v1.DeleteProductReply](#schemaapi.product.v1.deleteproductreply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## Product_GetProduct
-
-<a id="opIdProduct_GetProduct"></a>
+<a id="opIdGetProduct"></a>
 
 `GET /api/v1/products/{product_name}`
 
-<h3 id="product_getproduct-parameters">Parameters</h3>
+<h3 id="getproduct-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -106,23 +75,23 @@ BearerAuth
 
 ```json
 {
+  "name": "string",
   "git": {
-    "github": {
-      "description": "string",
-      "path": "string",
-      "visibility": "string"
-    },
     "gitlab": {
-      "description": "string",
       "path": "string",
-      "visibility": "string"
+      "visibility": "string",
+      "description": "string"
+    },
+    "github": {
+      "path": "string",
+      "visibility": "string",
+      "description": "string"
     }
-  },
-  "name": "string"
+  }
 }
 ```
 
-<h3 id="product_getproduct-responses">Responses</h3>
+<h3 id="getproduct-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -133,9 +102,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Product_SaveProduct
+## SaveProduct
 
-<a id="opIdProduct_SaveProduct"></a>
+<a id="opIdSaveProduct"></a>
 
 `POST /api/v1/products/{product_name}`
 
@@ -143,25 +112,25 @@ BearerAuth
 
 ```json
 {
+  "product_name": "string",
   "git": {
-    "github": {
-      "description": "string",
-      "name": "string",
-      "path": "string",
-      "visibility": "string"
-    },
     "gitlab": {
-      "description": "string",
       "name": "string",
       "path": "string",
-      "visibility": "string"
+      "visibility": "string",
+      "description": "string"
+    },
+    "github": {
+      "name": "string",
+      "path": "string",
+      "visibility": "string",
+      "description": "string"
     }
-  },
-  "product_name": "string"
+  }
 }
 ```
 
-<h3 id="product_saveproduct-parameters">Parameters</h3>
+<h3 id="saveproduct-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -178,11 +147,44 @@ BearerAuth
 }
 ```
 
-<h3 id="product_saveproduct-responses">Responses</h3>
+<h3 id="saveproduct-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.product.v1.SaveProductReply](#schemaapi.product.v1.saveproductreply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteProduct
+
+<a id="opIdDeleteProduct"></a>
+
+`DELETE /api/v1/products/{product_name}`
+
+<h3 id="deleteproduct-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|product_name|path|string|true|The name of the product to delete|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deleteproduct-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.product.v1.DeleteProductReply](#schemaapi.product.v1.deleteproductreply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -220,19 +222,19 @@ BearerAuth
 
 ```json
 {
+  "name": "string",
   "git": {
-    "github": {
-      "description": "string",
-      "path": "string",
-      "visibility": "string"
-    },
     "gitlab": {
-      "description": "string",
       "path": "string",
-      "visibility": "string"
+      "visibility": "string",
+      "description": "string"
+    },
+    "github": {
+      "path": "string",
+      "visibility": "string",
+      "description": "string"
     }
-  },
-  "name": "string"
+  }
 }
 
 ```
@@ -241,8 +243,8 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|git|[api.product.v1.GitGroup](#schemaapi.product.v1.gitgroup)|false|none|none|
 |name|string|false|none|The name of the product|
+|git|[api.product.v1.GitGroup](#schemaapi.product.v1.gitgroup)|false|none|none|
 
 <h2 id="tocS_api.product.v1.Git">api.product.v1.Git</h2>
 <!-- backwards compatibility -->
@@ -253,17 +255,17 @@ BearerAuth
 
 ```json
 {
-  "github": {
-    "description": "string",
-    "name": "string",
-    "path": "string",
-    "visibility": "string"
-  },
   "gitlab": {
-    "description": "string",
     "name": "string",
     "path": "string",
-    "visibility": "string"
+    "visibility": "string",
+    "description": "string"
+  },
+  "github": {
+    "name": "string",
+    "path": "string",
+    "visibility": "string",
+    "description": "string"
   }
 }
 
@@ -273,8 +275,8 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|github|[api.product.v1.Github](#schemaapi.product.v1.github)|false|none|none|
 |gitlab|[api.product.v1.Gitlab](#schemaapi.product.v1.gitlab)|false|none|none|
+|github|[api.product.v1.Github](#schemaapi.product.v1.github)|false|none|none|
 
 <h2 id="tocS_api.product.v1.GitGroup">api.product.v1.GitGroup</h2>
 <!-- backwards compatibility -->
@@ -285,15 +287,15 @@ BearerAuth
 
 ```json
 {
-  "github": {
-    "description": "string",
-    "path": "string",
-    "visibility": "string"
-  },
   "gitlab": {
-    "description": "string",
     "path": "string",
-    "visibility": "string"
+    "visibility": "string",
+    "description": "string"
+  },
+  "github": {
+    "path": "string",
+    "visibility": "string",
+    "description": "string"
   }
 }
 
@@ -303,8 +305,8 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|github|[api.product.v1.GithubGroup](#schemaapi.product.v1.githubgroup)|false|none|none|
 |gitlab|[api.product.v1.GitlabGroup](#schemaapi.product.v1.gitlabgroup)|false|none|none|
+|github|[api.product.v1.GithubGroup](#schemaapi.product.v1.githubgroup)|false|none|none|
 
 <h2 id="tocS_api.product.v1.Github">api.product.v1.Github</h2>
 <!-- backwards compatibility -->
@@ -315,10 +317,10 @@ BearerAuth
 
 ```json
 {
-  "description": "string",
   "name": "string",
   "path": "string",
-  "visibility": "string"
+  "visibility": "string",
+  "description": "string"
 }
 
 ```
@@ -327,10 +329,10 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|description|string|false|none|The description of the Github repository|
 |name|string|false|none|The name of the Github repository|
 |path|string|false|none|The path of the Github repository|
 |visibility|string|false|none|The visibility of the Github repository, which can only be "public" or "private"|
+|description|string|false|none|The description of the Github repository|
 
 <h2 id="tocS_api.product.v1.GithubGroup">api.product.v1.GithubGroup</h2>
 <!-- backwards compatibility -->
@@ -341,9 +343,9 @@ BearerAuth
 
 ```json
 {
-  "description": "string",
   "path": "string",
-  "visibility": "string"
+  "visibility": "string",
+  "description": "string"
 }
 
 ```
@@ -352,9 +354,9 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|description|string|false|none|The description of the Github group|
 |path|string|false|none|The path of the Github group|
 |visibility|string|false|none|The visibility of the Github group|
+|description|string|false|none|The description of the Github group|
 
 <h2 id="tocS_api.product.v1.Gitlab">api.product.v1.Gitlab</h2>
 <!-- backwards compatibility -->
@@ -365,10 +367,10 @@ BearerAuth
 
 ```json
 {
-  "description": "string",
   "name": "string",
   "path": "string",
-  "visibility": "string"
+  "visibility": "string",
+  "description": "string"
 }
 
 ```
@@ -377,10 +379,10 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|description|string|false|none|The description of the Gitlab repository|
 |name|string|false|none|The name of the Gitlab repository|
 |path|string|false|none|The path of the Gitlab repository|
 |visibility|string|false|none|The visibility of the Gitlab repository, which can only be "public" or "private"|
+|description|string|false|none|The description of the Gitlab repository|
 
 <h2 id="tocS_api.product.v1.GitlabGroup">api.product.v1.GitlabGroup</h2>
 <!-- backwards compatibility -->
@@ -391,9 +393,9 @@ BearerAuth
 
 ```json
 {
-  "description": "string",
   "path": "string",
-  "visibility": "string"
+  "visibility": "string",
+  "description": "string"
 }
 
 ```
@@ -402,9 +404,9 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|description|string|false|none|The description of the Gitlab group|
 |path|string|false|none|The path of the Gitlab group|
 |visibility|string|false|none|The visibility of the Gitlab group|
+|description|string|false|none|The description of the Gitlab group|
 
 <h2 id="tocS_api.product.v1.ListProductsReply">api.product.v1.ListProductsReply</h2>
 <!-- backwards compatibility -->
@@ -417,19 +419,19 @@ BearerAuth
 {
   "items": [
     {
+      "name": "string",
       "git": {
-        "github": {
-          "description": "string",
-          "path": "string",
-          "visibility": "string"
-        },
         "gitlab": {
-          "description": "string",
           "path": "string",
-          "visibility": "string"
+          "visibility": "string",
+          "description": "string"
+        },
+        "github": {
+          "path": "string",
+          "visibility": "string",
+          "description": "string"
         }
-      },
-      "name": "string"
+      }
     }
   ]
 }
@@ -471,21 +473,21 @@ BearerAuth
 
 ```json
 {
+  "product_name": "string",
   "git": {
-    "github": {
-      "description": "string",
-      "name": "string",
-      "path": "string",
-      "visibility": "string"
-    },
     "gitlab": {
-      "description": "string",
       "name": "string",
       "path": "string",
-      "visibility": "string"
+      "visibility": "string",
+      "description": "string"
+    },
+    "github": {
+      "name": "string",
+      "path": "string",
+      "visibility": "string",
+      "description": "string"
     }
-  },
-  "product_name": "string"
+  }
 }
 
 ```
@@ -494,6 +496,6 @@ BearerAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|git|[api.product.v1.Git](#schemaapi.product.v1.git)|false|none|none|
 |product_name|string|false|none|The name of the product to save|
+|git|[api.product.v1.Git](#schemaapi.product.v1.git)|false|none|none|
 

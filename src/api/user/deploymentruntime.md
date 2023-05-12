@@ -4,21 +4,23 @@ title: 部署运行时
 ---
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="deploymentruntime-api">Deploymentruntime API v0.3.0</h1>
+<h1 id="deployment-runtime-api">Deployment Runtime API v0.3.0</h1>
+
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
 
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
-<h1 id="deploymentruntime-api-deploymentruntime">Deploymentruntime</h1>
+<h1 id="deployment-runtime-api-deploymentruntime">Deploymentruntime</h1>
 
-## Deploymentruntime_ListDeploymentRuntimes
+## ListDeploymentRuntimes
 
-<a id="opIdDeploymentruntime_ListDeploymentRuntimes"></a>
+<a id="opIdListDeploymentRuntimes"></a>
 
 `GET /api/v1/products/{product_name}/deploymentruntimes`
 
-<h3 id="deploymentruntime_listdeploymentruntimes-parameters">Parameters</h3>
+<h3 id="listdeploymentruntimes-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -32,23 +34,23 @@ title: 部署运行时
 {
   "items": [
     {
-      "destination": "string",
-      "manifest_source": {
-        "code_repo": "string",
-        "path": "string",
-        "target_revision": "string"
-      },
-      "name": "string",
       "product": "string",
+      "name": "string",
       "projects_ref": [
         "string"
-      ]
+      ],
+      "manifest_source": {
+        "code_repo": "string",
+        "target_revision": "string",
+        "path": "string"
+      },
+      "destination": "string"
     }
   ]
 }
 ```
 
-<h3 id="deploymentruntime_listdeploymentruntimes-responses">Responses</h3>
+<h3 id="listdeploymentruntimes-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -59,48 +61,13 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Deploymentruntime_DeleteDeploymentRuntime
+## GetDeploymentRuntime
 
-<a id="opIdDeploymentruntime_DeleteDeploymentRuntime"></a>
-
-`DELETE /api/v1/products/{product_name}/deploymentruntimes/{deploymentruntime_name}`
-
-<h3 id="deploymentruntime_deletedeploymentruntime-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|product_name|path|string|true|ProductName is the name of the product.|
-|deploymentruntime_name|path|string|true|DeploymentRuntimeName is the name of the Deployment Runtime.|
-|insecure_skip_check|query|boolean|false|InsecureSkipCheck specifies whether to skip security checks.|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="deploymentruntime_deletedeploymentruntime-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.deploymentruntime.v1.DeleteReply](#schemaapi.deploymentruntime.v1.deletereply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## Deploymentruntime_GetDeploymentRuntime
-
-<a id="opIdDeploymentruntime_GetDeploymentRuntime"></a>
+<a id="opIdGetDeploymentRuntime"></a>
 
 `GET /api/v1/products/{product_name}/deploymentruntimes/{deploymentruntime_name}`
 
-<h3 id="deploymentruntime_getdeploymentruntime-parameters">Parameters</h3>
+<h3 id="getdeploymentruntime-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -113,21 +80,21 @@ BearerAuth
 
 ```json
 {
-  "destination": "string",
-  "manifest_source": {
-    "code_repo": "string",
-    "path": "string",
-    "target_revision": "string"
-  },
-  "name": "string",
   "product": "string",
+  "name": "string",
   "projects_ref": [
     "string"
-  ]
+  ],
+  "manifest_source": {
+    "code_repo": "string",
+    "target_revision": "string",
+    "path": "string"
+  },
+  "destination": "string"
 }
 ```
 
-<h3 id="deploymentruntime_getdeploymentruntime-responses">Responses</h3>
+<h3 id="getdeploymentruntime-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -138,9 +105,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Deploymentruntime_SaveDeploymentRuntime
+## SaveDeploymentRuntime
 
-<a id="opIdDeploymentruntime_SaveDeploymentRuntime"></a>
+<a id="opIdSaveDeploymentRuntime"></a>
 
 `POST /api/v1/products/{product_name}/deploymentruntimes/{deploymentruntime_name}`
 
@@ -148,19 +115,19 @@ BearerAuth
 
 ```json
 {
-  "destination": "string",
-  "manifest_source": {
-    "code_repo": "string",
-    "path": "string",
-    "target_revision": "string"
-  },
   "projects_ref": [
     "string"
-  ]
+  ],
+  "manifest_source": {
+    "code_repo": "string",
+    "target_revision": "string",
+    "path": "string"
+  },
+  "destination": "string"
 }
 ```
 
-<h3 id="deploymentruntime_savedeploymentruntime-parameters">Parameters</h3>
+<h3 id="savedeploymentruntime-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -179,11 +146,46 @@ BearerAuth
 }
 ```
 
-<h3 id="deploymentruntime_savedeploymentruntime-responses">Responses</h3>
+<h3 id="savedeploymentruntime-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.deploymentruntime.v1.SaveReply](#schemaapi.deploymentruntime.v1.savereply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteDeploymentRuntime
+
+<a id="opIdDeleteDeploymentRuntime"></a>
+
+`DELETE /api/v1/products/{product_name}/deploymentruntimes/{deploymentruntime_name}`
+
+<h3 id="deletedeploymentruntime-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|product_name|path|string|true|ProductName is the name of the product.|
+|deploymentruntime_name|path|string|true|DeploymentRuntimeName is the name of the Deployment Runtime.|
+|insecure_skip_check|query|boolean|false|InsecureSkipCheck specifies whether to skip security checks.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deletedeploymentruntime-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.deploymentruntime.v1.DeleteReply](#schemaapi.deploymentruntime.v1.deletereply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -223,17 +225,17 @@ Represents a response to a DeleteRequest message.
 
 ```json
 {
-  "destination": "string",
-  "manifest_source": {
-    "code_repo": "string",
-    "path": "string",
-    "target_revision": "string"
-  },
-  "name": "string",
   "product": "string",
+  "name": "string",
   "projects_ref": [
     "string"
-  ]
+  ],
+  "manifest_source": {
+    "code_repo": "string",
+    "target_revision": "string",
+    "path": "string"
+  },
+  "destination": "string"
 }
 
 ```
@@ -244,11 +246,11 @@ GetReply is a message that returns a Deployment Runtime.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|destination|string|false|none|Destination is the destination for the deployment.|
-|manifest_source|[api.deploymentruntime.v1.ManifestSource](#schemaapi.deploymentruntime.v1.manifestsource)|false|none|ManifestSource is a message representing the source of the deployment manifest.|
-|name|string|false|none|Name is the name of the Deployment Runtime.|
 |product|string|false|none|Product is the name of the product.|
+|name|string|false|none|Name is the name of the Deployment Runtime.|
 |projects_ref|[string]|false|none|ProjectsRef is a list of project references.|
+|manifest_source|[api.deploymentruntime.v1.ManifestSource](#schemaapi.deploymentruntime.v1.manifestsource)|false|none|ManifestSource is a message representing the source of the deployment manifest.|
+|destination|string|false|none|Destination is the destination for the deployment.|
 
 <h2 id="tocS_api.deploymentruntime.v1.ListsReply">api.deploymentruntime.v1.ListsReply</h2>
 <!-- backwards compatibility -->
@@ -261,17 +263,17 @@ GetReply is a message that returns a Deployment Runtime.
 {
   "items": [
     {
-      "destination": "string",
-      "manifest_source": {
-        "code_repo": "string",
-        "path": "string",
-        "target_revision": "string"
-      },
-      "name": "string",
       "product": "string",
+      "name": "string",
       "projects_ref": [
         "string"
-      ]
+      ],
+      "manifest_source": {
+        "code_repo": "string",
+        "target_revision": "string",
+        "path": "string"
+      },
+      "destination": "string"
     }
   ]
 }
@@ -296,8 +298,8 @@ ListsReply is a message that returns a list of Deployment Runtimes.
 ```json
 {
   "code_repo": "string",
-  "path": "string",
-  "target_revision": "string"
+  "target_revision": "string",
+  "path": "string"
 }
 
 ```
@@ -309,8 +311,8 @@ ManifestSource is a message representing the source of the deployment manifest.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |code_repo|string|false|none|CodeRepo specifies the code repository of the git platform.|
-|path|string|false|none|Path is the deploy the specified path.|
 |target_revision|string|false|none|TargetRevision is the corresponding code repository revision, eg: main.|
+|path|string|false|none|Path is the deploy the specified path.|
 
 <h2 id="tocS_api.deploymentruntime.v1.SaveReply">api.deploymentruntime.v1.SaveReply</h2>
 <!-- backwards compatibility -->
@@ -343,15 +345,15 @@ SaveReply is a message that confirms a Deployment Runtime has been saved.
 
 ```json
 {
-  "destination": "string",
-  "manifest_source": {
-    "code_repo": "string",
-    "path": "string",
-    "target_revision": "string"
-  },
   "projects_ref": [
     "string"
-  ]
+  ],
+  "manifest_source": {
+    "code_repo": "string",
+    "target_revision": "string",
+    "path": "string"
+  },
+  "destination": "string"
 }
 
 ```
@@ -362,7 +364,7 @@ Body is the message body.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|destination|string|false|none|Destination is the destination for the deployment.|
-|manifest_source|[api.deploymentruntime.v1.ManifestSource](#schemaapi.deploymentruntime.v1.manifestsource)|false|none|ManifestSource is a message representing the source of the deployment manifest.|
 |projects_ref|[string]|false|none|ProjectsRef is a list of project references.|
+|manifest_source|[api.deploymentruntime.v1.ManifestSource](#schemaapi.deploymentruntime.v1.manifestsource)|false|none|ManifestSource is a message representing the source of the deployment manifest.|
+|destination|string|false|none|Destination is the destination for the deployment.|
 

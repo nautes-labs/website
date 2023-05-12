@@ -6,19 +6,21 @@ title: Environment
 
 <h1 id="environment-api">Environment API v0.3.0</h1>
 
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
+
 # Authentication
 
-- HTTP Authentication, scheme: bearer 
+- HTTP Authentication, scheme: Bearer 
 
 <h1 id="environment-api-environment">Environment</h1>
 
-## Environment_ListEnvironments
+## ListEnvironments
 
-<a id="opIdEnvironment_ListEnvironments"></a>
+<a id="opIdListEnvironments"></a>
 
 `GET /api/v1/products/{product_name}/environments`
 
-<h3 id="environment_listenvironments-parameters">Parameters</h3>
+<h3 id="listenvironments-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -32,16 +34,16 @@ title: Environment
 {
   "items": [
     {
-      "cluster": "string",
-      "env_type": "string",
+      "product": "string",
       "name": "string",
-      "product": "string"
+      "cluster": "string",
+      "env_type": "string"
     }
   ]
 }
 ```
 
-<h3 id="environment_listenvironments-responses">Responses</h3>
+<h3 id="listenvironments-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -52,13 +54,13 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Environment_GetEnvironment
+## GetEnvironment
 
-<a id="opIdEnvironment_GetEnvironment"></a>
+<a id="opIdGetEnvironment"></a>
 
 `GET /api/v1/products/{product_name}/environments/{enviroment_name}`
 
-<h3 id="environment_getenvironment-parameters">Parameters</h3>
+<h3 id="getenvironment-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -71,14 +73,14 @@ BearerAuth
 
 ```json
 {
-  "cluster": "string",
-  "env_type": "string",
+  "product": "string",
   "name": "string",
-  "product": "string"
+  "cluster": "string",
+  "env_type": "string"
 }
 ```
 
-<h3 id="environment_getenvironment-responses">Responses</h3>
+<h3 id="getenvironment-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -89,44 +91,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BearerAuth
 </aside>
 
-## Environment_DeleteEnvironment
+## SaveEnvironment
 
-<a id="opIdEnvironment_DeleteEnvironment"></a>
-
-`DELETE /api/v1/products/{product_name}/environments/{environment_name}`
-
-<h3 id="environment_deleteenvironment-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|product_name|path|string|true|The name of the product|
-|environment_name|path|string|true|The name of the environment to delete|
-|insecure_skip_check|query|boolean|false|Whether to skip security checks (not recommended)|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "message": "string"
-}
-```
-
-<h3 id="environment_deleteenvironment-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.environment.v1.DeleteReply](#schemaapi.environment.v1.deletereply)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BearerAuth
-</aside>
-
-## Environment_SaveEnvironment
-
-<a id="opIdEnvironment_SaveEnvironment"></a>
+<a id="opIdSaveEnvironment"></a>
 
 `POST /api/v1/products/{product_name}/environments/{environment_name}`
 
@@ -139,7 +106,7 @@ BearerAuth
 }
 ```
 
-<h3 id="environment_saveenvironment-parameters">Parameters</h3>
+<h3 id="saveenvironment-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -158,11 +125,46 @@ BearerAuth
 }
 ```
 
-<h3 id="environment_saveenvironment-responses">Responses</h3>
+<h3 id="saveenvironment-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.environment.v1.SaveReply](#schemaapi.environment.v1.savereply)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
+</aside>
+
+## DeleteEnvironment
+
+<a id="opIdDeleteEnvironment"></a>
+
+`DELETE /api/v1/products/{product_name}/environments/{environment_name}`
+
+<h3 id="deleteenvironment-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|product_name|path|string|true|The name of the product|
+|environment_name|path|string|true|The name of the environment to delete|
+|insecure_skip_check|query|boolean|false|Whether to skip security checks (not recommended)|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="deleteenvironment-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.environment.v1.DeleteReply](#schemaapi.environment.v1.deletereply)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -202,10 +204,10 @@ Response for deleting an environment
 
 ```json
 {
-  "cluster": "string",
-  "env_type": "string",
+  "product": "string",
   "name": "string",
-  "product": "string"
+  "cluster": "string",
+  "env_type": "string"
 }
 
 ```
@@ -216,10 +218,10 @@ Response for getting environment information
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
+|product|string|false|none|The product name|
+|name|string|false|none|The environment name|
 |cluster|string|false|none|The name of the cluster that the environment belongs to|
 |env_type|string|false|none|The type of environment, such as "production" or "staging"|
-|name|string|false|none|The environment name|
-|product|string|false|none|The product name|
 
 <h2 id="tocS_api.environment.v1.ListsReply">api.environment.v1.ListsReply</h2>
 <!-- backwards compatibility -->
@@ -232,10 +234,10 @@ Response for getting environment information
 {
   "items": [
     {
-      "cluster": "string",
-      "env_type": "string",
+      "product": "string",
       "name": "string",
-      "product": "string"
+      "cluster": "string",
+      "env_type": "string"
     }
   ]
 }
