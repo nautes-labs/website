@@ -27,7 +27,7 @@ The tenant configuration repository uses independent Git repository and secret v
 
 ### User Product Repository
 
-The user product repository is used to store the configuration declarations of user product definitions, including products, projects, environments, artifact repositories, code repositories, permission, runtime, and secret data.
+The user product repository is used to store the configuration declarations of user product definitions, including products, projects, environments, artifact repositories, code repositories, permissions, runtimes, and secret data.
 
 The user product repository shares a secret vault with the tenant configuration repository for storing secret data, while other data is stored in an independent Git repository, which is unique within a product.
 
