@@ -80,7 +80,7 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "worker"
-  # 流水线运行时
+  # 运行时类型：流水线运行时
   workerType: "pipeline"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
@@ -246,7 +246,7 @@ spec:
   clusterType: "virtual"
   # 集群用途：host或worker
   usage: "worker"
-  # 流水线运行时
+  # 运行时类型：流水线运行时
   workerType: "pipeline"
   # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
   hostCluster: "$host-cluster"
