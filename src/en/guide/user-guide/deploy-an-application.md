@@ -330,7 +330,7 @@ spec:
   product: demo-$suffix
   language: golang
 ---
-# CodeRepo
+# CodeRepo: the repository is used to store Kubernetes Manifests.
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
@@ -477,13 +477,13 @@ spec:
       ...
 ```
 
-3. Access [GitLab](installation.md#check-the-installation-results) and configure the GitLab account to have permission for force-push code to the main branch. For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+3. Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [product's code repository](#prepare-runtime-environment), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
 4. Push the Kubernetes Manifests to the product's code repository.
 
 ```Shell
-# Replace the variable $deployment-manifest-repo with the code repository storing the Kubernetes Manifests.
-git remote set-url origin $deployment-manifest-repo
+# Change the URL of the origin remote repository, the repository URL below are only examples.
+git remote set-url origin git@github.com:demo-0412/coderepo-demo-0412.git
 # Push the Kubernetes Manifests to the product's code repository.
 git add .
 git commit -m 'submit the kubernetes manifests.'

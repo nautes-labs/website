@@ -328,7 +328,7 @@ spec:
   product: demo-$suffix
   language: golang
 ---
-# 代码库
+# 代码库: 用于存储 Kubernetes 资源清单
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
@@ -475,13 +475,13 @@ spec:
       ...
 ```
 
-3. 访问 [GitLab](installation.md#查看安装结果)，设置 GitLab 账号有向 main 分支强制推送代码的权限，详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+3. 访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[产品代码库](#准备运行环境) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 4. 推送 Kubernetes 资源清单至产品的代码库。
 
 ```Shell
-# 替换变量 $deployment-manifest-repo 为存储 Kubernetes 资源清单的代码库
-git remote set-url origin $deployment-manifest-repo
+# 更改 origin 远程仓库的 URL，以下仓库地址仅为示例
+git remote set-url origin git@github.com:demo-0412/coderepo-demo-0412.git
 # 推送 Kubernetes 资源清单至产品的代码库
 git add .
 git commit -m '提交 Kubernetes 资源清单'
