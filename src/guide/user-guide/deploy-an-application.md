@@ -52,13 +52,14 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 
 ### 注册物理集群
 
-1. 将命令行程序的代码库克隆到本地。
+将命令行程序的代码库克隆到本地。
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`cluster_ip` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-deployment.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
+
 ```Shell
 # 查看物理集群的 kubeconfig
 cat ${HOME}/.kube/config
@@ -79,8 +80,12 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "worker"
-  # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为集群IP
-  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io",
+  # 运行时类型：部署运行时
+  workerType: "deployment"
+  # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+  primaryDomain: "$cluster-ip.nip.io"
+  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
+  argocdHost: "argocd.host-worker-$suffix.$cluster-ip.nip.io",
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -96,12 +101,14 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-worker-aliyun-0412"
+  name: "host-worker-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
-  argocdHost: "argocd.host-worker-aliyun-0412.8.217.50.114.nip.io"
+  workerType: "deployment"
+  primaryDomain: "8.217.50.114.nip.io"
+  argocdHost: "argocd.host-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -127,26 +134,26 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令以注册物理集群。
 
 ```Shell
-# examples/demo-cluster-physical-worker.yaml 指在代码库中模板文件的相对路径
+# examples/demo-cluster-physical-worker-deployment.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
-nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ### 注册虚拟集群
 
 注册虚拟集群时需要先将物理集群注册为宿主集群，再在宿主集群上注册虚拟集群。
 
-1. 将命令行程序的代码库克隆到本地。
+将命令行程序的代码库克隆到本地。
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
 
 ```Shell
 # 查看宿主集群的 kubeconfig
@@ -183,7 +190,7 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-aliyun-114"
+  name: "host-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
@@ -213,7 +220,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -222,7 +229,7 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-4. 替换位于相对路径 `examples/demo-cluster-virtual-worker.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-deployment.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
 
 ```yaml
 # 虚拟集群
@@ -231,7 +238,7 @@ kind: Cluster
 spec:
   # 集群名称
   name: "vcluster-$suffix"
-  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的 IP，$api-server-port 指虚拟集群的 API Server 端口
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
   clusterKind: "kubernetes"
@@ -239,10 +246,14 @@ spec:
   clusterType: "virtual"
   # 集群用途：host或worker
   usage: "worker"
+  # 运行时类型：部署运行时
+  workerType: "deployment"
   # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
   hostCluster: "$host-cluster"
-  # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为宿主集群IP
-  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io",
+  # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
+  primaryDomain: "$cluster-ip.nip.io"
+  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
+  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
@@ -255,24 +266,26 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "vcluster-aliyun-0412"
+  name: "vcluster-aliyun"
   apiServer: "https://8.217.50.114:31456"
   clusterKind: "kubernetes"
   clusterType: "virtual"
   usage: "worker"
-  hostCluster: "host-aliyun-114"
-  argocdHost: "argocd.vcluster-aliyun-0412.8.217.50.114.nip.io"
+  workerType: "deployment"
+  hostCluster: "host-aliyun"
+  primaryDomain: "8.217.50.114.nip.io"
+  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
 ```
 
-5. 执行以下命令，将注册该虚拟集群。
+执行以下命令，将注册该虚拟集群。
 
 ```Shell
-# examples/demo-cluster-virtual-worker.yaml 指在代码库中模板文件的相对路径
+# examples/demo-cluster-virtual-worker-deployment.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
-nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## 准备运行环境
@@ -281,13 +294,13 @@ nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-toke
 
 下文将描述通过命令行提交创建运行环境的相关实体，包括产品、项目、代码库、环境以及部署运行时等。
 
-1. 将命令行程序的代码库克隆到本地。
+将命令行程序的代码库克隆到本地。
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. 替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
 
 ```yaml
 # 产品
@@ -305,19 +318,6 @@ spec:
       description: demo-$suffix
       parentID: 0
 ---
-# 环境
-apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: Environment
-spec:
-  # 环镜名称
-  name: env-demo-$suffix
-  # 环境的所属产品
-  product: demo-$suffix
-  # 环境关联的运行时集群
-  cluster: $runtime-cluster
-  # 环境类型
-  envType: dev
----
 # 项目
 apiVersion: "nautes.resource.nautes.io/v1alpha1"
 kind: Project
@@ -328,15 +328,15 @@ spec:
   product: demo-$suffix
   language: golang
 ---
-# 代码库: 用于存储 Kubernetes 资源清单
+# 源码库
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
   # 代码库名称
-  name: coderepo-demo-$suffix
+  name: coderepo-sc-demo-$suffix
   codeRepoProvider: gitlab
-  deploymentRuntime: true
-  pipelineRuntime: false
+  deploymentRuntime: false
+  pipelineRuntime: true
   # 代码库的所属产品
   product: demo-$suffix
   # 代码库的所属项目
@@ -347,12 +347,127 @@ spec:
   git:
     gitlab:
       # 代码库的名称
-      name: coderepo-demo-$suffix
+      name: coderepo-sc-demo-$suffix
       # 代码库的路径
-      path: coderepo-demo-$suffix 
+      path: coderepo-sc-demo-$suffix 
       # 代码库的可见性，例如：private、public
       visibility: private
-      description: coderepo-demo-$suffix 
+      description: coderepo-sc-demo-$suffix
+---
+# 部署配置库
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  # 代码库名称
+  name: coderepo-deploy-sc-demo-$suffix
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  # 代码库的所属产品
+  product: demo-$suffix
+  webhook:
+    events: ["push_events"]
+    isolation: shared
+  git:
+    gitlab:
+      # 代码库的名称
+      name: coderepo-deploy-demo-$suffix
+      # 代码库的路径
+      path: coderepo-deploy-demo-$suffix 
+      # 代码库的可见性，例如：private、public
+      visibility: private
+      description: coderepo-deploy-demo-$suffix
+```
+
+替换变量后的文件示例如下：
+```yaml
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: Product
+spec:
+  name: demo-quickstart
+  git:
+    gitlab:
+      name: demo-quickstart
+      path: demo-quickstart
+      visibility: private
+      description: demo-quickstart
+      parentID: 0
+---
+apiVersion: "nautes.resource.nautes.io/v1alpha1"
+kind: Project
+spec:
+  name: project-demo-quickstart
+  product: demo-quickstart
+  language: golang
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-sc-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  project: project-demo-quickstart
+  webhook:
+    events: ["push_events"]
+    isolation: shared
+  git:
+    gitlab:
+      name: coderepo-sc-demo-quickstart
+      path: coderepo-sc-demo-quickstart 
+      visibility: private
+      description: coderepo-sc-demo-quickstart
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-deploy-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  webhook:
+    events: ["push_events"]
+    isolation: shared
+  git:
+    gitlab:
+      name: coderepo-deploy-demo-quickstart
+      path: coderepo-deploy-demo-quickstart 
+      visibility: private
+      description: coderepo-deploy-demo-quickstart
+```
+
+替换位于相对路径 `examples/demo-deployment.yaml` 下模板的变量，包括 `$suffix`、`$deployment-runtime-cluster`。
+
+```yaml
+---
+# 测试环境
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: Environment
+spec:
+  # 环镜名称
+  name: env-test-demo-$suffix
+  # 环境的所属产品
+  product: demo-$suffix
+  # 环境关联的运行时集群
+  cluster: $deployment-runtime-cluster
+  # 环境类型
+  envType: test
+---
+# 部署配置库授权给部署运行时
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepoBinding
+spec:
+  # 代码库的所属产品
+  productName: demo-$suffix
+  name: coderepobinding-deploy-dr-demo-$suffix
+  # 被授权的代码库
+  coderepo: coderepo-deploy-demo-$suffix
+  # 授权给产品
+  product: demo-$suffix
+  # 授予的权限：readonly, readwrite
+  permissions: readonly
 ---
 # 部署运行时
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -361,10 +476,10 @@ spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
   # 承载部署运行时的环境
-  destination: env-demo-$suffix
+  destination: env-test-demo-$suffix
   manifestsource:
     # 部署运行时监听的代码库
-    codeRepo: coderepo-demo-$suffix
+    codeRepo: coderepo-deploy-demo-$suffix
     # 部署运行时监听的代码库的相对路径
     path: deployments/test
     # 部署运行时监听的代码库版本或代码库分支
@@ -376,77 +491,51 @@ spec:
     - project-demo-$suffix
 ```
 
-替换变量后的运行环境属性示例如下：
-> 如果运行环境的负载集群类型为物理集群，需要将 Environment 资源的 `spec.cluster` 设置为对应的[物理集群名称](#注册物理集群)。如果运行环境的负载集群类型为虚拟集群，需要将 Environment 资源的 `spec.cluster` 设置为相应的[虚拟集群名称](#注册虚拟集群)。 
+替换变量后的文件示例如下：
+
+> 您需要根据在上一章节选择的集群类型，将 Environment 资源的 `spec.cluster` 设置为的[物理集群名称](#注册物理集群)或[虚拟集群名称](#注册虚拟集群)。
 
 ```yaml
-apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: Product
-spec:
-  name: demo-0412
-  git:
-    gitlab:
-      name: demo-0412
-      path: demo-0412
-      visibility: private
-      description: demo-0412
-      parentID: 0
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
-  name: env-demo-0412
-  product: demo-0412
-  cluster: vcluster-aliyun-0412
-  envType: dev
----
-apiVersion: "nautes.resource.nautes.io/v1alpha1"
-kind: Project
-spec:
-  name: project-demo-0412
-  product: demo-0412
-  language: golang
+  name: env-test-demo-quickstart
+  product: demo-quickstart
+  cluster: vcluster-aliyun
+  envType: test
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: CodeRepo
+kind: CodeRepoBinding
 spec:
-  name: coderepo-demo-0412
-  codeRepoProvider: gitlab
-  deploymentRuntime: true
-  pipelineRuntime: false
-  product: demo-0412
-  project: project-demo-0412
-  webhook:
-    events: ["push_events"]
-    isolation: shared
-  git:
-    gitlab:
-      name: coderepo-demo-0412
-      path: coderepo-demo-0412 
-      visibility: private
-      description: coderepo-demo-0412 
+  productName: demo-quickstart
+  name: coderepobinding-deploy-dr-demo-quickstart
+  coderepo: coderepo-deploy-demo-quickstart
+  product: demo-quickstart
+  permissions: readonly
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
-  name: dr-demo-0412
-  destination: env-demo-0412
+  name: dr-demo-quickstart
+  destination: env-test-demo-quickstart
   manifestsource:
-    codeRepo: coderepo-demo-0412
+    codeRepo: coderepo-deploy-demo-quickstart
     path: deployments/test
     targetRevision: main
-  product: demo-0412
+  product: demo-quickstart
   projectsRef:
-    - project-demo-0412
+    - project-demo-quickstart
 ```
 
-3. 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备运行环境 。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备运行环境 。
 
 ```Shell
-# examples/demo-product.yaml 指在代码库中模板文件的相对路径
+# examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## 部署
@@ -456,10 +545,10 @@ nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-serve
 1. 克隆部署示例的代码库到本地。
 
 ```Shell
-git clone https://github.com/lanbingcloud/demo-user-deployments.git
+git clone https://github.com/nautes-examples/user-deployment.git
 ```
 
-2. 修改本地代码库中 Ingress 资源的域名：/deployment/test/devops-sample-svc.yaml
+2. 修改本地代码库中 Ingress 资源的域名：deployment/test/devops-sample-svc.yaml
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -475,14 +564,13 @@ spec:
       ...
 ```
 
-3. 访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[产品代码库](#准备运行环境) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+3. 访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#准备运行环境) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 4. 推送 Kubernetes 资源清单至产品的代码库。
 
 ```Shell
-# 更改 origin 远程仓库的 URL，以下仓库地址仅为示例
-git remote set-url origin git@github.com:demo-0412/coderepo-demo-0412.git
-# 推送 Kubernetes 资源清单至产品的代码库
+# 更改 origin 远程仓库为部署配置库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-deploy-demo-quickstart.git
 git add .
 git commit -m '提交 Kubernetes 资源清单'
 git push origin main -f
