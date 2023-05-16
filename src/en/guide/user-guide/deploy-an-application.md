@@ -477,7 +477,7 @@ spec:
       ...
 ```
 
-3. Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [product repository](#prepare-runtime-environment), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+3. Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [product's code repository](#prepare-runtime-environment), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
 4. Push the Kubernetes Manifests to the product's code repository.
 
