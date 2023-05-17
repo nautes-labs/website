@@ -4,12 +4,17 @@ title: Main Process
 ---
 # Main Process
 
-This document describes the main process of deploying an application, including the following steps:  
-[Installation](#installation)  
-[Register Runtime Cluster](#register-runtime-cluster)  
-[Prepare Runtime Environment](#prepare-runtime-environment)  
-[Deployment](#deployment)  
-[View Deployment Results](#view-deployment-results)  
+This document describes the main process of deploying an application, including the following steps:
+
+[Installation](#installation)
+
+[Register Runtime Cluster](#register-runtime-cluster)
+
+[Prepare Runtime Environment](#prepare-runtime-environment)
+
+[Deployment](#deployment)
+
+[View Deployment Results](#view-deployment-results)
 
 The main process is shown in the following diagram:
 
