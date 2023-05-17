@@ -4,15 +4,15 @@ title: 清理环境
 ---
 # 清理环境
 
-本文档描述了如何清理掉在[部署一个应用](deploy-an-application.md)章节中创建的所有资源、数据和环境。
+本文档描述了如何清理掉在[执行流水线](run-a-pipeline.md)和[部署一个应用](deploy-an-application.md)章节中创建的所有资源、数据和环境。
 
 > 清理过程将删除应用相关的代码库，这会导致应用的所有版本记录被清空且无法恢复。请确保待清理的环境是可以被彻底删除或已做好备份。
 
 ## 前提条件
 
-### 部署应用
+### 执行流水线或部署应用
 
-请确保运行时集群中成功部署了一个应用。
+请确保已经在运行时集群中成功运行过流水线或部署了一个应用。
 
 ### 注册 GitLab 账号
 
@@ -24,7 +24,11 @@ title: 清理环境
 
 ## 删除运行环境
 
-删除运行环境的相关实体，包括部署运行时、代码库、环境、项目和产品。
+您需要根据在前面章节执行过的具体操作来选择删除环境的类型。
+
+### 删除流水线环境
+
+删除流水线运行环境的相关实体，包括流水线运行时、代码库、代码库权限、环境、项目和产品。
 
 将命令行程序的代码库克隆到本地。
 
@@ -32,18 +36,51 @@ title: 清理环境
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+替换位于相对路径 `examples/demo-pipeline.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$pipeline-runtime-cluster`。
+
+替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`。
+
 > 运行环境属性模板的注释和示例，详情参考 [准备运行环境](deploy-an-application.md#准备运行环境)。
 
 下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品的运行环境。
 
 ```Shell
+# examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes remove -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+### 删除部署环境
+
+删除部署运行环境的相关实体，包括部署运行时、代码库、代码库权限、环境、项目和产品。
+
+将命令行程序的代码库克隆到本地。
+
+```Shell
+git clone https://github.com/nautes-labs/cli.git
+```
+
+替换位于相对路径 `examples/demo-deployment.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$deployment-runtime-cluster`。
+
+替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`。
+
+> 运行环境属性模板的注释和示例，详情参考 [准备运行环境](deploy-an-application.md#准备运行环境)。
+
+下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品的运行环境。
+
+```Shell
+# examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes remove -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
 nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## 删除运行时集群
 
-请您根据所注册的运行时集群的形态选择具体的删除步骤。
+请您根据所注册的运行时集群的形态和用途选择具体的删除步骤。
 
 ### 删除物理集群
 
@@ -55,13 +92,20 @@ nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-serv
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-physical-worker.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 或 `examples/demo-cluster-physical-worker-deployment.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+
 > 物理集群属性模板的注释和示例，详情参考 [注册物理集群](deploy-an-application.md#注册物理集群)。
 
 下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以删除物理集群。
 
 ```Shell
-nautes remove -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+或
+
+```Shell
+nautes remove -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ### 删除虚拟集群
@@ -74,17 +118,25 @@ nautes remove -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-to
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-virtual-worker.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
-> 虚拟集群属性模板的注释和示例，详情参考 [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 的第4步。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 或 `examples/demo-cluster-virtual-worker-deployment.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+
+> 虚拟集群属性模板的注释和示例，详情参考 [注册虚拟集群](deploy-an-application.md#注册虚拟集群)。
 
 下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，将删除虚拟集群。
 
 ```Shell
-nautes remove -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+或
+
+```Shell
+nautes remove -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
-> 宿主集群属性模板的注释和示例，详情参考 [注册虚拟集群](deploy-an-application.md#注册虚拟集群) 的第2步。
+
+> 宿主集群属性模板的注释和示例，详情参考 [注册虚拟集群](deploy-an-application.md#注册虚拟集群)。
 
 执行以下命令，以删除宿主集群。
 

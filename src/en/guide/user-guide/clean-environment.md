@@ -10,9 +10,9 @@ This document describes the process of cleaning up all resources, data, and envi
 
 ## Prerequisites
 
-### Deploy an Application
+### Run a Pipeline or Deploy an Application
 
-Please ensure that an application has been successfully deployed in the runtime cluster.
+Please ensure that you have successfully completed running a pipeline or deploying an application in the runtime cluster.
 
 ### Register a GitLab Account
 
@@ -24,7 +24,11 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 ## Delete Runtime Environment
 
-Delete the relevant entities of the runtime environment, including a deployment runtime, a code repository, an environment, a project, and a product.
+Please choose the specific deletion steps according to the type of environment based on the specific actions performed in the previous sections.
+
+### Delete Pipeline Runtime Environment
+
+Delete the relevant entities of the pipeline runtime environment, including a pipeline runtime, a code repository, code repository permissions, an environment, a project, and a product.
 
 Clone the command-line repository to your local machine.
 
@@ -32,22 +36,51 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`, `$runtime-cluster`.
+Replace the variables in the runtime environment property template located at the relative path `examples/demo-pipeline.yaml`, including `$suffix`, `$pipeline-runtime-cluster`.
+
+Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
 > For comments and examples of the runtime environment property template, refer to [Prepare Runtime Environment](deploy-an-application.md#prepare-runtime-environment).
 
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product's runtime environment.
 
 ```Shell
-# examples/demo-product.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
+nautes remove -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+### Delete Deployment Runtime Environment
+
+Delete the relevant entities of the deployment runtime environment, including a deployment runtime, a code repository, code repository permissions, an environment, a project, and a product.
+
+Clone the command-line repository to your local machine.
+
+```Shell
+git clone https://github.com/nautes-labs/cli.git
+```
+
+Replace the variables in the runtime environment property template located at the relative path `examples/demo-deployment.yaml`, including `$suffix`, `$deployment-runtime-cluster`.
+
+Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
+
+> For comments and examples of the runtime environment property template, refer to [Prepare Runtime Environment](deploy-an-application.md#prepare-runtime-environment).
+
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product's runtime environment.
+
+```Shell
+# examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
+nautes remove -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
 nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## Delete Runtime Cluster
 
-Please choose the specific deletion steps according to the type of runtime cluster you registered.
+Please choose the specific deletion steps according to the type and usage of runtime cluster you registered.
 
 ### Delete Physical Cluster
 
@@ -59,14 +92,20 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker-pipeline.yaml` or `examples/demo-cluster-physical-worker-deployment.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
 
 > For comments and examples of the physical cluster property template,  refer to  [Register Physical Cluster](deploy-an-application.md#register-physical-cluster).
 
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the physical cluster.
 
 ```Shell
-nautes remove -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+or
+
+```Shell
+nautes remove -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ### Delete Virtual Cluster
@@ -79,19 +118,25 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker.yaml`, including `$suffix`, `$api-server`, `$host-cluster`, and `$api-server-port`.
+Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-pipeline.yaml` or `examples/demo-cluster-virtual-worker-deployment.yaml`, including `$suffix`, `$api-server`, `$host-cluster`, and `$api-server-port`.
 
-> For comments and examples of the virtual cluster property template, refer to step 4 of [Register Virtual Cluster](deploy-an-application.md#register-runtime-cluster).
+> For comments and examples of the virtual cluster property template, refer to [Register Virtual Cluster](deploy-an-application.md#register-runtime-cluster).
 
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to destroy the virtual cluster.
 
 ```Shell
-nautes remove -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes remove -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
+```
+
+or
+
+```Shell
+nautes remove -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
 
-> For comments and examples of the host cluster property template, refer to step 2 of [Register Virtual Cluster](deploy-an-application.md#register-runtime-cluster).
+> For comments and examples of the host cluster property template, refer to [Register Virtual Cluster](deploy-an-application.md#register-runtime-cluster).
 
 Run the following command to clean up the host cluster.
 
