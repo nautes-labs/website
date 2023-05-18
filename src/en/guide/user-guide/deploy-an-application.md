@@ -45,11 +45,11 @@ Using Alibaba Cloud as an example, this section describes the process of deployi
 
 ## Register Runtime Cluster
 
-Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can function as a runtime environment for hosting applications.
+Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can host the runtime of applications.
 
 The supported cluster types include physical clusters and virtual clusters.
 
-When higher performance, isolation, and reliability are required for your application's runtime environment, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
+When higher performance, isolation, and reliability are required for your runtime of applications, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
 
 ### Register Physical Cluster
 
@@ -181,11 +181,11 @@ spec:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster
-  kubeconfig: |
+  kubeconfig:
     "$kubeconfig"
 ```
 
-The host cluster property example after replacing the variables is shown below: 
+The host cluster property example after replacing the variables is shown below:
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -261,7 +261,7 @@ spec:
     httpsNodePort: "$api-server-port"
 ```
 
-The virtual cluster property example after replacing the variables is shown below: 
+The virtual cluster property example after replacing the variables is shown below:
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -289,11 +289,11 @@ Run the following command to register the virtual cluster.
 nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-## Prepare Runtime Environment
+## Initialize a Product
 
-Preparing the runtime environment refers to initializing a basic environment for deploying a product in the runtime cluster, including resources such as namespaces, serviceAccounts, secrets, etc.
+Initializing the product refers to creating various entities in the Nautes product model, and initializing a set of resources for executing automated deployment in the runtime cluster, including namespace, serviceaccount, secret, and argocd related resources, etc.
 
-The following sections describe the entities related to creating a runtime environment through the command-line, including a product, a project, a code repository, an environment, and a deployment runtime.
+The following sections describe the entities related to initializing the product through the command-line, including a product, a project, a code repository, an authorization, an environment, and a deployment runtime.
 
 Clone the command-line repository to your local machine.
 
@@ -301,7 +301,7 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
+Replace the variables in the product property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
 ```yaml
 # Product
@@ -530,7 +530,7 @@ spec:
     - project-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to prepare the runtime environment.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
@@ -541,15 +541,16 @@ nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-se
 ```
 
 ## Deployment
-Submit the Kubernetes Manifests to the deployment configuration repository, such as deployment, service, and other resources. 
 
-1. Clone the sample example repository to your local machine.
+Submit the Kubernetes Manifests to the deployment configuration repository, such as deployment, service, and other resources.
+
+Clone the sample example repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-examples/user-deployment.git
 ```
 
-2. Modify the domain name of the Ingress resource in the local code repository: `deployment/test/devops-sample-svc.yaml`
+Modify the domain name of the Ingress resource in the local code repository: `deployment/test/devops-sample-svc.yaml`
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -565,9 +566,9 @@ spec:
       ...
 ```
 
-3. Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [deployment configuration repository](#prepare-runtime-environment), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [deployment configuration repository](#initialize-a-product), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
-4. Push the Kubernetes Manifests to the deployment configuration repository.
+Push the Kubernetes Manifests to the deployment configuration repository.
 
 ```Shell
 # Change the URL of remote repository 'origin' to that of the deployment configuration repository, the repository URL below are only examples, replace $gitlab-url with the IP or domain of Gitlab.
@@ -582,16 +583,16 @@ git push origin main -f
 
 After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport`.
 
-> Replace the $cluster-ip variable with the public IP of the cluster hosting the runtime environment.
+> Replace the $cluster-ip variable with the public IP of the runtime cluster.
 >
-> Replace the $traefik-httpnodeport variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
+> Replace the $traefik-httpnodeport variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
-Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only. 
+Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only.
 
 Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console.
 
-> Replace the $argocdHost variable with the argocdHost address of the cluster hosting the runtime environment. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
