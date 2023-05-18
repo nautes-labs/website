@@ -22,13 +22,13 @@ Please ensure that you have a Nautes GitLab account. For more information, refer
 
 If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
 
-## Delete Runtime Environment
+## Delete Runtime
 
-Please choose the specific deletion steps according to the type of environment based on the specific actions performed in the previous sections.
+Please choose the specific deletion steps according to the type of runtime based on the specific actions performed in the previous sections.
 
-### Delete Pipeline Runtime Environment
+### Delete Pipeline Runtime
 
-Delete the relevant entities of the pipeline runtime environment, including a pipeline runtime, a code repository, code repository permissions, an environment, a project, and a product.
+Delete the related entities of the pipeline runtime, including a pipeline runtime, a code repository, code repository permissions, an environment, a project, and a product.
 
 Clone the command-line repository to your local machine.
 
@@ -36,13 +36,13 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-pipeline.yaml`, including `$suffix`, `$pipeline-runtime-cluster`.
+Replace the variables in the pipeline runtime template located at the relative path `examples/demo-pipeline.yaml`, including `$suffix`, `$pipeline-runtime-cluster`.
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
+Replace the variables in the product template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
-> For comments and examples of the runtime environment property template, refer to [Prepare Runtime Environment](deploy-an-application.md#prepare-runtime-environment).
+> For comments and examples of the template, refer to [Initialize a Product](deploy-an-application.md#initialize-a-product).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product's runtime environment.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product and runtime.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -52,9 +52,9 @@ nautes remove -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-ser
 nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-### Delete Deployment Runtime Environment
+### Delete Deployment Runtime
 
-Delete the relevant entities of the deployment runtime environment, including a deployment runtime, a code repository, code repository permissions, an environment, a project, and a product.
+Delete the related entities of the deployment runtime, including a deployment runtime, a code repository, code repository permissions, an environment, a project, and a product.
 
 Clone the command-line repository to your local machine.
 
@@ -62,13 +62,13 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-deployment.yaml`, including `$suffix`, `$deployment-runtime-cluster`.
+Replace the variables in the deployment runtime template located at the relative path `examples/demo-deployment.yaml`, including `$suffix`, `$deployment-runtime-cluster`.
 
-Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
+Replace the variables in the product template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
-> For comments and examples of the runtime environment property template, refer to [Prepare Runtime Environment](deploy-an-application.md#prepare-runtime-environment).
+> For comments and examples of th template, refer to [Initialize a Product](deploy-an-application.md#initialize-a-product).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product's runtime environment.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product and runtime.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.

@@ -22,13 +22,13 @@ title: 清理环境
 
 如果您想使用 https 协议访问 Nautes API Server，需要[导入证书](deploy-an-application.md#导入证书)。
 
-## 删除运行环境
+## 删除运行时
 
-您需要根据在前面章节执行过的具体操作来选择删除环境的类型。
+您需要根据在前面章节执行过的具体操作来选择删除运行时的类型。
 
-### 删除流水线环境
+### 删除流水线运行时
 
-删除流水线运行环境的相关实体，包括流水线运行时、代码库、代码库权限、环境、项目和产品。
+删除流水线运行时的相关实体，包括流水线运行时、代码库、代码库权限、环境、项目和产品。
 
 将命令行程序的代码库克隆到本地。
 
@@ -36,13 +36,13 @@ title: 清理环境
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-pipeline.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$pipeline-runtime-cluster`。
+替换位于相对路径 `examples/demo-pipeline.yaml` 下流水线运行时模板的变量，包括 `$suffix`，`$pipeline-runtime-cluster`。
 
-替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`。
+替换位于相对路径 `examples/demo-product.yaml` 下产品模板的变量，包括 `$suffix`。
 
-> 运行环境属性模板的注释和示例，详情参考 [准备运行环境](deploy-an-application.md#准备运行环境)。
+> 模板的注释和示例，详情参考 [初始化产品](deploy-an-application.md#初始化产品)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品的运行环境。
+下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品及运行时。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -52,9 +52,9 @@ nautes remove -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-ser
 nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-### 删除部署环境
+### 删除部署运行时
 
-删除部署运行环境的相关实体，包括部署运行时、代码库、代码库权限、环境、项目和产品。
+删除部署运行时的相关实体，包括部署运行时、代码库、代码库权限、环境、项目和产品。
 
 将命令行程序的代码库克隆到本地。
 
@@ -62,13 +62,13 @@ nautes remove -f examples/demo-product.yaml -t $gitlab-access-token -s $api-serv
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-deployment.yaml` 下运行环境属性模板的变量，包括 `$suffix`，`$deployment-runtime-cluster`。
+替换位于相对路径 `examples/demo-deployment.yaml` 下部署运行时模板的变量，包括 `$suffix`，`$deployment-runtime-cluster`。
 
-替换位于相对路径 `examples/demo-product.yaml` 下运行环境属性模板的变量，包括 `$suffix`。
+替换位于相对路径 `examples/demo-product.yaml` 下产品模板的变量，包括 `$suffix`。
 
-> 运行环境属性模板的注释和示例，详情参考 [准备运行环境](deploy-an-application.md#准备运行环境)。
+> 模板的注释和示例，详情参考 [初始化产品](deploy-an-application.md#初始化产品)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品的运行环境。
+下载 [命令行工具](https://github.com/nautes-labs/cli.git)，执行以下命令，以销毁产品及运行时。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
