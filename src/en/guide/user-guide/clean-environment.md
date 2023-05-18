@@ -4,7 +4,7 @@ title: Clean Up the Environment
 ---
 # Clean Up the Environment
 
-This document describes the process of cleaning up all resources, data, and environment created in the [Deploy an Application](deploy-an-application.md) section.
+This document describes the process of cleaning up all resources, data, and environment created in the [Run a Pipeline](#run-a-pipeline.md) and [Deploy an Application](deploy-an-application.md) sections.
 
 > The cleanup process will delete the application-related repository, which will result in all version records of the application being cleared and unrecoverable. Please ensure that the environment can be completely deleted or has been backed up.
 
@@ -45,7 +45,7 @@ Replace the variables in the product template located at the relative path `exam
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product and runtime.
 
 ```Shell
-# examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-product.yaml and examples/demo-pipeline.yaml refer to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
 nautes remove -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-server-address
@@ -71,7 +71,7 @@ Replace the variables in the product template located at the relative path `exam
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)  and run the following command to clean up the product and runtime.
 
 ```Shell
-# examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-product.yaml and examples/demo-deployment.yaml refer to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
 nautes remove -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
