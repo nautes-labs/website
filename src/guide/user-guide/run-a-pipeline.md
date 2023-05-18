@@ -176,6 +176,8 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "host"
+  # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+  primaryDomain: "$cluster-ip.nip.io"
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -196,6 +198,7 @@ spec:
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "host"
+  primaryDomain: "8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -289,11 +292,11 @@ spec:
 nautes apply -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-## 准备流水线环境
+## 初始化产品
 
-准备流水线环境是指在运行时集群中初始化一个用于执行流水线的基础环境，包括 namespace、serviceAccount、secret 等资源。
+初始化产品是指创建 Nautes 产品模型中的各个实体，并在运行时集群中初始化一套用于执行流水线的资源，包括 namespace、serviceaccount、secret、以及 argoevents 和 tekton 相关资源等。
 
-下文将描述通过命令行提交创建流水线环境的相关实体，包括产品、项目、代码库、代码库权限、环境以及流水线运行时等。
+下文将描述通过命令行初始化产品的相关实体，包括产品、项目、代码库、代码库权限、环境以及流水线运行时等。
 
 将命令行程序的代码库克隆到本地。
 
@@ -346,7 +349,6 @@ spec:
   project: project-demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # 代码库的名称
@@ -364,13 +366,12 @@ spec:
   # 代码库名称
   name: coderepo-deploy-demo-$suffix
   codeRepoProvider: gitlab
-  deploymentRuntime: false
-  pipelineRuntime: true
+  deploymentRuntime: true
+  pipelineRuntime: false
   # 代码库的所属产品
   product: demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # 代码库的名称
@@ -415,7 +416,6 @@ spec:
   project: project-demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-sc-demo-quickstart
@@ -428,12 +428,11 @@ kind: CodeRepo
 spec:
   name: coderepo-deploy-demo-quickstart
   codeRepoProvider: gitlab
-  deploymentRuntime: false
-  pipelineRuntime: true
+  deploymentRuntime: true
+  pipelineRuntime: false
   product: demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-deploy-demo-quickstart
@@ -493,23 +492,23 @@ spec:
     # 流水线名称
   - name: pipeline-dev-demo-$suffix
     # 流水线资源的标签
-    label: dev
+    label: main
     # 流水线配置文件的路径
-    path: pipelines/dev.yaml
+    path: pipelines/main.yaml
   # 承载部署运行时的环境
   destination: env-dev-demo-$suffix
   # 触发流水线的事件源
   eventSources:
     # 事件源名称
-    name: webhook
+  - name: webhook
     # gitlab 事件源
-  gitlab:
-    # 代码库名称
-    repoName: coderepo-sc-demo-$suffix
-    # 产生事件的代码库分支，"*"表示该事件源接收所有分支的事件
-    revision: *
-    # 该事件源接收的代码库的事件类型
-    events:
+    gitlab:
+      # 代码库名称
+      repoName: coderepo-sc-demo-$suffix
+      # 产生事件的代码库分支，"*"表示该事件源接收所有分支的事件
+      revision: main
+      # 该事件源接收的代码库的事件类型
+      events:
       - push_events
   # 流水线相关资源的隔离性定义，shared（默认）或 exclusive
   isolation: exclusive
@@ -555,15 +554,15 @@ spec:
   pipelineSource: coderepo-sc-demo-quickstart
   pipelines:
   - name: pipeline-dev-demo-quickstart
-    label: dev
-    path: pipelines/dev.yaml
+    label: main
+    path: pipelines/main.yaml
   destination: env-dev-demo-quickstart
   eventSources:
-    name: webhook
-  gitlab:
-    repoName: coderepo-sc-demo-quickstart
-    revision: *
-    events:
+  - name: webhook
+    gitlab:
+      repoName: coderepo-sc-demo-quickstart
+      revision: main
+      events:
       - push_events
   isolation: exclusive
   pipelineTriggers:
@@ -571,7 +570,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以准备流水线环境 。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.2.0)，执行以下命令，以初始化产品 。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -598,7 +597,7 @@ echo -n '$github-user:$github-token' | base64
 替换变量后使用 `kubectl` 命令在运行时集群上创建 Secret：
 
 ```shell
-# pipeline-runtime-name 指流水线运行时名称
+# pipeline-runtime-name 指流水线运行时名称，如：pr-demo-quickstart
 kubectl create secret generic registry-auth --from-file=.docker=examples/.docker -n $pipeline-runtime-name
 ```
 
@@ -630,7 +629,7 @@ spec:
       ...
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#准备流水线环境) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 推送 Kubernetes 资源清单至部署配置库。
 
@@ -650,7 +649,7 @@ git push origin main -f
 git clone https://github.com/nautes-examples/user-pipeline.git
 ```
 
-修改本代码库中流水线配置文件中的密钥信息：pipelines/main.yaml，替换其中的变量，包括：
+替换本代码库中流水线配置文件 `pipelines/main.yaml` 中变量，包括：
 
 **$pipeline-runtime-name** 替换为流水线运行时名称，如：`pr-demo-quickstart`。
 
@@ -658,7 +657,7 @@ git clone https://github.com/nautes-examples/user-pipeline.git
 
 **$deploy-repo-id** 替换为部署配置库 ID，来源同上。
 
-**$sc-repo-url** 替换为源码库的 SSH URL，你可以 Gitlab 控制台的 Project 首页中找到找到这个 URL，如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
+**$sc-repo-url** 替换为源码库的 SSH URL，你可以 Gitlab 控制台的 Project 首页中找到这个 URL，如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
 
 **$deploy-repo-url** 替换为部署配置库的 SSH URL，来源同上。
 
@@ -838,7 +837,7 @@ spec:
       name: registry-auth
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#准备流水线环境) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 推送流水线配置至源码库。
 
@@ -854,13 +853,13 @@ git push origin main -f
 
 ### 流水线
 
-当您提交流水线配置到源码库后，Gitlab 会通过 Webhook 在运行时集群上触发流水线的执行，您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
+当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
 
-> 替换变量 $tekonHost 为承载运行环境的集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
 >
-> 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
-当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 Tekton Dashboard。
+当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 
 ### 镜像库
 
