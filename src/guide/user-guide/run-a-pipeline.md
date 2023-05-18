@@ -2,7 +2,7 @@
 footerLink: /guide/user-guide/run-a-pipeline
 title: 执行流水线 
 ---
-# 执行流水线
+# 执行一条流水线
 
 本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上执行一条 CI 流水线的过程。
 
@@ -19,6 +19,7 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。
 
 ### 准备服务器
+
 您需要准备一台用于安装 Kubernetes 集群的服务器。如果您已经有一套 Kubernetes 集群（需要公网 IP），可以省略该步骤。
 
 下文将以阿里云为例描述如何准备服务器并安装一个 K3s 集群。
@@ -522,7 +523,7 @@ spec:
 
 替换变量后的文件示例如下：
 
-> 您需要根据在上一章节选择的集群类型，将 Environment 资源的 `spec.cluster` 设置为的[物理集群名称](#注册物理集群)或[虚拟集群名称](#注册虚拟集群)。 
+> 您需要根据在上一章节选择的集群类型，将 Environment 资源的 `spec.cluster` 设置为的[物理集群名称](#注册物理集群)或[虚拟集群名称](#注册虚拟集群)。
 
 ```yaml
 ---
@@ -837,7 +838,7 @@ spec:
       name: registry-auth
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#准备运行环境) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#准备流水线环境) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 推送流水线配置至源码库。
 
@@ -849,13 +850,13 @@ git commit -m '提交流水线配置'
 git push origin main -f
 ```
 
-## 查看部署结果
+## 查看流水线结果
 
-### 流水线执行
+### 流水线
 
 当您提交流水线配置到源码库后，Gitlab 会通过 Webhook 在运行时集群上触发流水线的执行，您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
 
-> 替换变量 $tekonHost 为承载运行环境的集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost `，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+> 替换变量 $tekonHost 为承载运行环境的集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
 >
 > 替换变量 $traefik-httpsNodePort 为承载运行环境的集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
