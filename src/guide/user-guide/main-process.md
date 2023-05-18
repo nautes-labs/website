@@ -10,7 +10,11 @@ title: 主体流程
 
 [注册运行时集群](#注册运行时集群)
 
-[准备运行环境](#准备运行环境)
+[初始化产品](#初始化产品)
+
+[执行流水线](#执行流水线)
+
+[查看流水线结果](#查看流水线结果)
 
 [部署](#部署)
 
@@ -54,9 +58,9 @@ Nautes 通过 Kubernetes 资源文件来定义环境、项目、代码库、权�
 
 如果您选择使用 API，请参考 [维护集群](cluster.md)。
 
-## 准备运行环境
+## 初始化产品
 
-提交产品配置清单支持 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式。使用 API 接口的详细参见 [维护产品](product.md)、[维护项目](project.md)、[维护代码库](code-repo.md)、[维护环境](environment.md)、[维护流水线运行时](pipeline-runtime.md)、[维护部署运行时](deployment-runtime.md) 章节。
+提交产品配置清单支持命令行和 API 两种方式。使用 API 的方法参见 [维护产品](product.md)、[维护项目](project.md)、[维护代码库](code-repo.md)、[维护环境](environment.md)、[维护流水线运行时](pipeline-runtime.md)、[维护部署运行时](deployment-runtime.md) 章节。使用命令行的方法请参见 [流水线](run-a-pipeline.md#初始化产品) 或 [部署](deploy-an-application.md#初始化产品)。
 
 使用命令行提交产品配置清单时，命令行会清单内容排序后再执行。正向新增的顺序是：创建产品、创建环境、创建项目、创建代码库、创建授权、创建流水线运行时、创建部署运行时。反向销毁的顺序是：删除部署运行时、删除流水线运行时、删除授权、删除代码库、删除项目、删除环境、删除产品。
 

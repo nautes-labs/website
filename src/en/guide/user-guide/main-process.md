@@ -10,7 +10,11 @@ This document describes the main process of deploying an application, including 
 
 [Register Runtime Cluster](#register-runtime-cluster)
 
-[Prepare Runtime Environment](#prepare-runtime-environment)
+[Initialize a Product](#initialize-a-product)
+
+[Run Pipelines](#run-pipelines)
+
+[View Pipeline Results](#view-pipeline-results)
 
 [Deployment](#deployment)
 
@@ -52,9 +56,9 @@ If you choose to use the command-line, please refer to [Register Pipeline Runtim
 
 If you choose to use the API, please refer to [API](cluster.md).
 
-## Prepare Runtime Environment
+## Initialize a Product
 
-Submitting product configuration manifests supports both [Command-Line](deploy-an-application.md#prepare-runtime-environment) and API methods. For more information about the API, refer to the [Maintain Product](product.md), [Maintain Project](project.md), [Maintain Code Repository](code-repo.md), [Maintain Environment](environment.md), [Maintain Pipeline Runtime](pipeline-runtime.md), and [Maintain Deployment Runtime](deployment-runtime.md) sections.
+Submitting product configuration manifests supports both Command-Line and API. For more information about the API, please refer to the [Maintain Product](product.md), [Maintain Project](project.md), [Maintain Code Repository](code-repo.md), [Maintain Environment](environment.md), [Maintain Pipeline Runtime](pipeline-runtime.md), and [Maintain Deployment Runtime](deployment-runtime.md) sections. For more information about the command-line, please refer to [Pipeline](run-a-pipeline.md#initialize-a-product) or [Deployment](deploy-an-application.md#initialize-a-product).
 
 When submitting product configuration manifests via the command-line, it sorts the contents of the manifest before executing. The order for adding is: create a product, create an environment, create a project, create a code repository, create an authorization, create a pipeline runtime, and create a deployment runtime. The order for destroying is: delete the deployment runtime, delete the pipeline runtime, delete the authorization, delete the code repository, delete the project, delete the environment, and delete the product.
 
