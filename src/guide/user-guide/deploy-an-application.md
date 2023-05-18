@@ -360,7 +360,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
   # 代码库名称
-  name: coderepo-deploy-sc-demo-$suffix
+  name: coderepo-deploy-demo-$suffix
   codeRepoProvider: gitlab
   deploymentRuntime: false
   pipelineRuntime: true

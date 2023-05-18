@@ -360,7 +360,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
   # coderepo name
-  name: coderepo-deploy-sc-demo-$suffix
+  name: coderepo-deploy-demo-$suffix
   codeRepoProvider: gitlab
   deploymentRuntime: false
   pipelineRuntime: true
@@ -372,12 +372,12 @@ spec:
   git:
     gitlab:
       # Repository name
-      name: coderepo-deploy-sc-demo-$suffix
+      name: coderepo-deploy-demo-$suffix
       # Repository path
-      path: coderepo-deploy-sc-demo-$suffix
+      path: coderepo-deploy-demo-$suffix
       # Repository visibility：private or public
       visibility: private
-      description: coderepo-deploy-sc-demo-$suffix
+      description: coderepo-deploy-demo-$suffix
 ```
 
 The file example after replacing the variables is shown below:
@@ -424,7 +424,7 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
-  name: coderepo-deploy-sc-demo-quickstart
+  name: coderepo-deploy-demo-quickstart
   codeRepoProvider: gitlab
   deploymentRuntime: false
   pipelineRuntime: true
@@ -434,10 +434,10 @@ spec:
     isolation: shared
   git:
     gitlab:
-      name: coderepo-deploy-sc-demo-quickstart
-      path: coderepo-deploy-sc-demo-quickstart
+      name: coderepo-deploy-demo-quickstart
+      path: coderepo-deploy-demo-quickstart
       visibility: private
-      description: coderepo-deploy-sc-demo-quickstart
+      description: coderepo-deploy-demo-quickstart
 ```
 
 Replace the variables in the runtime environment property template located at the relative path `examples/demo-deployment.yaml`, including `$suffix` and `$deployment-runtime-cluster`.
@@ -466,7 +466,7 @@ spec:
   name: coderepobinding-deploy-dr-demo-$suffix
   # Authorized code repository
   coderepo: coderepo-deploy-demo-$suffix
-  # Products with granted authorization.
+  # The product with granted authorization
   product: demo-$suffix
   # Permissions: readonly, readwrite
   permissions: readonly
@@ -571,7 +571,7 @@ Access [GitLab](installation.md#check-the-installation-results), and configure y
 Push the Kubernetes Manifests to the deployment configuration repository.
 
 ```Shell
-# Change the URL of remote repository 'origin' to that of the deployment configuration repository, the repository URL below are only examples, replace $gitlab-url with the IP or domain of Gitlab.
+# Change the URL of the remote repository 'origin' to that of the deployment configuration repository, the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
 git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-deploy-demo-quickstart.git
 # Push the Kubernetes Manifests to the deployment configuration repository.
 git add .
