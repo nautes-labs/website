@@ -9,7 +9,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining repositories.
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining repositories.
 
 ## Prerequisites
 
@@ -240,7 +240,7 @@ Use the curl command or other tools to execute the API request to view the repos
 
 ## Force Create/Update/Delete Repository (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
 Taking the creation of a repository as an example, if the value of the `project` property is set to a non-existent project, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the repository resource file. The request example is shown below:
 
