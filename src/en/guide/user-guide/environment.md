@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 The environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining environments.
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining environments.
 
 ## Prerequisites
 
@@ -195,7 +195,7 @@ Use the curl command or other tools to execute the API request to view the envir
 
 ## Force Create/Update/Delete Environment (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
 Taking creating an environment as an example, if the value of the `cluster` property is set to a non-existent cluster, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the environment resource file. The request example is shown below:
 

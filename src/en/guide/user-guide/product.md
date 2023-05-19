@@ -11,7 +11,7 @@ A product corresponds to a software system, which includes teams, projects, envi
 
 When using GitLab as a product provider, each product corresponds to a single GitLab Group. Nautes will maintain a repository with a fixed name (defaulted to `default.project`) under that Group to store the product metadata. Nautes will leverage the GitLab permission model to manage user access to different product data.
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining products.
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining products.
 
 ## Prerequisites
 

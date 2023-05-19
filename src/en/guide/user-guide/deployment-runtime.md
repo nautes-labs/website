@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A deployment runtime defines the configuration declaration used to deploy projects, such as the storage location of deployment manifests and the target environment to deploy to, etc.
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining deployment runtimes.
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining deployment runtimes.
 
 ## Prerequisites
 
@@ -222,7 +222,7 @@ Use the curl command or other tools to execute the API request to view the deplo
 
 ## Force Create/Update/Delete Deployment-Runtime (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
 Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 

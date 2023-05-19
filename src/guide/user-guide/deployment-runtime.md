@@ -8,7 +8,7 @@ title: 维护部署运行时
 
 部署运行时定义了用于部署项目的配置声明，如：部署清单的存储位置、部署到的目标环境等。
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护部署运行时。
+支持通过 [命令行](deploy-an-application.md#初始化产品) 和 API 两种方式维护部署运行时。
 
 ## 前提条件
 
@@ -222,7 +222,7 @@ curl -X 'GET' \
 
 ## 强制创建/更新/删除部署运行时（API）
 
-适用于需要跳过 API 校验的特殊场景，详情参见[准备运行环境](main-process.md#准备运行环境)。
+适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
 以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 

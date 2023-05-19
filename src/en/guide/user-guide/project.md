@@ -10,7 +10,7 @@ By maintaining [products](product.md) and projects, you can build management uni
 
 A project corresponds to a microservice, and each project has its own code repositories. You can integrate and deploy projects using Kubernetes clusters, and store versioned artifacts in artifact repositories. A product can contain multiple projects.
 
-Support both [Command Line](deploy-an-application.md#prepare-runtime-environment) and API for maintaining projects.
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining projects.
 
 ## Prerequisites
 
@@ -80,7 +80,7 @@ After the request is successful, the resource file for the project will be gener
 
 > When requesting the API to update a project, the resource file for the project will also be updated.
 >
-> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update projects. 
+> If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update projects.
 
 ## Delete Project (API)
 
@@ -189,7 +189,7 @@ Use the curl command or other tools to execute the API request to view the proje
 
 ## Force Create/Update/Delete Project (API)
 
-For special scenarios in which API verification needs to be skipped, refer to the [Prepare Runtime Environment](main-process.md#prepare-runtime-environment) section.
+For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
 Taking the creation of a project as an example, if there are invalid resources (such as a cluster related to an environment that has been destroyed) in the product to which the project belongs, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the project resource file. The request example is shown below:
 

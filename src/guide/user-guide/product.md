@@ -10,7 +10,7 @@ title: 维护产品
 
 当您使用 GitLab 作为产品提供者时，产品唯一对应一个 GitLab Group，Nautes 会在该 Group 下维护一个用于存储产品元数据的固定名称的代码库（默认为 `default.project`），同时，Nautes 会利用 GitLab 权限模型来管理用户对不同产品数据的权限。
 
-支持通过 [命令行](deploy-an-application.md#准备运行环境) 和 API 两种方式维护产品。
+支持通过 [命令行](deploy-an-application.md#初始化产品) 和 API 两种方式维护产品。
 
 ## 前提条件
 
@@ -29,7 +29,7 @@ access token 将作为请求 API 的请求头。
 ### 生成创建产品的 API 请求
 
 通过接口定义 `Product_SaveProduct` 生成 API 请求示例，并添加 access token 作为请求头。
-  
+
 ```Shell
    # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
    # 替换变量 $gitlab-access-token 为 GitLab access token
@@ -41,7 +41,7 @@ access token 将作为请求 API 的请求头。
        -H 'Authorization: Bearer $gitlab-access-token' \
        -d '{
        "git": {
-           "gitlab": {	
+           "gitlab": {
                # group 的名称
                "name": $product_name,
                # group 的路径
