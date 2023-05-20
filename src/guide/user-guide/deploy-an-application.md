@@ -291,7 +291,7 @@ nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-
 
 ## 初始化产品
 
-初始化产品是指创建 Nautes 产品模型中的各个实体，并在运行时集群中初始化一套用于执行自动化部署的资源，包括 namespace、serviceaccount、secret、以及 argocd 相关资源等。
+初始化产品是指创建 Nautes 产品模型中的各个实体，并在运行时集群中初始化一套用于执行自动化部署的资源，包括 namespace、serviceaccount、secret、以及 ArgoCD 相关资源等。
 
 下文将描述通过命令行初始化产品的相关实体，包括产品、项目、代码库、权限、环境以及部署运行时等。
 

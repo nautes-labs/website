@@ -291,7 +291,7 @@ nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-
 
 ## Initialize a Product
 
-Initializing the product refers to creating various entities in the Nautes product model, and initializing a set of resources for executing automated deployment in the runtime cluster, including namespace, serviceaccount, secret, and argocd related resources, etc.
+Initializing the product refers to creating various entities in the Nautes product model, and initializing a set of resources for executing automated deployment in the runtime cluster, including namespace, serviceaccount, secret, and ArgoCD related resources, etc.
 
 The following sections describe the entities related to initializing the product through the command-line, including a product, a project, a code repository, an authorization, an environment, and a deployment runtime.
 
