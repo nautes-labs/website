@@ -7,9 +7,11 @@ title: Maintain Code Repository
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-A repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
+A code repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining repositories.
+In the software development process, a single code repository often cannot independently complete expected functions. It may need to depend on other code repositories to complete specific features, and these code repositories are usually referred to as "dependency libraries." The "Code Repository Authorization" feature grants authorization to a code repository for products or projects. This enables the code repository of the products or projects to use the authorized code repository for project integration.
+
+Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining repositories and maintaining repository authorizations.
 
 ## Prerequisites
 
@@ -268,3 +270,183 @@ Taking the creation of a repository as an example, if the value of the `project`
       }
     }'
 ```
+
+## Create and Update Repository Authorization(API)
+
+### Compose Create and Update Repository Authorization Request
+
+Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBinding` and add the access token as a request header.
+
+```Shell
+    # Replace the variable $api-server-address with the access address of the Nautes API Server.
+    # Replace the variable $gitlab-access-token with the GitLab access token.
+    # Replace the variable $product_name with the name of the product to which the authorization belongs.
+    # Replace the variable $coderepo_binding_name with the authorization name.
+    curl -X 'POST' \
+    'HTTP://$api-server-addresss/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer $gitlab-access-token' \
+    -d '{
+    "product": "$product_name",
+    # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
+    "projects": [
+        "$project_name"
+    ],
+    # Permission: readwrite or readonly
+    "permissions": "$permissions",
+    # Name of the authorized code repository
+    "coderepo": "$coderepo_name"
+    }'
+```
+
+The request example after replacing the variables is shown below:
+
+```Shell
+    curl -X 'POST' \
+    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "product": "nautes-labs",
+    "projects": [
+        "argo-operator"
+    ],
+    "permissions": "readonly",
+    "coderepo": "vault-proxy"
+    }'
+```
+
+### Execute Create and Update Repository Authorization Request
+
+Use the curl command or other tools to execute the API request to create a repository authorization.
+
+After the request is successful, the resource file for the repository authorization will be generated in the `default.project` repository of the specified product, and the deploy keys of the related code repositories of the granted products or projects will be added to the deploy key list of the authorized code repository. The example of a resource file for a repository authorization is shown below:
+
+```yaml
+    apiVersion: nautes.resource.nautes.io/v1alpha1
+    kind: CodeRepoBinding
+    metadata:
+    creationTimestamp: null
+    name: coderepo-binding-vault-proxy
+    spec:
+    coderepo: vault-proxy
+    permissions: readonly
+    product: nautes-labs
+    projects:
+    - argo-operator
+```
+
+> When requesting the API to update a repository authorization, the resource file for the repository authorization will also be updated.
+>
+> If your account is a member of the GitLab group, and has a `Maintainer` or higher-level role, and has write permission to the `main` branch of the `default.project` repository, you can create or update repository authorization.
+>
+> You can create multiple resource files of repository authorizations for a code repository, such as authorizing a code repository to both products and projects, or multiple projects. The scope of the repository authorization will be determined by the union of product and project authorizations.
+>
+> After the repository authorization is successful, if you need to update the related code repositories of the granted product or project, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically increase or decrease to reflect the changes of the corresponding code repository.
+>
+> If the resource file of the repository authorization is successfully created, the value of the `coderepo` cannot be changed. If you need to change the authorized code repository, please [Delete Repository Authorization](#delete-repository-api) and re-authorize it.
+>
+> The code repositories within a project have read and write permissions for each other by default.
+
+## Delete Repository Authorization (API)
+
+### Compose Delete Repository Authorization Request
+
+Compose an API request example by API definition `CodeRepoBinding_DeleteCodeRepoBinding` and add the access token as a request header.
+
+```Shell
+    curl -X 'DELETE' \
+    'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer $gitlab-access-token'
+```
+
+The request example after replacing the variables is shown below:
+
+```Shell
+    curl -X 'DELETE' \
+    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+```
+
+### Execute Delete Repository Authorization Request
+
+Use the curl command or other tools to execute the API request to delete a repository authorization.
+
+After the request is successful, the resource file for the repository authorization will be deleted from the `default.project` repository of the specified product. The authorization scope of the code repository will then be recalculated, and the deploy key list of the authorized code repository will be updated based on the recalculated results.
+
+> If your account is a member of the GitLab group, and has a `Maintainer` or higher-level role, and has write permission to the `main` branch of the `default.project` repository, you can delete repository authorization.
+
+## List Repository Authorizations（API）
+
+### Compose List Repository Authorizations Request
+
+Compose an API request example by API definition `CodeRepoBinding_ListCodeRepoBindings` and add the access token as a request header.
+
+```Shell
+    curl -X 'GET' \
+    'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings' \
+    -H 'accept: application/json'  \
+    -H 'Authorization: Bearer $gitlab-access-token'
+```
+
+The request example after replacing the variables is shown below:
+
+```Shell
+    curl -X 'GET' \
+    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings' \
+    -H 'accept: application/json' \
+    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+```
+
+### Execute List Repository Authorizations Request
+
+Use the curl command or other tools to execute the API request to list repository authorizations. The response example for the repository authorizations list is shown below:
+
+```yaml
+    {
+        "items": [
+            {
+                "product": "nautes-labs",
+                "name": "coderepo-binding-vault-proxy",
+                "projects": [
+                    "argo-operator"
+                ],
+                "permissions": "readonly",
+                "coderepo": "vault-proxy"
+            }
+        ]
+    }
+ ```
+
+> If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can list repository authorizations.
+
+## View Repository Authorization Details (API)
+
+### Compose View Repository Authorization Details Request
+
+Compose an API request example by API definition `CodeRepoBinding_GetCodeRepoBinding` and add the access token as a request header.
+
+```Shell
+    curl -X 'GET' \
+      'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+      -H 'accept: application/json' \
+      -H 'Authorization: Bearer $gitlab-access-token'
+```
+
+The request example after replacing the variables is shown below:
+
+```Shell
+    curl -X 'GET' \
+      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+      -H 'accept: application/json' \
+      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+```
+
+### Execute View Repository Authorization Details Request
+
+Use the curl command or other tools to execute the API request to view the repository authorization details. The response example for viewing the repository details is similar to that of [listing repository authorizations](#execute-list-repositories-request).
+
+> If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can view the details of repository authorization.
