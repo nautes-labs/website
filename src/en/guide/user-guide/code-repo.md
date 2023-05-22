@@ -1,9 +1,9 @@
 ---
 footerLink: /guide/user-guide/code-repo
-title: Maintain Code Repository
+title: Maintain Code Repository and its Authorization
 ---
 
-# Maintain Code Repository
+# Maintain Code Repository and its Authorization
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
@@ -327,14 +327,13 @@ After the request is successful, the resource file for the repository authorizat
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepoBinding
     metadata:
-    creationTimestamp: null
-    name: coderepo-binding-vault-proxy
+        name: coderepo-binding-vault-proxy
     spec:
-    coderepo: vault-proxy
-    permissions: readonly
-    product: nautes-labs
-    projects:
-    - argo-operator
+        coderepo: vault-proxy
+        permissions: readonly
+        product: nautes-labs
+        projects:
+        - argo-operator
 ```
 
 > When requesting the API to update a repository authorization, the resource file for the repository authorization will also be updated.
@@ -346,6 +345,8 @@ After the request is successful, the resource file for the repository authorizat
 > After the repository authorization is successful, if you need to update the related code repositories of the granted products or projects, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically update to reflect the changes of the corresponding code repository.
 >
 > If the resource file of the repository authorization is successfully created, the value of the `coderepo` cannot be changed. If you need to change the authorized code repository, please [Delete Repository Authorization](#delete-repository-authorization-api) and re-authorize it.
+>
+> Currently, we only support authorizing the code repository to its related product or projects within the product. Cross-product authorization is not supported yet.
 >
 > The code repositories within the same project have read and write permissions to each other by default.
 
@@ -419,7 +420,7 @@ Use the curl command or other tools to execute the API request to list repositor
             }
         ]
     }
- ```
+```
 
 > If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can list repository authorizations.
 
@@ -450,3 +451,25 @@ The request example after replacing the variables is shown below:
 Use the curl command or other tools to execute the API request to view the repository authorization details. The response example for viewing the repository details is similar to that of [listing repository authorizations](#execute-list-repository-authorizations-request).
 
 > If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can view the details of repository authorizations.
+
+## Force Create/Update/Delete Repository Authorization (API)
+
+For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
+
+Taking the creation of a repository authorization as an example, if the value of the `project` property is set to a non-existent project, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true`, to submit the repository authorization resource file. The request example is shown below:
+
+```Shell
+    curl -X 'POST' \
+    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+    -d '{
+    "product": "nautes-labs",
+    "projects": [
+        "project-invalid"
+    ],
+    "permissions": "readonly",
+    "coderepo": "vault-proxy"
+    }'
+```

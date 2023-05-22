@@ -1,8 +1,8 @@
 ---
 footerLink: /guide/user-guide/code-repo
-title: 维护代码库
+title: 维护代码库及其授权
 ---
-# 维护代码库
+# 维护代码库及其授权
 在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语。
 
 代码库是用于存储项目的源代码、流水线配置、部署清单的版本库。只支持 Git。
@@ -249,6 +249,7 @@ title: 维护代码库
       'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/coderepo-demo?insecure_skip_check=true' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
+      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
       -d '{
       "project": "project-demo-invalid",
       "webhook": {
@@ -305,6 +306,7 @@ title: 维护代码库
     'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
     -d '{
     "product": "nautes-labs",
     "projects": [
@@ -325,14 +327,13 @@ title: 维护代码库
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepoBinding
     metadata:
-    creationTimestamp: null
-    name: coderepo-binding-vault-proxy
+        name: coderepo-binding-vault-proxy
     spec:
-    coderepo: vault-proxy
-    permissions: readonly
-    product: nautes-labs
-    projects:
-    - argo-operator
+        coderepo: vault-proxy
+        permissions: readonly
+        product: nautes-labs
+        projects:
+        - argo-operator
 ```
 
 > 请求 API 更新代码库授权也将更新代码库授权的资源文件。
@@ -344,6 +345,8 @@ title: 维护代码库
 > 代码库授权成功后，如果您需要更新被授权产品或项目相关联的代码库，例如：新增或删除关联的代码库，授权代码库的 deploy key 列表将自动更新以反映相应代码库的变更。
 >
 > 代码库授权的资源文件创建成功后，不能变更 `coderepo` 的属性值，如果您需要变更授权的代码库，请先[删除代码库授权](#删除代码库授权api)再重新授权。
+>
+> 目前仅支持将代码库授权给其所属的产品或产品内的项目，暂不支持跨产品的授权操作。
 >
 > 相同项目内的代码库之间默认具备互相读写的权限。
 
@@ -448,3 +451,25 @@ title: 维护代码库
 使用 curl 命令或者其他工具执行 API 请求，以查询代码库授权详情。代码库授权详情的返回值示例与[查询代码库授权列表](#查询代码库授权列表api)类似。
 
 > 只有当您的账号是 GitLab 的 group 成员，并具备对 `default.project` 代码库的读取权限，才可以查看代码库授权详情。
+
+## 强制创建/更新/删除代码库授权（API）
+
+适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
+
+以创建代码库授权为例，将 project 属性设置为不存在的 project，启用 `insecure_skip_check` 查询参数，可以强制提交代码库授权的资源文件。 请求示例如下：
+
+```Shell
+    curl -X 'POST' \
+    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+    -d '{
+    "product": "nautes-labs",
+    "projects": [
+        "project-invalid"
+    ],
+    "permissions": "readonly",
+    "coderepo": "vault-proxy"
+    }'
+```
