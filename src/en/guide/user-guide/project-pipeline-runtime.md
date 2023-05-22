@@ -30,7 +30,7 @@ Pipeline runtimes belong to a project, so you need to create at least one [proje
 
 ### Create Repository
 
-Pipeline runtimes need to watch the pipeline configurations in the repositories, so you need to create at least one repository related to the specified [project](project.md#create-and-update-project-api).
+Pipeline runtimes need to watch the pipeline configurations in the code repositories, so you need to create at least one code repository related to the specified [project](project.md#create-and-update-project-api).
 
 ### Create Environment
 
@@ -88,11 +88,11 @@ Compose an API request example by API definition `ProjectPipelineRuntime_SavePro
                 "schedule": "$cron_expression",
                 # The interval period for triggering a pipeline
                 "interval": "$interval",
-                # The dates excluded by scheduling rules
+                # The exception dates and times for recurring events.
                 "exclusion_dates": [
                     "$exclusion_date"
                 ],
-                # Time zone
+                # Timezone in which to run the schedule
                 "timezone": "$timezone"
             }
         }
