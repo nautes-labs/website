@@ -280,8 +280,8 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the authorization belongs.
-    # Replace the variable $coderepo_binding_name with the authorization name.
+    # Replace the variable $product_name with the name of the product to which the repository authorization belongs.
+    # Replace the variable $coderepo_binding_name with the repository authorization name.
     curl -X 'POST' \
     'HTTP://$api-server-addresss/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
     -H 'accept: application/json' \
@@ -343,11 +343,11 @@ After the request is successful, the resource file for the repository authorizat
 >
 > You can create multiple resource files of repository authorizations for a code repository, such as authorizing a code repository to both products and projects, or multiple projects. The scope of the repository authorization will be determined by the union of product and project authorizations.
 >
-> After the repository authorization is successful, if you need to update the related code repositories of the granted product or project, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically increase or decrease to reflect the changes of the corresponding code repository.
+> After the repository authorization is successful, if you need to update the related code repositories of the granted products or projects, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically update to reflect the changes of the corresponding code repository.
 >
-> If the resource file of the repository authorization is successfully created, the value of the `coderepo` cannot be changed. If you need to change the authorized code repository, please [Delete Repository Authorization](#delete-repository-api) and re-authorize it.
+> If the resource file of the repository authorization is successfully created, the value of the `coderepo` cannot be changed. If you need to change the authorized code repository, please [Delete Repository Authorization](#delete-repository-authorization-api) and re-authorize it.
 >
-> The code repositories within a project have read and write permissions for each other by default.
+> The code repositories within the same project have read and write permissions to each other by default.
 
 ## Delete Repository Authorization (API)
 
@@ -403,7 +403,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute List Repository Authorizations Request
 
-Use the curl command or other tools to execute the API request to list repository authorizations. The response example for the repository authorizations list is shown below:
+Use the curl command or other tools to execute the API request to list repository authorizations. The response example for the repository authorization list is shown below:
 
 ```yaml
     {
@@ -447,6 +447,6 @@ The request example after replacing the variables is shown below:
 
 ### Execute View Repository Authorization Details Request
 
-Use the curl command or other tools to execute the API request to view the repository authorization details. The response example for viewing the repository details is similar to that of [listing repository authorizations](#execute-list-repositories-request).
+Use the curl command or other tools to execute the API request to view the repository authorization details. The response example for viewing the repository details is similar to that of [listing repository authorizations](#execute-list-repository-authorizations-request).
 
-> If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can view the details of repository authorization.
+> If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can view the details of repository authorizations.
