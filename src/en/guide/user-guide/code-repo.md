@@ -9,7 +9,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A code repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-In the software development process, a single code repository often cannot independently complete expected functions. It may need to depend on other code repositories to complete specific features, and these code repositories are usually referred to as "dependency libraries." The "Code Repository Authorization" feature grants authorization to a code repository for products or projects. This enables the code repository of the products or projects to use the authorized code repository for project integration.
+The pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, and granting the code repository secrets related to products or projects to the pipeline runtime, the pipeline runtime can use the secrets to read or write to the authorized code repository for project integration.
 
 Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining repositories and maintaining repository authorizations.
 
@@ -288,7 +288,8 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    "product": "$product_name",
+    # Granted Product: Currently, only the product to which the code repository belongs can be granted, which should be the same as the value of $product_name.
+    "product": "$authorized_product_name",
     # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
     "projects": [
         "$project_name"
@@ -329,9 +330,9 @@ After the request is successful, the resource file for the repository authorizat
     metadata:
         name: coderepo-binding-vault-proxy
     spec:
-        coderepo: vault-proxy
+        coderepo: repo-xxxx
         permissions: readonly
-        product: nautes-labs
+        product: product-xxxx
         projects:
         - argo-operator
 ```
@@ -340,15 +341,11 @@ After the request is successful, the resource file for the repository authorizat
 >
 > If your account is a member of the GitLab group, and has a `Maintainer` or higher-level role, and has write permission to the `main` branch of the `default.project` repository, you can create or update repository authorization.
 >
-> You can create multiple resource files of repository authorizations for a code repository, such as authorizing a code repository to both products and projects, or multiple projects. The scope of the repository authorization will be determined by the union of product and project authorizations.
+> You can create multiple resource files of repository authorizations for a code repository. For example, you may create two resource files, one authorized for the product and another for the project, or alternatively, assign each of the two resource files to different projects. The authorization scope of the code repository will be determined by the union of the product and the project authorizations.
 >
 > After the repository authorization is successful, if you need to update the related code repositories of the granted products or projects, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically update to reflect the changes of the corresponding code repository.
 >
 > If the resource file of the repository authorization is successfully created, the value of the `coderepo` cannot be changed. If you need to change the authorized code repository, please [Delete Repository Authorization](#delete-repository-authorization-api) and re-authorize it.
->
-> Currently, we only support authorizing the code repository to its related product or projects within the product. Cross-product authorization is not supported yet.
->
-> The code repositories within the same project have read and write permissions to each other by default.
 
 ## Delete Repository Authorization (API)
 
