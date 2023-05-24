@@ -1,6 +1,6 @@
 ---
 footerLink: /guide/user-guide/deployment-results
-title: View Deployment Results
+title: View Pipeline and Deployment Results
 ---
 # View Pipeline and Deployment Results
 
