@@ -9,6 +9,8 @@ title: 维护代码库及其授权
 
 流水线运行时需要获取代码库中的源代码、流水线配置和其他相关文件，以实现项目集成。通过将代码库授权给产品或项目，并且将关联产品或项目的代码库密钥授权给流水线运行时，流水线运行时就能够使用该密钥来读取/读写授权代码库，从而推进项目集成。
 
+与流水线运行时类似，部署运行时也需要从代码库中获取部署清单和其他相关文件, 并且使用相同的授权方式，以实现应用部署。
+
 支持通过 [命令行](deploy-an-application.md#初始化产品) 和 API 两种方式维护代码库和代码库授权。
 
 ## 前提条件
@@ -101,20 +103,17 @@ title: 维护代码库及其授权
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepo
     metadata:
-        name: api-server
-        namespace: nautes
+        name: repo-xxxx
     spec:
-        codeRepoProvider: "gitlab"
+        codeRepoProvider: gitlab
         deploymentRuntime: true
         pipelineRuntime: false
-        product: "nautes-labs"
-        project: "api-server"
-        repoName: "api-server"
-        url: "https://github.com/nautes-labs/api-server.git"
+        product: product-xxxx
+        project: api-server
+        repoName: api-server
         webhook:
             events:
-            - "push_events"
-            isolation: "default"
+            - push_events
 ```
 
 > 请求 API 更新代码库也将更新代码库资源文件。

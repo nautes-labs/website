@@ -11,6 +11,8 @@ A code repository used for storing a project's source code, pipeline configurati
 
 The pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, and granting the code repository secrets related to products or projects to the pipeline runtime, the pipeline runtime can use the secrets to read or write to the authorized code repository for project integration.
 
+Similar to the pipeline runtime, the deployment runtime also needs to fetch the deployment manifest and other related files from the code repository, and it uses the same authorization method for application deployment.
+
 Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining repositories and maintaining repository authorizations.
 
 ## Prerequisites
@@ -27,7 +29,7 @@ If you want to access Nautes API Server using the HTTPS protocol, you need to [i
 
 Projects belong to products, so you need to create at least one [product](product.md#create-product-api).
 
-## Create and Update Repository(API)
+## Create and Update Repository (API)
 
 ### Compose Create and Update Repository Request
 
@@ -97,26 +99,23 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to create a repository.
 
-After the request is successful, the resource file for the repository will be generated in the `default.project` repository of the specified product and the repository will be created in GitLab. The example of a resource file for a repository is shown below:
+After the request is successful, the resource file for the repository will be generated in the `default.project` repository of the specified product and the repository will be created in GitLab. An example of a resource file for a repository is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: CodeRepo
     metadata:
-        name: api-server
-        namespace: nautes
+        name: repo-xxxx
     spec:
-        codeRepoProvider: "gitlab"
+        codeRepoProvider: gitlab
         deploymentRuntime: true
         pipelineRuntime: false
-        product: "nautes-labs"
-        project: "api-server"
-        repoName: "api-server"
-        url: "https://github.com/nautes-labs/api-server.git"
+        product: product-xxxx
+        project: api-server
+        repoName: api-server
         webhook:
             events:
-            - "push_events"
-            isolation: "default"
+            - push_events
 ```
 
 > When requesting the API to update a repository, the resource file for the repository will also be updated.
