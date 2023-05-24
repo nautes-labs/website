@@ -1,14 +1,55 @@
 ---
 footerLink: /guide/user-guide/deployment-results
-title: 查看部署结果
+title: 查看流水线和部署的结果
 ---
-# 查看部署结果
+# 查看流水线和部署的结果
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语，并且已经创建了至少一个部署运行时，详情参见 [维护部署运行时](deployment-runtime.md)。
+在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语，并且已经创建了至少一个[流水运行时](project-pipeline-runtime.md#创建和更新流水线运行时api)或者[部署运行时](deployment-runtime.md#创建和更新部署运行时api)。
 
-您可以通过 ArgoCD 控制台和 Kubectl 命令行两种方式查看应用的部署情况。您只能查看和管理授权产品的相关资源。
+您可以通过 Tekton Dashboard 和镜像库控制台查看流水线的执行结果，通过 ArgoCD 控制台和 Kubectl 命令行查看应用的部署情况。
 
-## 查看 ArgoCD 中的资源
+## 查看流水线结果
+
+### 查看 Tekton Dashboard 中的资源
+
+使用浏览器访问地址 `https://$tekonHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 Tekton Dashboard 来查看流水线。
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](run-a-pipeline.md#注册物理集群)或者[注册虚拟集群](run-a-pipeline.md#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+>
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](run-a-pipeline.md#注册物理集群)或者[注册虚拟集群](run-a-pipeline.md#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+
+当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过认证服务器（如 Gitlab），访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
+
+Tekton Dashboard 将呈现被授权的命名空间（与流水线运行时同名）及其相关资源，包括 pipelines，pipelineruns，task，taskruns 和 pipelineresources 等资源。
+
+点击某条 pipeline 记录，您可以查看 YAML、创建 pipelinerun、查看相关的 pipelinerun。点击某条 pipelinerun 记录，您也可以查看 pipelinerun 的状态、执行时间和运行时长，taskrun 的参数、状态、日志和 YAML 等，并对 pipelinerun 执行重新运行、启停、删除等操作。
+
+![directive syntax graph](./../images/pipeline-results-1.png)
+
+### 查看镜像仓库中的镜像
+
+如果流水线包括构建镜像的任务并且已正常执行完成，您可以在镜像仓库中（例如：`https://github.com/orgs/nautes-labs/packages`）看到新增的镜像信息，并可以通过类似命令拉取镜像：
+
+```shell
+docker pull ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
+```
+
+### 查看部署清单的镜像配置
+
+如果流水线包括更新 Kubernetes 资源清单的任务并且已正常执行完成，您可以在部署配置库的文件中（例如：`deployments/test/devops-sample.yaml`）看到容器的镜像标签已被自动修改为包含最新 commitid 的版本，配置片段如下：
+
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+        - name: ks-sample
+          image: ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
+```
+
+## 查看部署结果
+
+### 查看 ArgoCD 中的资源
 
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台。点击 `LOG IN VIA DEX` 进行统一认证，如果在当前浏览器会话中未登录过认证服务器（如 Gitlab），那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
@@ -20,7 +61,7 @@ title: 查看部署结果
 
 ![directive syntax graph](./../images/quickstart-argocd-2.png)
 
-## 查看 Kubernetes 中的资源
+### 查看 Kubernetes 中的资源
 
 您可以通过一个标准的 OICD 客户端进行统一认证以获取 ID Token，并将该 ID Token 作为 Kubectl 的认证凭证，再使用 Kubectl 以认证服务器上的身份访问 Kubernetes。下文描述了如何通过 DEX 官方提供的一个示例客户端进行统一认证并获取 ID Token。
 
