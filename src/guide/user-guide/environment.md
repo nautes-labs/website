@@ -22,11 +22,11 @@ title: 维护环境
 
 ### 创建产品
 
-由于环境归属于产品，您需要创建至少一个[产品](product.md#创建产品api)。
+环境归属于产品，您需要创建至少一个[产品](product.md#创建产品api)。
 
 ### 注册运行时集群
 
-环境需要与部署运行时集群关联，您需要注册至少一个[物理运行时集群](cluster.md#注册物理集群api)或者一个[虚拟运行时集群](cluster.md#注册虚拟集群api)。
+环境需要与运行时集群关联，您需要注册至少一个[物理运行时集群](cluster.md#注册物理集群api)或者一个[虚拟运行时集群](cluster.md#注册虚拟集群api)。
 
 ## 创建和更新环境（API）
 
@@ -76,24 +76,23 @@ title: 维护环境
     kind: Environment
     metadata:
         name: env-dev
-        namespace: nautes
     spec:
-        cluster: "cluster-dev"
-        envType: "development"
-        product: "nautes-labs"
+        cluster: cluster-dev
+        envType: development
+        product: product-xxxx
 ```
 
 > 相同产品内，相同的运行时集群不能重复关联不同的环境。
 >
-> 当环境已经承载了产品的部署运行时环境，暂不支持变更环境的关联集群。
+> 当环境已经承载了产品的运行时，暂不支持变更环境的关联集群。
 >
 > 请求 API 更新环境也将更新环境的资源文件。
 >
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以创建或者更新环境。
+> 只有当您的账号是 GitLab 的 group 成员，并且具备对 `default.project` 代码库的 main 分支的写入权限，才可以创建或者更新环境。
 
 ## 删除环境（API）
 
-> 在删除环境之前，请先删除与环境关联的所有相关实体和资源，例如：部署运行时等，否则将不能执行删除。
+> 在删除环境之前，请先删除与环境关联的所有相关实体和资源，例如：流水线运行时和部署运行时，否则将不能执行删除。
 
 ### 生成删除环境的 API 请求
 
@@ -121,7 +120,7 @@ title: 维护环境
 
 请求成功后，将删除在指定产品的 `default.project` 代码库中的环境资源文件。
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的 main 分支的写入权限，才可以删除环境。
+> 只有当您的账号是 GitLab 的 group 成员，并且具备对 `default.project` 代码库的 main 分支的写入权限，才可以删除环境。
 
 ## 查询环境列表（API）
 
@@ -162,7 +161,7 @@ title: 维护环境
 }
 ```
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查询环境列表。
+> 只有当您的账号是 GitLab 的 group 成员，并且具备对 `default.project` 代码库的读取权限，才可以查询环境列表。
 
 ## 查询环境详情（API）
 
@@ -190,7 +189,7 @@ title: 维护环境
 
 使用 curl 命令或者其他工具执行 API 请求，以查询环境详情。环境详情的返回值示例与[查询环境列表](#执行查询环境列表的-api-请求)类似。
 
-> 只有当您的账号是 GitLab 的 group 成员，并且有 `default.project` 代码库的读取权限，才可以查看环境详情。
+> 只有当您的账号是 GitLab 的 group 成员，并且具备对 `default.project` 代码库的读取权限，才可以查看环境详情。
 
 ## 强制创建/更新/删除环境（API）
 

@@ -26,7 +26,7 @@ Environments belong to products, so you need to create at least one [product](pr
 
 ### Register Runtime Cluster
 
-An environment needs to be related to a runtime cluster in order to host the product's runtime environment, so you need to register at least one [physical runtime cluster](cluster.md#register-physical-clusterapi) or one [virtual runtime cluster](cluster.md#register-virtual-clusterapi).
+An environment needs to be related to a runtime cluster, so you need to register at least one [physical runtime cluster](cluster.md#register-physical-clusterapi) or [virtual runtime cluster](cluster.md#register-virtual-clusterapi).
 
 ## Create and Update Environment (API)
 
@@ -68,33 +68,32 @@ The request example after replacing the variables is shown below:
 
 ### Execute Create and Update Environment Request
 
-Use the curl command or other tools to execute the API request to create a environment.
+Use the curl command or other tools to execute the API request to create an environment.
 
-After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
+After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. The example of a resource file for an environment is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: Environment
     metadata:
         name: env-dev
-        namespace: nautes
     spec:
-        cluster: "cluster-dev"
-        envType: "development"
-        product: "nautes-labs"
+        cluster: cluster-dev
+        envType: development
+        product: product-xxxx
 ```
 
-> Within the same product, the same runtime cluster cannot be related to different environments.
+> Within the same product, the same runtime cluster cannot relate to different environments.
 >
-> If the environment has already hosted the deployment runtime environment of a product, it is not currently supported to change the related cluster of the environment.
+> If the environment has already hosted the runtimes of a product, it is not currently supported to change the cluster which relates to the environment.
 >
-> When requesting the API to update a environment, the resource file for the environment will also be updated.
+> When requesting the API to update an environment, the resource file for the environment will also be updated.
 >
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update environments.
 
 ## Delete Environment (API)
 
-> Before deleting an environment, please delete all entities and resources related to the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
+> Before deleting an environment, please delete all entities and resources related to the environment, such as project pipeline runtimes and deployment runtimes, otherwise the deletion cannot be performed.
 
 ### Compose Delete Environment Request
 
@@ -118,7 +117,7 @@ The request example after replacing the variables is shown below:
 
 ### Execute Delete Environment Request
 
-Use the curl command or other tools to execute the API request to delete a environment.
+Use the curl command or other tools to execute the API request to delete an environment.
 
 After the request is successful, the resource file for the environment will be deleted in the `default.project` repository of the specified product.
 
