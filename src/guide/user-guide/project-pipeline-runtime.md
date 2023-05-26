@@ -34,83 +34,85 @@ title: 维护流水线运行时
 
 ### 创建环境
 
-流水线运行时需要使用环境关联的流水线运行时集群对项目进行集成，您需要创建至少一个属于指定产品的[环境](environment.md#创建和更新环境api)。
+流水线运行时需要使用关联运行时集群的环境进行项目集成，您需要创建至少一个属于指定产品的[环境](environment.md#创建和更新环境api)。
 
 ## 创建和更新流水线运行时（API）
 
 ### 生成创建/更新流水线运行时的 API 请求
 
-通过接口定义 `ProjectPipelineRuntime_SaveProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `ProjectPipelineRuntime-SaveProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
-    # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-    # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $product_name 为流水线运行时所属产品的名称
-    # 替换变量 $project_pipeline_runtime_name 为流水线运行时的名称
+    # $api-server-address 指 Nautes API Server 的访问地址
+    # $gitlab-access-token 指 GitLab access token
+    # $product-name 指流水线运行时所属产品的名称
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/projectpipelineruntimes/$project_pipeline_runtime_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    # 流水线运行时所属项目的名称
-    "project": "$project_name",
-    # 存储流水线运行时配置的代码库的名称
-    "pipeline_source": "$pipeline_coderepo_name",
-    # 定义名称、标签和路径等属性，以匹配存储流水线运行时配置的代码库中的流水线，支持定义多分支流水线
+    # project（必填） 指归属于特定产品（名称为 $product-name）的项目名称，该项目决定了流水线运行时资源文件在 GitLab 中的存储位置
+    "project": "$project-name",
+    # pipeline-source（必填） 指存储流水线配置的代码库的名称
+    "pipeline-source": "$pipeline-coderepo-name",
+    # pipelines 表示流水线运行时从特定代码库（名称为 $pipeline-coderepo-name）中自动发现流水线配置的过滤条件，请至少填写一组数据
+    # 支持多分支流水线：如果代码库中有多条分支，并且不同分支有各自的流水线配置，流水线运行时将根据过滤条件自动发现多个分支的流水线。其中，过滤条件包括 pipelines.name（流水线名称）、pipelines.path（流水线在代码库中的相对路径）
+    # 多分支流水线的配置举例：如果一个代码库中有三个分支：main、dev、test，每个分支在 'pipelines' 的相对路径下存储了名称为 'pipeline-demo' 的流水线。这时您只需要配置一组 pipelines ，并设置 pipelines.name 为 pipeline-demo、pipelines.path 为 pipelines，流水线运行时即可自动发现该代码库中三个不同分支的三条流水线
+    # pipelines.label 指流水线运行时将对流水线打标签，标签与该属性值相同，以便于查询流水线
     "pipelines": [
         {
-        "name": "$pipeline_name",
-        "label": "$pipeline_label",
-        # 支持通配符
-        "path": "$pipeline_path"
+        "name": "$pipeline-name",
+        "label": "$pipeline-label",
+        "path": "$pipeline-path"
         }
     ],
-    # 监听流水线的事件源，目前支持 GitLab webhook 和定时器
-    "event_sources": [
+    # event-sources 指触发流水线的事件源，目前支持 GitLab webhook 和 Calendar，请至少填写一个事件源，事件源类型任选一种即可
+    "event-sources": [
         {
-            # 事件源名称
-            "name": "$event_source_name",
-            # 定义 GitLab webhook
+            "name": "$event-source-name",
+            # event-sources.gitlab 用于在 Gitlab project 中自动创建 webhook
+            # event-sources.gitlab.repo-name（必填） 指 webhook 所属的 Gitlab project 的名称
+            # event-sources.gitlab.events（必填） 指触发 webhook 的 Gitlab 事件，例如：push_events，tag_push_events 等，参见：https://github.com/xanzy/go-gitlab/blob/bf34eca5d13a9f4c3f501d8a97b8ac226d55e4d9/projects.go#L794
+            # event-sources.gitlab.revision（选填） 表示根据分支过滤事件，以确定哪些分支的事件需要被处理，支持正则表达式，例如：^(feature|hotfix)/)
             "gitlab": {
-                # webhook 监听的代码库名称
-                "repo_name": "$repo_name",
-                # webhook 监听的代码库版本
-                "revision": "$repo_revision",
-                # 触发 webhook 的事件，例如：PushEvents, TagPushEvents 等
+                "repo-name": "$repo-name",
+                "revision": "$repo-revision",
                 "events": [
-                    "$webhook_events"
+                    "$webhook-events"
                 ]
             },
-            # 定义定时器
+            # event-sources.calendar 用于生成 calendar 类型的事件源，将定时生成事件。如果使用该类型的事件源，请至少填写“schedule、interval”属性中的一项，如果两者都被定义了，“schedule”属性的优先级更高
+            # event-sources.calendar.schedule 指定时调度规则，支持 cron 表达式，参见：https://en.wikipedia.org/wiki/Cron
+            # event-sources.calendar.interval 指两个事件之间的时间间隔周期，例如：1s、30m、2h 等
+            # event-sources.calendar.exclusion-dates（选填） 指 calendar 类型事件源的例外日期和时间，这些时间内将不会触发事件。日期时间格式遵循 ISO8601 格式，参见：https://en.wikipedia.org/wiki/ISO_8601
+            # event-sources.calendar.timezone（选填）指执行调度的时区，参见：https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
             "calendar": {
-                # 使用 cron 表达式定义调度规则，参见：https://en.wikipedia.org/wiki/Cron
-                "schedule": "$cron_expression",
-                # 触发流水线的间隔周期
+                "schedule": "$cron-expression",
                 "interval": "$interval",
-                # 循环事件的例外日期和时间
-                "exclusion_dates": [
-                    "$exclusion_date"
+                "exclusion-dates": [
+                    "$exclusion-date"
                 ],
-                # 执行调度的时区
                 "timezone": "$timezone"
             }
         }
     ],
-    # 组合事件源和流水线，以定义流水线及其触发机制
-    "pipeline_triggers": [
+    # pipeline-triggers 定义了 pipelines 和 event-sources 的组合，表示待执行的流水线及其触发方式，是执行流水线的前提条件，请至少填写一组数据
+    # pipeline-triggers.event-source（必填） 需填写 event-sources.name 的属性值。不同事件源可以和相同流水线组成多组数据，表示流水线可以被多个事件触发
+    # pipeline-triggers.pipeline（必填） 需填写 pipelines.name 的属性值。组合 pipeline-source、pipelines.name 和 pipelines.path 属性，表示从特定代码库中根据流水线名称和相对路径拉取流水线配置
+    # pipeline-triggers.revision（选填）指从代码库中哪个分支拉取流水线配置，如果不填，将根据 event-sources.gitlab.revision 决定拉取流水线配置的分支
+    "pipeline-triggers": [
         {
-            # 触发流水线的事件源，填写已定义的 event_sources 中的名称
-            "event_source": "$event_source_name",
-            # 待触发的流水线，填写已定义的 pipelines 中的名称
-            "pipeline": "$pipeline_name",
-            # 待触发的流水线的版本，如果不填，将根据 event_sources.gitlab.revision 决定流水线的版本
-            "revision": "$pipeline_revision"
+            "event-source": "$event-source-name",
+            "pipeline": "$pipeline-name",
+            "revision": "$pipeline-revision"
         }
     ],
-    # 执行流水线的目标环境
+    # destination 指执行流水线的目标环境
     "destination": "$destination",
-    # 流水线运行时相关资源的隔离性：shared 或者 exclusive
+    # isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
+    # shared 指多个 event-sources 共享资源，当某个 event-source 需要重启时，将影响其他的 event-source；相较于 exclusive 模式，更节省资源
+    # exclusive 指每个 event-source 独占资源，不同 event-source 之间资源隔离互不影响； 相较于 shared 模式，将占用更多资源
     "isolation": "$isolation"
     }'  
 ```
@@ -125,7 +127,7 @@ title: 维护流水线运行时
     -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
     -d '{
     "project": "api-server",
-    "pipeline_source": "api-server",
+    "pipeline-source": "api-server",
     "pipelines": [
         {
             "name": "pipeline-test",
@@ -137,11 +139,11 @@ title: 维护流水线运行时
             "path": "pipeline/dev"
         }
     ],
-    "event_sources": [
+    "event-sources": [
         {
             "name": "event-source-test",
             "gitlab": {
-                "repo_name": "api-server",
+                "repo-name": "api-server",
                 "revision": "test",
                 "events": [
                     "PushEvents"
@@ -153,7 +155,7 @@ title: 维护流水线运行时
         },{
             "name": "event-source-dev",
             "gitlab": {
-                "repo_name": "api-server",
+                "repo-name": "api-server",
                 "revision": "dev",
                 "events": [
                     "PushEvents"
@@ -164,12 +166,12 @@ title: 维护流水线运行时
             }
         }
     ],
-    "pipeline_triggers": [
+    "pipeline-triggers": [
         {
-            "event_source": "event-source-dev",
+            "event-source": "event-source-dev",
             "pipeline": "pipeline-dev"
         },        {
-            "event_source": "event-source-test",
+            "event-source": "event-source-test",
             "pipeline": "pipeline-test"
         }
     ],
@@ -210,7 +212,7 @@ title: 维护流水线运行时
             revision: dev
           name: event-source-dev
         isolation: shared
-        pipeline_triggers:
+        pipeline-triggers:
           - eventSource: event-source-dev
             pipeline: pipeline-dev
           - eventSource: event-source-test
@@ -234,11 +236,11 @@ title: 维护流水线运行时
 
 ### 生成删除流水线运行时的 API 请求
 
-通过接口定义 `ProjectPipelineRuntime_DeleteProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `ProjectPipelineRuntime-DeleteProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projectpipelineruntimes/$project_pipeline_runtime_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -264,11 +266,11 @@ title: 维护流水线运行时
 
 ### 生成查询流水线运行时列表的 API 请求
 
-通过接口定义 `ProjectPipelineRuntime_ListProjectPipelineRuntimes` 生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `ProjectPipelineRuntime-ListProjectPipelineRuntimes` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projectpipelineruntimes' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -292,12 +294,12 @@ title: 维护流水线运行时
         {
             "name": "api-server-pr",
             "project": "api-server",
-            "pipeline_source": "api-server",
-            "event_sources": [
+            "pipeline-source": "api-server",
+            "event-sources": [
                 {
                     "name": "event-source-test",
                     "gitlab": {
-                        "repo_name": "api-server",
+                        "repo-name": "api-server",
                         "revision": "test",
                         "events": [
                             "PushEvents"
@@ -308,7 +310,7 @@ title: 维护流水线运行时
                 {
                     "name": "event-source-dev",
                     "gitlab": {
-                        "repo_name": "api-server",
+                        "repo-name": "api-server",
                         "revision": "dev",
                         "events": [
                             "PushEvents"
@@ -329,13 +331,13 @@ title: 维护流水线运行时
                     "path": "pipeline/dev"
                 }
             ],
-            "pipeline_triggers": [
+            "pipeline-triggers": [
                 {
-                    "event_source": "event-source-dev",
+                    "event-source": "event-source-dev",
                     "pipeline": "pipeline-dev"
                 },
                 {
-                    "event_source": "event-source-test",
+                    "event-source": "event-source-test",
                     "pipeline": "pipeline-test"
                 }
             ],
@@ -352,11 +354,11 @@ title: 维护流水线运行时
 
 ### 生成查看流水线运行时详情的 API 请求
 
-通过接口定义 `ProjectPipelineRuntime_GetProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
+通过接口定义 `ProjectPipelineRuntime-GetProjectPipelineRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projectpipelineruntimes/$project_pipeline_runtime_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -380,17 +382,17 @@ title: 维护流水线运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建流水线运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
+以创建流水线运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure-skip-check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
 
 ```Shell
     curl -X 'POST' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr?insecure_skip_check=true' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr?insecure-skip-check=true' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
         -d '{
         "project": "api-server",
-        "pipeline_source": "api-server",
+        "pipeline-source": "api-server",
         ...
         "destination": "env-invalid",
         "isolation": "shared"
