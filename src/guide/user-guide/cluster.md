@@ -251,7 +251,7 @@ curl -X 'POST' \
   "cluster_kind": "kubernetes",
   "cluster_type": "virtual",
   "usage": "worker",
-  "worker_type": "pipeline",
+  "worker_type": "deployment",
   "host_cluster": "cluster-host",
   "primary_domain": "8.217.50.114.nip.io",
   "argocd_host": "argocd.vcluster-virtual.8.217.50.114.nip.io",
