@@ -132,15 +132,14 @@ title: 维护流水线运行时
 
 ```JSONC
 {
-    // 以下属性默认是必填项，当属性非必填时才会添加“选填”的注释
     // 指流水线运行时归属于哪个项目
     "project": "$project-name",
     // 指存储流水线配置的代码库的名称
     "pipeline_source": "$pipeline-coderepo-name",
     // pipelines 表示流水线运行时从特定代码库中自动发现流水线配置的过滤条件，请至少填写一组数据
     // 支持多分支流水线：如果代码库中有多条分支，并且不同分支有各自的流水线配置，流水线运行时将根据过滤条件自动发现多个分支的流水线
-    // 多分支流水线的配置示例：如果一个团队使用 github flow 的分支策略对某个产品开展 CI/CD 活动
-    // 该产品的源码库中存在 main、featureA、featureB 三条分支，每条分支的相同路径下（例如:pipelines）分别存储了不同名称的流水线配置
+    // 多分支流水线的配置示例：如果一个团队使用 GitHub flow 的分支策略对某个产品开展 CI/CD 活动
+    // 该产品的源码库中存在 main、feature-xxxx、feature-yyyy 三条分支，每条分支的相同路径下（例如:pipelines）分别存储了不同名称的流水线配置
     // 这时您可以配置三组过滤条件（参见请求示例），流水线运行时将自动发现该代码库三条分支下的流水线
        "pipelines": [
         {
@@ -195,14 +194,14 @@ title: 维护流水线运行时
     // pipeline_triggers 表示待执行的流水线及其触发方式，是执行流水线的前提条件，请至少填写一组数据
     "pipeline_triggers": [
         {
-            // 填写 event-sources 中 name 的属性值。不同事件源可以和相同流水线组成多组数据，表示流水线可以被多个事件触发
+            // 填写 event_sources 中 name 的属性值。不同事件源可以和相同流水线组成多组数据，表示流水线可以被多个事件触发
             "event_source": "$event-source-name",
             // 填写 pipelines 中 name 的属性值
-            // 结合 pipeline-source 和 pipelines 的属性值，表示流水线运行时将从特定代码库中根据过滤条件拉取流水线配置
+            // 结合 pipeline_source 和 pipelines 的属性值，表示流水线运行时将从特定代码库中根据过滤条件拉取流水线配置
             "pipeline": "$pipeline-name",
             // 选填
             // 表示流水线运行时将从代码库中哪个分支拉取流水线配置
-            // 如果不填，将根据 event-sources 中 gitlab 的 revision 属性值决定拉取流水线配置的分支
+            // 如果不填，将根据 event_sources 中 gitlab 的 revision 属性值决定拉取流水线配置的分支
             "revision": "$pipeline-revision"
         }
     ],
@@ -454,10 +453,10 @@ title: 维护流水线运行时
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
         -d '{
-        "project": "api-server",
-        "pipeline-source": "api-server",
-        ...
-        "destination": "env-invalid",
-        "isolation": "shared"
+            "project": "api-server",
+            "pipeline-source": "api-server",
+            ...
+            "destination": "env-invalid",
+            "isolation": "shared"
         }'
 ```
