@@ -1,6 +1,6 @@
 ---
 footerLink: /guide/user-guide/run-a-pipeline
-title: 执行流水线 
+title: 执行一条流水线
 ---
 # 执行一条流水线
 
