@@ -8,17 +8,17 @@ title: 注册运行时集群
 
 运行时集群用于承载应用的运行时环境。集群形态支持物理集群和虚拟集群。
 
-支持通过 [命令行](deploy-an-application.md#注册运行时集群) 和 API 两种方式注册运行时集群。
+支持通过 [命令行](run-a-pipeline.md#注册运行时集群) 和 API 两种方式注册运行时集群。
 
 ## 前提条件
 
 ### 创建 access token
 
-您需要创建一个 access token，作为请求 API 的请求头。详情参考 [注册 GitLab 账号](deploy-an-application.md#注册-gitlab-账号)。
+您需要创建一个 access token，作为请求 API 的请求头。详情参考 [注册 GitLab 账号](run-a-pipeline.md#注册-gitlab-账号)。
 
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+如果您想使用 https 协议访问 Nautes API Server，请[导入证书](run-a-pipeline.md#导入证书)。
 
 ## 注册物理集群（API）
 
@@ -29,34 +29,40 @@ title: 注册运行时集群
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $cluster_name 为集群名称
+    # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
-      "api_server": $api_server,
-      # 集群种类：目前只支持 kubernetes
-      "cluster_kind": "kubernetes",
-      # 集群类型：virtual或physical
-      "cluster_type": $cluster_type,
-      # 集群用途：host或worker
-      "usage": $usage,
-      # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为集群IP
-      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
-      # traefik 配置
-      "traefik": {
-        "http_node_port": "30080",
-        "https_node_port": "30443"
-      },
-      # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
-      "kubeconfig": $kubeconfig
+        # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
+        "api_server": $api-server,
+        # 集群种类：目前只支持 kubernetes
+        "cluster_kind": "kubernetes",
+        # 集群类型：virtual或physical
+        "cluster_type": $cluster-type,
+        # 集群用途：host或worker
+        "usage": $usage,
+        # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
+        "worker_type": $worker-type
+        # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+        "primary_domain": "$cluster-ip.nip.io"
+        # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
+        "tekton_host": "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
+        # argocd 域名：$cluster-name 替换为集群名称,$cluster-ip 替换为集群IP
+        "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
+        # traefik 配置
+        "traefik": {
+          "http_node_port": "30080",
+          "https_node_port": "30443"
+        },
+        # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
+        "kubeconfig": $kubeconfig
     }'
 ```
 
-替换变量后的请求示例如下：
+替换变量后部署运行时集群的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
@@ -69,6 +75,8 @@ title: 注册运行时集群
       "cluster_kind": "kubernetes",
       "cluster_type": "physical",
       "usage": "worker",
+      "worker_type": "deployment",
+      "primary_domain": "8.217.50.114.nip.io",
       "argocd_host": "argocd.host-worker-aliyun-0412.8.217.50.114.nip.io",
       "traefik": {
         "http_node_port": "30080",
@@ -101,9 +109,9 @@ title: 注册运行时集群
 
 使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。
 
-请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为部署运行时集群。注册成功后，将在物理集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
+请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为运行时集群。注册成功后，将在物理集群中安装 ArgoCD、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
+> 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以注册运行时集群。
 
 ## 注册虚拟集群（API）
 
@@ -116,29 +124,31 @@ title: 注册运行时集群
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $cluster_name 为集群名称
+    # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
-      "api_server": $api_server,
-      # 集群种类：目前只支持 kubernetes
-      "cluster_kind": "kubernetes",
-      # 集群类型：virtual或physical
-      "cluster_type": $cluster_type,
-      # 集群用途：host或worker
-      "usage": $usage,
-      # traefik 配置
-      "traefik": {
-        "http_node_port": "30080",
-        "https_node_port": "30443"
-      },
-      # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
-      "kubeconfig": $kubeconfig
-}'
+        # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
+        "api_server": $api-server,
+        # 集群种类：目前只支持 kubernetes
+        "cluster_kind": "kubernetes",
+        # 集群类型：virtual或physical
+        "cluster_type": $cluster-type,
+        # 集群用途：host或worker
+        "usage": $usage,
+        # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+        "primary_domain": "$cluster-ip.nip.io"
+        # traefik 配置
+        "traefik": {
+          "http_node_port": "30080",
+          "https_node_port": "30443"
+        },
+        # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
+        "kubeconfig": $kubeconfig
+      }'
 ```
 
 替换变量后的请求示例如下：
@@ -154,6 +164,7 @@ curl -X 'POST' \
   "cluster_kind": "kubernetes",
   "cluster_type": "physical",
   "usage": "host",
+  "primary_domain": "8.217.50.114.nip.io",
   "traefik": {
     "http_node_port": "30080",
     "https_node_port": "30443"
@@ -194,34 +205,40 @@ curl -X 'POST' \
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $cluster_name 为集群名称
+    # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
-      "api_server": $api_server,
-      # 集群种类：目前只支持 kubernetes
-      "cluster_kind": "kubernetes",
-      # 集群类型：virtual或physical
-      "cluster_type": $cluster_type,
-      # 集群用途：host或worker
-      "usage": $usage,
-      # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
-      "host_cluster": $host_cluster,
-      # argocd 域名：$cluster_name 替换为集群名称,$cluster_ip 替换为宿主集群IP
-      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
-      # 虚拟集群配置：virtual类型集群才有此属性
-      "vcluster": {
-        # API SERVER 端口号
-        "https_node_port": $api_server_port,
-      }
+        # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+        "api_server": $api-server,
+        # 集群种类：目前只支持 kubernetes
+        "cluster_kind": "kubernetes",
+        # 集群类型：virtual或physical
+        "cluster_type": $cluster-type,
+        # 集群用途：host或worker
+        "usage": $usage,
+        # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
+        "worker_type": $worker_type,
+        # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
+        "host_cluster": $host-cluster,
+        # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
+        "primary_domain": "$cluster-ip.nip.io"
+        # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
+        "tekton_host": "tekton.vcluster-$suffix.$cluster-ip.nip.io"
+        # argocd 域名：$cluster-name 替换为集群名称,$cluster-ip 替换为宿主集群IP
+        "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
+        # 虚拟集群配置：virtual类型集群才有此属性
+        "vcluster": {
+          # API SERVER 端口号
+          "https_node_port": $api-server-port,
+        }
     }'
 ```
 
-替换变量后的请求示例如下：
+替换变量后的部署运行时集群的请求示例如下：
 
 ```Shell
 curl -X 'POST' \
@@ -234,8 +251,10 @@ curl -X 'POST' \
   "cluster_kind": "kubernetes",
   "cluster_type": "virtual",
   "usage": "worker",
+  "worker_type": "pipeline",
   "host_cluster": "cluster-host",
-  "argocd_host": "argocd.cluster-virtual.8.217.50.114.nip.io",
+  "primary_domain": "8.217.50.114.nip.io",
+  "argocd_host": "argocd.vcluster-virtual.8.217.50.114.nip.io",
   "vcluster": {
     "https_node_port": "31456"
   }
@@ -246,15 +265,15 @@ curl -X 'POST' \
 
 使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。
 
-请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为部署运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、ArgoRollouts、ExternalSecret、HNC、Vault-agent 等组件。
+请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以注册运行时集群。
+> 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以注册运行时集群。
 
 ## 删除物理集群（API）
 
 > 请确保已成功注册物理集群。
 >
-> 在删除集群之前请先删除产品配置清单。详情参考 [删除产品配置清单（命令行）](clean-environment.md#删除运行环境) ，或者 [维护部署运行时](deployment-runtime.md) 、[维护环境](environment.md)、 [维护代码库](code-repo.md)、[维护项目](project.md)、[维护产品](product.md)中的删除章节（API）。
+> 在删除集群之前请先[删除运行时(命令行)](clean-environment.md#删除运行时)，或者参考[删除部署运行时](deployment-runtime.md#删除部署运行时api)、[删除流水线运行时](project-pipeline-runtime.md#删除流水线运行时api)、[删除环境](environment.md#删除环境api)、 [删除代码库](code-repo.md#删除代码库api)、[删除项目](project.md#删除项目api)、[删除产品](product.md#删除产品api)等 API 接口。
 
 ### 生成删除物理集群的 API 请求
 
@@ -262,7 +281,7 @@ curl -X 'POST' \
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -282,7 +301,7 @@ curl -X 'POST' \
 
 请求成功后，将删除物理集群，以及在租户配置库的集群资源文件。
 
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。
+> 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以删除运行时集群。
 
 ## 删除虚拟集群（API）
 
@@ -322,4 +341,4 @@ curl -X 'POST' \
 使用 curl 命令或者其他工具执行 API 请求。
 
 请求成功后，将删除宿主集群，以及在租户配置库中的集群资源文件。
-> 只有当您的账号是租户配置库的成员，并且有 main 分支的写入权限，才可以删除运行时集群。
+> 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以删除运行时集群。
