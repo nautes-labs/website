@@ -72,7 +72,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "host-worker-$suffix"
+  name: "physical-worker-$suffix"
   # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -86,14 +86,14 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.host-worker-$suffix.$cluster-ip.nip.io",
+  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io",
   # traefik 配置
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 替换变量后的物理集群属性示例如下：
@@ -102,14 +102,14 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-worker-aliyun"
+  name: "physical-worker-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
   workerType: "deployment"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.host-worker-aliyun.8.217.50.114.nip.io"
+  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -182,7 +182,7 @@ spec:
     httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 替换变量后的宿主集群属性示例如下：
@@ -344,7 +344,6 @@ spec:
   project: project-demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # 代码库的名称
@@ -368,7 +367,6 @@ spec:
   product: demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # 代码库的名称
@@ -413,7 +411,6 @@ spec:
   project: project-demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-sc-demo-quickstart
@@ -431,7 +428,6 @@ spec:
   product: demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-deploy-demo-quickstart

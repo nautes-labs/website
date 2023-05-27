@@ -72,7 +72,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "host-worker-$suffix"
+  name: "physical-worker-$suffix"
   # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -86,14 +86,14 @@ spec:
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
   # ArgoCD domain. replace $cluster-ip with the cluster IP.
-  argocdHost: "argocd.host-worker-$suffix.$cluster-ip.nip.io"
+  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
   # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster.
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 The physical cluster property example after replacing the variables is shown below:
@@ -102,14 +102,14 @@ The physical cluster property example after replacing the variables is shown bel
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-worker-aliyun"
+  name: "physical-worker-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
   workerType: "deployment"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.host-worker-aliyun.8.217.50.114.nip.io"
+  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -181,8 +181,8 @@ spec:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster
-  kubeconfig:
-    "$kubeconfig"
+  kubeconfig: |
+    $kubeconfig
 ```
 
 The host cluster property example after replacing the variables is shown below:
@@ -344,7 +344,6 @@ spec:
   project: project-demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # Repository name
@@ -368,7 +367,6 @@ spec:
   product: demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # Repository name
@@ -413,7 +411,6 @@ spec:
   project: project-demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-sc-demo-quickstart
@@ -431,7 +428,6 @@ spec:
   product: demo-quickstart
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       name: coderepo-deploy-demo-quickstart
