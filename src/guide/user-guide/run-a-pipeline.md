@@ -590,9 +590,9 @@ nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-serv
 
 您需要在 Github 上准备一个账号或组织，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
 
-当运行时集群中与流水线运行时同名的命名空间就绪后，您需要在此命名空间下创建一个 Secret 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 Secret 通过镜像仓库的认证。
+当运行时集群中与流水线运行时同名的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
 
-Secret 资源的模板位于相对路径 `examples/.docker` 下，您需要用以下命令生成的字符串替换其中的 `$auth` 变量：
+ConfigMap 资源的模板位于相对路径 `examples/config.json` 下，您需要用以下命令生成的字符串替换其中的 `$auth` 变量：
 
 ```shell
 # github-user 指您在 github 中的账号
@@ -600,11 +600,11 @@ Secret 资源的模板位于相对路径 `examples/.docker` 下，您需要用�
 echo -n '$github-user:$github-token' | base64
 ```
 
-替换变量后使用 `kubectl` 命令在运行时集群上创建 Secret：
+替换变量后使用 `kubectl` 命令在运行时集群上创建 ConfigMap：
 
 ```shell
 # pipeline-runtime-name 指流水线运行时名称，如：pr-demo-quickstart
-kubectl create secret generic registry-auth --from-file=.docker=examples/.docker -n $pipeline-runtime-name
+kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runtime-name
 ```
 
 ## 执行流水线
@@ -855,7 +855,7 @@ spec:
           requests:
             storage: 500M
   - name: dockerconfig-volume
-    secret:
+    configMap:
       name: registry-auth
 ```
 
