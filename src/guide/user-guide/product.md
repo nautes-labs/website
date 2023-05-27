@@ -10,19 +10,19 @@ title: 维护产品
 
 当您使用 GitLab 作为产品提供者时，产品唯一对应一个 GitLab Group，Nautes 会在该 Group 下维护一个用于存储产品元数据的固定名称的代码库（默认为 `default.project`），同时，Nautes 会利用 GitLab 权限模型来管理用户对不同产品数据的权限。
 
-支持通过 [命令行](deploy-an-application.md#初始化产品) 和 API 两种方式维护产品。
+支持通过 [命令行](run-a-pipeline.md#初始化产品) 和 API 两种方式维护产品。
 
 ## 前提条件
 
 ### 创建 access token
 
-GitLab 安装完成后，您需要注册一个账号，并创建  [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)，其中 access token 的权限范围包括：api、read_api、read_repository 和 write_repository。
+GitLab 安装完成后，您需要注册一个账号，并创建 [personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html)，其中 access token 的权限范围包括：api、read_api、read_repository 和 write_repository。
 
 access token 将作为请求 API 的请求头。
 
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+如果您想使用 https 协议访问 Nautes API Server，请[导入证书](run-a-pipeline.md#导入证书)。
 
 ## 创建产品（API）
 
@@ -33,9 +33,9 @@ access token 将作为请求 API 的请求头。
 ```Shell
    # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
    # 替换变量 $gitlab-access-token 为 GitLab access token
-   # 替换变量 $product_name 为产品名称
+   # 替换变量 $product-name 为产品名称
    curl -X 'POST' \
-       'HTTP://$api-server-address/api/v1/products/$product_name' \
+       'HTTP://$api-server-address/api/v1/products/$product-name' \
        -H 'accept: application/json' \
        -H 'Content-Type: application/json' \
        -H 'Authorization: Bearer $gitlab-access-token' \
@@ -43,12 +43,12 @@ access token 将作为请求 API 的请求头。
        "git": {
            "gitlab": {
                # group 的名称
-               "name": $product_name,
+               "name": $product-name,
                # group 的路径
-               "path": $product_name,
+               "path": $product-name,
                # group 的可见性，例如：private、public
-               "visibility": $product_visibility,
-               "description": $product_desc
+               "visibility": $product-visibility,
+               "description": $product-desc
                }
            }
        }'
@@ -84,7 +84,7 @@ access token 将作为请求 API 的请求头。
 
 ## 删除产品（API）
 
-> 在删除产品之前，请先删除与产品关联的所有实体和资源，例如：部署运行时、环境、代码库和项目等，否则将不能执行删除。
+> 在删除产品之前，请先删除与产品关联的所有实体和资源，例如：部署运行时、流水线运行时、环境、代码库和项目等，否则将不能执行删除。
 
 ### 生成删除产品的 API 请求
 
@@ -92,7 +92,7 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://$api-server-address/api/v1/products/$product_name' \
+        'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -177,7 +177,7 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'GET' \
-        'HTTP://$api-server-address/api/v1/products/$product_name' \
+        'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
