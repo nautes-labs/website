@@ -45,21 +45,21 @@ Using Alibaba Cloud as an example, this section describes the process of deployi
 
 ## Register Runtime Cluster
 
-Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can function as a runtime environment for hosting applications.
+Registering a runtime cluster involves adding a prepared Kubernetes cluster to the tenant management cluster and initializing its configuration through the tenant management cluster. After initialization, the cluster can host the runtime of applications.
 
 The supported cluster types include physical clusters and virtual clusters.
 
-When higher performance, isolation, and reliability are required for your application's runtime environment, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
+When higher performance, isolation, and reliability are required for your runtime of applications, it is recommended to use a [physical cluster](#register-physical-cluster). For other environments such as development, testing, and trial environments, a [virtual cluster](#register-runtime-cluster) can be used.
 
 ### Register Physical Cluster
 
-1. Clone the command-line repository to your local machine.
+Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, `$cluster_ip` and `$kubeconfig`.
+Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker.yaml`, including `$suffix`, `$api-server`, `$cluster-ip` and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the physical cluster.
@@ -72,7 +72,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "host-worker-$suffix"
+  name: "physical-worker-$suffix"
   # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -81,15 +81,19 @@ spec:
   clusterType: "physical"
   # Cluster usage: host or worker
   usage: "worker"
-  # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the cluster IP.
-  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io"
+  # Runtime type: deployment runtime
+  workerType: "deployment"
+  # Primary domain, replace $cluster-ip with the cluster IP.
+  primaryDomain: "$cluster-ip.nip.io"
+  # ArgoCD domain. replace $cluster-ip with the cluster IP.
+  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
   # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster.
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 The physical cluster property example after replacing the variables is shown below:
@@ -98,12 +102,14 @@ The physical cluster property example after replacing the variables is shown bel
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-worker-aliyun-0412"
+  name: "physical-worker-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
-  argocdHost: "argocd.host-worker-aliyun-0412.8.217.50.114.nip.io"
+  workerType: "deployment"
+  primaryDomain: "8.217.50.114.nip.io"
+  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -129,26 +135,26 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the physical cluster.
 
 ```Shell
-# examples/demo-cluster-physical-worker.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-cluster-physical-worker-deployment.yaml refers to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
-nautes apply -f examples/demo-cluster-physical-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ### Register Virtual Cluster
 
 When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
 
-1. Clone the command-line repository to your local machine.
+Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the host cluster.
@@ -170,26 +176,29 @@ spec:
   clusterType: "physical"
   # Cluster usage: host or worker
   usage: "host"
+  # Primary domain, Replace $cluster-ip with the host cluster IP.
+  primaryDomain: "$cluster-ip.nip.io"
   # Traefik configuration
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
-The host cluster property example after replacing the variables is shown below: 
+The host cluster property example after replacing the variables is shown below:
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-aliyun-114"
+  name: "host-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "host"
+  primaryDomain: "8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -215,7 +224,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-3. Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -224,7 +233,7 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-4. Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker.yaml`, including `$suffix`, `$api-server`, `$host-cluster`, and `$api-server-port`.
+Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-deployment.yaml`, including `$suffix`, `$api-server`, `$host-cluster`, and `$api-server-port`.
 
 ```yaml
 # Virtual cluster property template
@@ -232,7 +241,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "cluster-demo-$suffix"
+  name: "vcluster-$suffix"
   # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
   apiServer: "$api-server"
   # Cluster kind: Currently only supports Kubernetes
@@ -241,55 +250,61 @@ spec:
   clusterType: "virtual"
   # Cluster usage: host or worker
   usage: "worker"
+  # Runtime type: deployment runtime
+  workerType: "deployment"
   # Host cluster: the property is only available for virtual type clusters. Replace the parameter with the name of the host cluster.
   hostCluster: "$host-cluster"
-  # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the host cluster IP.
-  argocdHost: "argocd.$cluster_name.$cluster_ip.nip.io"
+  # Primary domain, Replace $cluster-ip with the host cluster IP.
+  primaryDomain: "$cluster-ip.nip.io"
+  # ArgoCD domain, Replace $cluster-ip with the host cluster IP.
+  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io"
   # Virtual cluster configuration: the property is only available for virtual type clusters.
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
 ```
 
-The virtual cluster property example after replacing the variables is shown below: 
+The virtual cluster property example after replacing the variables is shown below:
 
 ```yaml
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "vcluster-aliyun-0412"
+  name: "vcluster-aliyun"
   apiServer: "https://8.217.50.114:31456"
   clusterKind: "kubernetes"
   clusterType: "virtual"
   usage: "worker"
-  hostCluster: "host-aliyun-114"
-  argocdHost: "argocd.vcluster-aliyun-0412.8.217.50.114.nip.io"
+  workerType: "deployment"
+  hostCluster: "host-aliyun"
+  primaryDomain: "8.217.50.114.nip.io"
+  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
 ```
 
-5. Run the following command to register the virtual cluster.
+Run the following command to register the virtual cluster.
 
 ```Shell
-# examples/demo-cluster-virtual-worker.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-cluster-virtual-worker-deployment.yaml refers to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
-nautes apply -f examples/demo-cluster-virtual-worker.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-## Prepare Runtime Environment
+## Initialize a Product
 
-Preparing the runtime environment refers to initializing a basic environment for deploying a product in the runtime cluster, including resources such as namespaces, serviceAccounts, secrets, etc.
+Initializing the product refers to creating various entities in the Nautes product model, and initializing a set of resources for executing automated deployment in the runtime cluster, including namespace, serviceaccount, secret, and ArgoCD related resources, etc.
 
-The following sections describe the entities related to creating a runtime environment through the command-line, including a product, a project, a code repository, an environment, and a deployment runtime.
+The following sections describe the entities related to initializing the product through the command-line, including a product, a project, a code repository, an authorization, an environment, and a deployment runtime.
 
-1. Clone the command-line repository to your local machine.
+Clone the command-line repository to your local machine.
 
 ```Shell
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-2. Replace the variables in the runtime environment property template located at the relative path `examples/demo-product.yaml`, including `$suffix` and `$runtime-cluster`.
+Replace the variables in the product property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
 ```yaml
 # Product
@@ -307,19 +322,6 @@ spec:
       description: demo-$suffix
       parentID: 0
 ---
-# Environment
-apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: Environment
-spec:
-  # Environment name
-  name: env-demo-$suffix
-  # The product to which the environment belongs
-  product: demo-$suffix
-  # Runtime cluster related to the environment
-  cluster: $runtime-cluster
-  # Environment type
-  envType: dev
----
 # Project
 apiVersion: "nautes.resource.nautes.io/v1alpha1"
 kind: Project
@@ -330,31 +332,143 @@ spec:
   product: demo-$suffix
   language: golang
 ---
-# CodeRepo: the repository is used to store Kubernetes Manifests.
+# source code repository
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
-  # CodeRepo name
-  name: coderepo-demo-$suffix
+  # coderepo name
+  name: coderepo-sc-demo-$suffix
   codeRepoProvider: gitlab
-  deploymentRuntime: true
-  pipelineRuntime: false
+  deploymentRuntime: false
+  pipelineRuntime: true
   # The product to which the coderepo belongs
   product: demo-$suffix
   # The project to which the coderepo belongs
   project: project-demo-$suffix
   webhook:
     events: ["push_events"]
-    isolation: shared
   git:
     gitlab:
       # Repository name
-      name: coderepo-demo-$suffix
+      name: coderepo-sc-demo-$suffix
       # Repository path
-      path: coderepo-demo-$suffix 
+      path: coderepo-sc-demo-$suffix
       # Repository visibility：private or public
       visibility: private
-      description: coderepo-demo-$suffix 
+      description: coderepo-sc-demo-$suffix
+---
+# deployment manifests repository
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  # coderepo name
+  name: coderepo-deploy-demo-$suffix
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  # The product to which the coderepo belongs
+  product: demo-$suffix
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      # Repository name
+      name: coderepo-deploy-demo-$suffix
+      # Repository path
+      path: coderepo-deploy-demo-$suffix
+      # Repository visibility：private or public
+      visibility: private
+      description: coderepo-deploy-demo-$suffix
+```
+
+The file example after replacing the variables is shown below:
+
+```yaml
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: Product
+spec:
+  name: demo-quickstart
+  git:
+    gitlab:
+      name: demo-quickstart
+      path: demo-quickstart
+      visibility: private
+      description: demo-quickstart
+      parentID: 0
+---
+apiVersion: "nautes.resource.nautes.io/v1alpha1"
+kind: Project
+spec:
+  name: project-demo-quickstart
+  product: demo-quickstart
+  language: golang
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-sc-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  project: project-demo-quickstart
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      name: coderepo-sc-demo-quickstart
+      path: coderepo-sc-demo-quickstart
+      visibility: private
+      description: coderepo-sc-demo-quickstart
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-deploy-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      name: coderepo-deploy-demo-quickstart
+      path: coderepo-deploy-demo-quickstart
+      visibility: private
+      description: coderepo-deploy-demo-quickstart
+```
+
+Replace the variables in the runtime environment property template located at the relative path `examples/demo-deployment.yaml`, including `$suffix` and `$deployment-runtime-cluster`.
+
+```yaml
+---
+# Testing Environment
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: Environment
+spec:
+  # Environment name
+  name: env-test-demo-$suffix
+  # The product to which the environment belongs
+  product: demo-$suffix
+  # Runtime cluster related to the environment
+  cluster: $deployment-runtime-cluster
+  # Environment type
+  envType: test
+---
+# Grant deployment configuration repository authorization to the deployment runtime.
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepoBinding
+spec:
+  # The product to which the authorized code repository belongs.
+  productName: demo-$suffix
+  name: coderepobinding-deploy-dr-demo-$suffix
+  # Authorized code repository
+  coderepo: coderepo-deploy-demo-$suffix
+  # The product with granted authorization
+  product: demo-$suffix
+  # Permissions: readonly, readwrite
+  permissions: readonly
 ---
 # DeploymentRuntime
 apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -363,12 +477,12 @@ spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
   # The target environment of the deployment runtime
-  destination: env-demo-$suffix
+  destination: env-test-demo-$suffix
   manifestsource:
     # The source coderepo of the deployment runtime
-    codeRepo: coderepo-demo-$suffix
+    codeRepo: coderepo-deploy-demo-$suffix
     # The relative path of the source coderepo 
-    path: deployments
+    path: deployments/test
     # The revision or branch of the source coderepo 
     targetRevision: main
   # The product to which the deployment runtime belongs
@@ -378,90 +492,64 @@ spec:
     - project-demo-$suffix
 ```
 
-The runtime environment example after replacing the variables is shown below:
+The file example after replacing the variables is shown below:
 
-> If the runtime environment's host cluster type is physical, you must set the spec.cluster of the Environment resource to the corresponding [physical cluster](#register-physical-cluster) name. If the runtime environment's host cluster type is virtual, you must set the spec.cluster of the Environment resource to the corresponding [virtual cluster](#register-virtual-cluster) name.
+> According to the cluster type selected in the previous section, you need to set `spec.cluster` of Environment resource to the [physical cluster name](#register-physical-cluster) or [virtual cluster name](#register-virtual-cluster).
 
 ```yaml
-apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: Product
-spec:
-  name: demo-0412
-  git:
-    gitlab:
-      name: demo-0412
-      path: demo-0412
-      visibility: private
-      description: demo-0412
-      parentID: 0
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
-  name: env-demo-0412
-  product: demo-0412
-  cluster: host-worker-aliyun-0412
-  envType: dev
----
-apiVersion: "nautes.resource.nautes.io/v1alpha1"
-kind: Project
-spec:
-  name: project-demo-0412
-  product: demo-0412
-  language: golang
+  name: env-test-demo-quickstart
+  product: demo-quickstart
+  cluster: vcluster-aliyun
+  envType: test
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: CodeRepo
+kind: CodeRepoBinding
 spec:
-  name: coderepo-demo-0412
-  codeRepoProvider: gitlab
-  deploymentRuntime: true
-  pipelineRuntime: false
-  product: demo-0412
-  project: project-demo-0412
-  webhook:
-    events: ["push_events"]
-    isolation: shared
-  git:
-    gitlab:
-      name: coderepo-demo-0412
-      path: coderepo-demo-0412 
-      visibility: private
-      description: coderepo-demo-0412 
+  productName: demo-quickstart
+  name: coderepobinding-deploy-dr-demo-quickstart
+  coderepo: coderepo-deploy-demo-quickstart
+  product: demo-quickstart
+  permissions: readonly
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
-  name: dr-demo-0412
-  destination: env-demo-0412
+  name: dr-demo-quickstart
+  destination: env-test-demo-quickstart
   manifestsource:
-    codeRepo: coderepo-demo-0412
-    path: deployments
+    codeRepo: coderepo-deploy-demo-quickstart
+    path: deployments/test
     targetRevision: main
-  product: demo-0412
+  product: demo-quickstart
   projectsRef:
-    - project-demo-0412
+    - project-demo-quickstart
 ```
 
-3. Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to prepare the runtime environment.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to initialize the product.
 
 ```Shell
-# examples/demo-product.yaml refers to the relative path of the template file in the command-line repository.
+# examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
 # gitlab-access-token refers to the GitLab access token.
 # api-server-address refers to the access address of the Nautes API Server.
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## Deployment
-Submit the Kubernetes Manifests to the product's code repository, such as deployment, service, and other resources. 
 
-1. Clone the sample example repository to your local machine.
+Submit the Kubernetes Manifests to the deployment configuration repository, such as deployment, service, and other resources.
+
+Clone the sample example repository to your local machine.
 
 ```Shell
-git clone https://github.com/lanbingcloud/demo-user-deployments.git
+git clone https://github.com/nautes-examples/user-deployment.git
 ```
 
-2. Modify the domain name of the Ingress resource in the local code repository: `/deployment/test/devops-sample-svc.yaml`
+Modify the domain name of the Ingress resource in the local code repository: `deployment/test/devops-sample-svc.yaml`
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -477,14 +565,14 @@ spec:
       ...
 ```
 
-3. Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [product's code repository](#prepare-runtime-environment), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the main branch of the [deployment configuration repository](#initialize-a-product), which is used to store Kubernetes Manifests. For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
-4. Push the Kubernetes Manifests to the product's code repository.
+Push the Kubernetes Manifests to the deployment configuration repository.
 
 ```Shell
-# Change the URL of the origin remote repository, the repository URL below are only examples.
-git remote set-url origin git@github.com:demo-0412/coderepo-demo-0412.git
-# Push the Kubernetes Manifests to the product's code repository.
+# Change the URL of the remote repository 'origin' to that of the deployment configuration repository, the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-deploy-demo-quickstart.git
+# Push the Kubernetes Manifests to the deployment configuration repository.
 git add .
 git commit -m 'submit the kubernetes manifests.'
 git push origin main -f
@@ -494,16 +582,16 @@ git push origin main -f
 
 After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport`.
 
-> Replace the $cluster-ip variable with the public IP of the cluster hosting the runtime environment.
+> Replace the $cluster-ip variable with the public IP of the runtime cluster.
 >
-> Replace the $traefik-httpnodeport variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
+> Replace the $traefik-httpnodeport variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
-Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only. 
+Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only.
 
 Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console.
 
-> Replace the $argocdHost variable with the argocdHost address of the cluster hosting the runtime environment. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the cluster hosting the runtime environment. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
