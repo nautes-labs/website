@@ -176,6 +176,8 @@ spec:
   clusterType: "physical"
   # Cluster usage: host or worker
   usage: "host"
+  # Primary domain, Replace $cluster-ip with the host cluster IP.
+  primaryDomain: "$cluster-ip.nip.io"
   # Traefik configuration
   traefik:
     httpNodePort: "30080"
@@ -196,6 +198,7 @@ spec:
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "host"
+  primaryDomain: "8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
