@@ -115,7 +115,7 @@ title: 维护流水线运行时
                     "pipeline": "pipeline-main"
                 },
                 {
-                    "event_source": "event-source-xxxx",
+                    "event_source": "event-source-feature-xxxx",
                     "pipeline": "pipeline-feature-xxxx"
                 },
                 {
@@ -227,7 +227,6 @@ title: 维护流水线运行时
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: ProjectPipelineRuntime
     metadata:
-        creationTimestamp: null
         name: api-server-pr
     spec:
         destination: env-test
@@ -238,29 +237,39 @@ title: 维护流水线运行时
             events:
             - PushEvents
             repoName: api-server
-            revision: test
-          name: event-source-test
+            revision: main
+          name: event-source-main
         - calendar:
             schedule: 0 0 16 ? * MON-FRI
           gitlab:
             events:
             - PushEvents
             repoName: api-server
-            revision: dev
-          name: event-source-dev
-        isolation: shared
+            revision: feature-xxxx
+          name: event-source-feature-xxxx
+        - calendar:
+            schedule: 0 0 16 ? * MON-FRI
+          gitlab:
+            events:
+            - PushEvents
+            repoName: api-server
+            revision: feature-yyyy
+          name: event-source-feature-yyyy
+        isolation: exclusive
         pipeline-triggers:
-          - eventSource: event-source-dev
-            pipeline: pipeline-dev
-          - eventSource: event-source-test
-            pipeline: pipeline-test
+          - eventSource: event-source-main
+            pipeline: pipeline-main
+          - eventSource: event-source-feature-xxxx
+            pipeline: pipeline-feature-xxx
+          - eventSource: event-source-feature-yyyy
+            pipeline: pipeline-feature-yyyy
         pipelines:
-        - label: test
-          name: pipeline-test
-          path: pipeline/test
-        - label: dev
-          name: pipeline-dev
-          path: pipeline/dev
+        - name: pipeline-main
+          path: pipelines
+        - name: pipeline-feature-xxxx
+          path: pipelines
+        - name: pipeline-feature-yyyy
+          path: pipelines
         pipelinesource: api-server
         project: api-server
 ```
@@ -334,10 +343,10 @@ title: 维护流水线运行时
             "pipeline-source": "api-server",
             "event-sources": [
                 {
-                    "name": "event-source-test",
+                    "name": "event-source-main",
                     "gitlab": {
                         "repo-name": "api-server",
-                        "revision": "test",
+                        "revision": "main",
                         "events": [
                             "PushEvents"
                         ]
@@ -345,10 +354,21 @@ title: 维护流水线运行时
                     "calendar": "0 15 17 ? * MON-FRI"
                 },
                 {
-                    "name": "event-source-dev",
+                    "name": "event-source-feature-xxxx",
                     "gitlab": {
                         "repo-name": "api-server",
-                        "revision": "dev",
+                        "revision": "feature-xxxx",
+                        "events": [
+                            "PushEvents"
+                        ]
+                    },
+                    "calendar": "0 0 16 ? * MON-FRI"
+                },
+                {
+                    "name": "event-source-feature-yyyy",
+                    "gitlab": {
+                        "repo-name": "api-server",
+                        "revision": "feature-yyyy",
                         "events": [
                             "PushEvents"
                         ]
@@ -358,28 +378,34 @@ title: 维护流水线运行时
             ],
             "pipelines": [
                 {
-                    "name": "pipeline-test",
-                    "label": "test",
-                    "path": "pipeline/test"
+                    "name": "pipeline-main",
+                    "path": "pipelines"
                 },
                 {
-                    "name": "pipeline-dev",
-                    "label": "dev",
-                    "path": "pipeline/dev"
+                    "name": "pipeline-feature-xxxx",
+                    "path": "pipelines"
+                },
+                {
+                    "name": "pipeline-feature-yyyy",
+                    "path": "pipelines"
                 }
             ],
             "pipeline-triggers": [
                 {
-                    "event-source": "event-source-dev",
-                    "pipeline": "pipeline-dev"
+                    "event-source": "event-source-main",
+                    "pipeline": "pipeline-main"
                 },
                 {
-                    "event-source": "event-source-test",
-                    "pipeline": "pipeline-test"
+                    "event-source": "event-source-feature-xxxx",
+                    "pipeline": "pipeline-feature-xxxx"
+                },
+                {
+                    "event-source": "event-source-feature-yyyy",
+                    "pipeline": "pipeline-feature-yyyy"
                 }
             ],
             "destination": "env-test",
-            "isolation": "shared"
+            "isolation": "exclusive"
         }
     ]
 }
