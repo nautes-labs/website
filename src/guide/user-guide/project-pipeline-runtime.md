@@ -255,7 +255,7 @@ title: 维护流水线运行时
             revision: feature-yyyy
           name: event-source-feature-yyyy
         isolation: exclusive
-        pipeline-triggers:
+        pipeline_triggers:
           - eventSource: event-source-main
             pipeline: pipeline-main
           - eventSource: event-source-feature-xxxx
@@ -339,12 +339,12 @@ title: 维护流水线运行时
         {
             "name": "api-server-pr",
             "project": "api-server",
-            "pipeline-source": "api-server",
-            "event-sources": [
+            "pipeline_source": "api-server",
+            "event_sources": [
                 {
                     "name": "event-source-main",
                     "gitlab": {
-                        "repo-name": "api-server",
+                        "repo_name": "api-server",
                         "revision": "main",
                         "events": [
                             "PushEvents"
@@ -355,7 +355,7 @@ title: 维护流水线运行时
                 {
                     "name": "event-source-feature-xxxx",
                     "gitlab": {
-                        "repo-name": "api-server",
+                        "repo_name": "api-server",
                         "revision": "feature-xxxx",
                         "events": [
                             "PushEvents"
@@ -366,7 +366,7 @@ title: 维护流水线运行时
                 {
                     "name": "event-source-feature-yyyy",
                     "gitlab": {
-                        "repo-name": "api-server",
+                        "repo_name": "api-server",
                         "revision": "feature-yyyy",
                         "events": [
                             "PushEvents"
@@ -389,17 +389,17 @@ title: 维护流水线运行时
                     "path": "pipelines"
                 }
             ],
-            "pipeline-triggers": [
+            "pipeline_triggers": [
                 {
-                    "event-source": "event-source-main",
+                    "event_source": "event-source-main",
                     "pipeline": "pipeline-main"
                 },
                 {
-                    "event-source": "event-source-feature-xxxx",
+                    "event_source": "event-source-feature-xxxx",
                     "pipeline": "pipeline-feature-xxxx"
                 },
                 {
-                    "event-source": "event-source-feature-yyyy",
+                    "event_source": "event-source-feature-yyyy",
                     "pipeline": "pipeline-feature-yyyy"
                 }
             ],
