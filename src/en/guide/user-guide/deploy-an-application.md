@@ -135,7 +135,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml refers to the relative path of the template file in the command-line repository.
@@ -224,7 +224,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -529,7 +529,7 @@ spec:
     - project-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.2.0) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
