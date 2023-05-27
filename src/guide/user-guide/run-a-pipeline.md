@@ -826,7 +826,7 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd deployment
-          sed -i -e "s#$registry-url/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml 
+          sed -i -e "s#ghcr.io/lanbingcloud/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml 
           git add deployments/test/devops-sample.yaml
           git commit -a -m "automatic update by pipeline bot: $(tasks.image-build.results.IMAGE_URL)"
           git push origin HEAD:$(params.REVISION) --force
