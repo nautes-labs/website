@@ -58,21 +58,24 @@ title: 维护流水线运行时
             "pipeline_source": "api-server",
             "pipelines": [
                 {
-                    "name": "pipeline-test",
-                    "label": "test",
-                    "path": "pipeline/test"
-                },{
-                    "name": "pipeline-dev",
-                    "label": "dev",
-                    "path": "pipeline/dev"
+                    "name": "pipeline-main",
+                    "path": "pipelines"
+                }，
+                {
+                    "name": "pipeline-feature-xxxx",
+                    "path": "pipelines"
+                }，
+                {
+                    "name": "pipeline-feature-yyyy",
+                    "path": "pipelines"
                 }
             ],
             "event_sources": [
                 {
-                    "name": "event-source-test",
+                    "name": "event-source-main",
                     "gitlab": {
                         "repo_name": "api-server",
-                        "revision": "test",
+                        "revision": "main",
                         "events": [
                             "push_events"
                         ]
@@ -81,10 +84,22 @@ title: 维护流水线运行时
                         "schedule": "0 15 17 ? * MON-FRI"
                     }
                 },{
-                    "name": "event-source-dev",
+                    "name": "event-source-feature-xxxx",
                     "gitlab": {
                         "repo_name": "api-server",
-                        "revision": "dev",
+                        "revision": "feature-xxxx",
+                        "events": [
+                            "push_events"
+                        ]
+                    },
+                    "calendar": {
+                        "schedule": "0 0 16 ? * MON-FRI"
+                    }
+                },{
+                    "name": "event-source-feature-yyyy",
+                    "gitlab": {
+                        "repo_name": "api-server",
+                        "revision": "feature-yyyy",
                         "events": [
                             "push_events"
                         ]
@@ -96,19 +111,24 @@ title: 维护流水线运行时
             ],
             "pipeline_triggers": [
                 {
-                    "event_source": "event-source-dev",
-                    "pipeline": "pipeline-dev"
-                },        {
-                    "event_source": "event-source-test",
-                    "pipeline": "pipeline-test"
-                }
+                    "event_source": "event-source-main",
+                    "pipeline": "pipeline-main"
+                },
+                {
+                    "event_source": "event-source-xxxx",
+                    "pipeline": "pipeline-feature-xxxx"
+                },
+                {
+                    "event_source": "event-source-feature-yyyy",
+                    "pipeline": "pipeline-feature-yyyy"
+                },
             ],
             "destination": "env-test",
-            "isolation": "shared"
+            "isolation": "exclusive"
         }'  
 ```
 
-请求体中的属性注释如下：
+请求体中属性的注释如下：
 
 ```JSONC
 {
@@ -121,10 +141,9 @@ title: 维护流水线运行时
     // 支持多分支流水线：如果代码库中有多条分支，并且不同分支有各自的流水线配置，流水线运行时将根据过滤条件自动发现多个分支的流水线
     // 多分支流水线的配置示例：如果一个团队使用 github flow 的分支策略对某个产品开展 CI/CD 活动
     // 该产品的源码库中存在 main、featureA、featureB 三条分支，每条分支的相同路径下（例如:pipelines）分别存储了不同名称的流水线配置
-    // 这时您可以配置一组过滤条件（例如：设置 path 为 pipelines），流水线运行时将自动发现该代码库三条分支下的流水线
+    // 这时您可以配置三组过滤条件（参见请求示例），流水线运行时将自动发现该代码库三条分支下的流水线
        "pipelines": [
         {
-            // 选填
             // 指流水线名称，用于过滤流水线
             "name": "$pipeline-name",
             // 选填
@@ -153,7 +172,7 @@ title: 维护流水线运行时
                 ]
             },
             // 选填
-            // calendar 用于生成 calendar 类型的事件源，将定时生成事件
+            // calendar 指 calendar 类型的事件源，将定时生成事件
             // 如果使用该类型的事件源，请至少填写“schedule、interval”属性中的一项 
             // 如果两者都被定义了，“schedule”属性的优先级更高
             "calendar": {
@@ -192,7 +211,7 @@ title: 维护流水线运行时
     // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
     // shared 指多个 event_sources 共享资源，当某个 event_source 需要重启时，将影响其他的 event_sources
     // shared 相较于 exclusive 模式，更节省资源
-    // exclusive 指每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响； 
+    // exclusive 指每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
     // exclusive 相较于 shared 模式，将占用更多资源
     "isolation": "$isolation"
 }
