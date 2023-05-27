@@ -176,6 +176,8 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "host"
+  # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+  primaryDomain: "$cluster-ip.nip.io"
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -196,6 +198,7 @@ spec:
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "host"
+  primaryDomain: "8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
