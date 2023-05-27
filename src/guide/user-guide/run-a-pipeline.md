@@ -72,7 +72,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "host-worker-$suffix"
+  name: "physical-worker-$suffix"
   # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -86,14 +86,16 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # tekton 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.host-worker-$suffix.$cluster-ip.nip.io"
+  tektonHost: "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
+  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
+  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
   # traefik 配置
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 替换变量后的物理集群属性示例如下：
@@ -102,14 +104,15 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
-  name: "host-worker-aliyun"
+  name: "physical-worker-aliyun"
   apiServer: "https://8.217.50.114:6443"
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
   workerType: "pipeline"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.host-worker-aliyun.8.217.50.114.nip.io"
+  tektonHost: "tekton.physical-worker-aliyun.8.217.50.114.nip.io"
+  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
@@ -162,7 +165,7 @@ cat ${HOME}/.kube/config
 ```
 
 ```yaml
-# 宿主集群
+# 宿主集群属性模板
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
@@ -184,7 +187,7 @@ spec:
     httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
-    "$kubeconfig"
+    $kubeconfig
 ```
 
 替换变量后的宿主集群属性示例如下：
@@ -236,7 +239,7 @@ nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-
 替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip`、`$host-cluster` 和 `$api-server-port`。
 
 ```yaml
-# 虚拟集群
+# 虚拟集群属性模板
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
@@ -258,6 +261,8 @@ spec:
   primaryDomain: "$cluster-ip.nip.io"
   # tekton 域名，使用宿主集群的 IP 替换变量 $cluster-ip
   tektonHost: "tekton.vcluster-$suffix.$cluster-ip.nip.io"
+  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
+  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io"
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
@@ -279,6 +284,7 @@ spec:
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
   tektonHost: "tekton.vcluster-aliyun.8.217.50.114.nip.io"
+  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
 ```
@@ -655,30 +661,30 @@ git clone https://github.com/nautes-examples/user-pipeline.git
 
 **$sc-repo-id** 替换为源码库 ID，您可以从 Gitlab 控制台的 Project 首页中找到这个 ID。
 
-**$deploy-repo-id** 替换为部署配置库 ID，来源同上。
-
 **$sc-repo-url** 替换为源码库的 SSH URL，你可以 Gitlab 控制台的 Project 首页中找到这个 URL，如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
 
 **$deploy-repo-url** 替换为部署配置库的 SSH URL，来源同上。
 
-**$registry-url** 替换为容器镜像仓库的 URL，如：gcr.io/nautes-labs。
+**$registry-url** 替换为容器镜像仓库的 URL，如：ghcr.io/nautes-labs。
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: main-pipiline
-  namespace: user-pipelines
 spec:
   params:
   - name: REVISION
     value: main
   taskRunSpecs:
   - pipelineTaskName: git-clone-sourcecode
+    taskServiceAccountName: nautes-sa
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
         vault.hashicorp.com/role: '$pipeline-runtime-name'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
@@ -690,33 +696,39 @@ spec:
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: git-clone-deployment
+    taskServiceAccountName: nautes-sa
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
         vault.hashicorp.com/role: '$pipeline-runtime-name'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$deploy-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$deploy-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: manifest-update
+    taskServiceAccountName: nautes-sa
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
         vault.hashicorp.com/role: '$pipeline-runtime-name'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$deploy-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$deploy-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   pipelineSpec:
@@ -769,8 +781,6 @@ spec:
         workspace: empty-dir
       - name: maven-repository
         workspace: maven-repository-volume
-      - name: dockerconfig
-        workspace: dockerconfig-volume
       params:
       - name: GOALS
         value: 
@@ -788,6 +798,8 @@ spec:
       workspaces:
       - name: source
         workspace: source-volume
+      - name: dockerconfig
+        workspace: dockerconfig-volume
       params:
       - name: IMAGE
         value: $registry-url/devops-sample:0.0.1-$(tasks.git-clone-sourcecode.results.commit)
@@ -814,7 +826,7 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd deployment
-          sed -i -e "s#$registry-url/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml
+          sed -i -e "s#$registry-url/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml 
           git add deployments/test/devops-sample.yaml
           git commit -a -m "automatic update by pipeline bot: $(tasks.image-build.results.IMAGE_URL)"
           git push origin HEAD:$(params.REVISION) --force
@@ -827,11 +839,21 @@ spec:
   - name: empty-dir
     emptyDir: {}
   - name: source-volume
-    persistentVolumeClaim:
-      claimName: source-pvc
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50M
   - name: maven-repository-volume
-    persistentVolumeClaim:
-      claimName: maven-repository-pvc
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500M
   - name: dockerconfig-volume
     secret:
       name: registry-auth
@@ -881,3 +903,4 @@ spec:
         - name: ks-sample
           image: ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
 ```
+
