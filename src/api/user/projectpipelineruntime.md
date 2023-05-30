@@ -460,8 +460,8 @@ Response message format for getting pipeline information.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |repo_name|string|false|none|Gitlab project name.|
-|revision|string|false|none|Supports wildcards.|
-|events|[string]|false|none|Gitlab webhook events: PushEvents, TagPushEvents, etc.|
+|revision|string|false|none|Supports regular expressions.|
+|events|[string]|false|none|Gitlab webhook events: push_events, tag_push_events, etc.|
 
 <h2 id="tocS_api.projectpipelineruntime.v1.ListsReply">api.projectpipelineruntime.v1.ListsReply</h2>
 <!-- backwards compatibility -->
@@ -575,7 +575,7 @@ Defines a pipeline and its associated event sources.
 |---|---|---|---|---|
 |event_source|string|false|none|Key of the event source.|
 |pipeline|string|false|none|Key of the pipeline.|
-|revision|string|false|none|does not support wildcards. If it is empty, the trigger will determine the revision of the pipeline based on the revision of the event source.|
+|revision|string|false|none|Regular expressions are not supported, If it is empty, the trigger will determine the revision of the pipeline based on the revision of the event source|
 
 <h2 id="tocS_api.projectpipelineruntime.v1.SaveReply">api.projectpipelineruntime.v1.SaveReply</h2>
 <!-- backwards compatibility -->

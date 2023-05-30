@@ -37,7 +37,10 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
     "http_node_port": "string",
     "https_node_port": "string"
   },
-  "kubeconfig": "string"
+  "kubeconfig": "string",
+  "worker_type": "string",
+  "primary_domain": "string",
+  "tekton_host": "string"
 }
 ```
 
@@ -173,7 +176,10 @@ SaveReply represents a response to a save request.
     "http_node_port": "string",
     "https_node_port": "string"
   },
-  "kubeconfig": "string"
+  "kubeconfig": "string",
+  "worker_type": "string",
+  "primary_domain": "string",
+  "tekton_host": "string"
 }
 
 ```
@@ -193,6 +199,9 @@ Body represents the body of the save request.
 |vcluster|[api.cluster.v1.Vcluster](#schemaapi.cluster.v1.vcluster)|false|none|Vcluster represents the configuration for the virtual cluster.|
 |traefik|[api.cluster.v1.Traefik](#schemaapi.cluster.v1.traefik)|false|none|Traefik represents the configuration for the Traefik ingress controller.|
 |kubeconfig|string|false|none|kubeconfig specifies the Kubeconfig file of the cluster.|
+|worker_type|string|false|none|pipeline or deployment, when the cluster usage is 'worker', the WorkType is required.|
+|primary_domain|string|false|none|PrimaryDomain is used to build the domain of components within the cluster.|
+|tekton_host|string|false|none|TektonHost is the domain for the tekton dashboard, and it must be a subdomain of the PrimaryDomain|
 
 <h2 id="tocS_api.cluster.v1.Traefik">api.cluster.v1.Traefik</h2>
 <!-- backwards compatibility -->
