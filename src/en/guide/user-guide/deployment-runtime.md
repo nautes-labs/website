@@ -8,7 +8,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A deployment runtime defines the configuration declaration used to deploy projects, such as the storage location of deployment manifests and the target environment to deploy to, etc.
 
-Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining deployment runtimes.
+Support both [Command Line](run-a-pipeline.md#initialize-a-product) and API for maintaining deployment runtimes.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ You need to create an access token to use as a request header for requesting API
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](run-a-pipeline.md#import-certificates).
 
 ### Create Product
 
@@ -26,11 +26,11 @@ Deployment runtimes belong to products, so you need to create at least one [prod
 
 ### Create Repository
 
-Deployment runtimes need to watch the Kubernetes Manifests in the repositories, so you need to create at least one repository related to the specified [product](product.md#create-product-api).
+Deployment runtimes need to watch code repositories that store the Kubernetes manifests, so you need to create at least one [code repository](code-repo.md#create-and-update-repositoryapi) related to the specified [product](product.md#create-product-api).
 
 ### Create Environment
 
-Deployment runtimes need to deploy to the runtime cluster related to the environment, so you need to create at least one environment related to the specified [product](product.md#create-product-api).
+Deployment runtimes need to deploy to environments related to runtime clusters, so you need to create at least one [environment](environment.md#create-and-update-environment-api) related to the specified [product](product.md#create-product-api).
 
 ## Create and Update Deployment-Runtime (API)
 
@@ -41,10 +41,10 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the deployment runtime belongs.
-    # Replace the variable $deploymentruntime_name with the deployment runtime name.
+    # Replace the variable $product-name with the name of the product to which the deployment runtime belongs.
+    # Replace the variable $deploymentruntime-name with the deployment runtime name.
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$deploymentruntime_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
@@ -55,11 +55,11 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
         ],
         "manifest_source": {
             # The source coderepo of the deployment runtime
-            "code_repo": $coderepo_name,
-             # The revision or branch of the source coderepo 
-            "target_revision": $coderepo_target_revision,
-             # The relative path of the source coderepo 
-            "path": $coderepo_path
+            "code_repo": $coderepo-name,
+            # The revision or branch of the source coderepo
+            "target_revision": $coderepo-target-revision,
+            # The revision or branch of the source coderepo
+            "path": $coderepo-path
         },
         # The target environment of the deployment runtime
         "destination": $destination
@@ -91,26 +91,25 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to create a deployment runtime.
 
-After the request is successful, the resource file for the deployment runtime will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
+After the request is successful, the resource file for the deployment runtime will be generated in the `default.project` repository of the specified product. An example of a resource file for a deployment runtime is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: DeploymentRuntime
     metadata:
         name: dr-dev
-        namespace: nautes
     spec:
-        destination: "env-dev"
+        destination: env-dev
         manifestSource:
-            codeRepo: "api-server"
-            path: "manifests/development"
-            targetRevision: "HEAD"
-        product: "nautes-labs"
+            codeRepo: repo-xxxx
+            path: manifests/development
+            targetRevision: HEAD
+        product: product-xxxx
         projectsRef:
-            - "api-server"
+            - api-server
 ```
 
-> If the deployment runtime is deployed to a runtime cluster, changing the destination of the deployment runtime is not supported.
+> If the deployment runtime is deployed to a runtime cluster, changing the `destination` of the deployment runtime is not supported.
 >
 > When requesting the API to update a deployment runtime, the resource file for the deployment runtime will also be updated.
 >
@@ -124,7 +123,7 @@ After the request is successful, the resource file for the deployment runtime wi
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$deploymentruntime_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -142,7 +141,7 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to delete a deployment runtime.
 
-After the request is successful, the resource file for the deployment runtime will be deleted in the `default.project` repository of the specified product , and the deployment runtime environment will be destroyed.
+After the request is successful, the resource file for the deployment runtime will be deleted in the `default.project` repository of the specified product, and the deployment runtime will be destroyed in the runtime cluster.
 
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can delete deployment runtimes.
 
@@ -154,7 +153,7 @@ Compose an API request example by API definition `Deploymentruntime_ListDeployme
 
 ```Shell
 curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes' \
+  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -200,7 +199,7 @@ Compose an API request example by API definition `Deploymentruntime_GetDeploymen
 
 ```Shell
 curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product_name/deploymentruntimes/$enviroment_name' \
+  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
   -H 'accept: application/json' \
   -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -232,14 +231,14 @@ Taking creating a deployment runtime as an example, if the value of the `destina
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -d '{
-      "projects_ref": [
-        "api-server"
-      ],
-      "manifest_source": {
-        "code_repo": "api-server",
-        "target_revision": "HEAD",
-        "path": "manifests/development"
-      },
-      "destination": "env-demo"
-    }'
+            "projects_ref": [
+                "api-server"
+            ],
+            "manifest_source": {
+                "code_repo": "api-server",
+                "target_revision": "HEAD",
+                "path": "manifests/development"
+            },
+            "destination": "env-demo"
+        }'
 ```
