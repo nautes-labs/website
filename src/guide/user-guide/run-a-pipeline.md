@@ -1,10 +1,10 @@
 ---
-footerLink: /guide/user-guide/deploy-an-application
-title: 部署一个应用
+footerLink: /guide/user-guide/run-a-pipeline
+title: 执行一条流水线
 ---
-# 部署一个应用
+# 执行一条流水线
 
-本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上部署一个应用的过程。
+本文档描述了将一个全新的 Kubernetes 集群注册到 Nautes 中，并在此集群上执行一条 CI 流水线的过程。
 
 ## 前提条件
 
@@ -59,7 +59,7 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-physical-worker-deployment.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
 
 ```Shell
 # 查看物理集群的 kubeconfig
@@ -81,12 +81,14 @@ spec:
   clusterType: "physical"
   # 集群用途：host或worker
   usage: "worker"
-  # 运行时类型：部署运行时
-  workerType: "deployment"
+  # 运行时类型：流水线运行时
+  workerType: "pipeline"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
+  # tekton 域名，使用物理集群的 IP 替换变量 $cluster-ip
+  tektonHost: "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
   # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io",
+  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -107,8 +109,9 @@ spec:
   clusterKind: "kubernetes"
   clusterType: "physical"
   usage: "worker"
-  workerType: "deployment"
+  workerType: "pipeline"
   primaryDomain: "8.217.50.114.nip.io"
+  tektonHost: "tekton.physical-worker-aliyun.8.217.50.114.nip.io"
   argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
   traefik:
     httpNodePort: "30080"
@@ -138,10 +141,10 @@ spec:
 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令以注册物理集群。
 
 ```Shell
-# examples/demo-cluster-physical-worker-deployment.yaml 指在代码库中模板文件的相对路径
+# examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
-nautes apply -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ### 注册虚拟集群
@@ -162,7 +165,7 @@ cat ${HOME}/.kube/config
 ```
 
 ```yaml
-# 宿主集群
+# 宿主集群属性模板
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
@@ -233,16 +236,16 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-替换位于相对路径 `examples/demo-cluster-virtual-worker-deployment.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip`、`$host-cluster` 和 `$api-server-port`。
 
 ```yaml
-# 虚拟集群
+# 虚拟集群属性模板
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
   name: "vcluster-$suffix"
-  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的 IP，$api-server-port 指虚拟集群的 API Server 端口
+  # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
   clusterKind: "kubernetes"
@@ -250,14 +253,16 @@ spec:
   clusterType: "virtual"
   # 集群用途：host或worker
   usage: "worker"
-  # 运行时类型：部署运行时
-  workerType: "deployment"
+  # 运行时类型：流水线运行时
+  workerType: "pipeline"
   # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
   hostCluster: "$host-cluster"
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
+  # tekton 域名，使用宿主集群的 IP 替换变量 $cluster-ip
+  tektonHost: "tekton.vcluster-$suffix.$cluster-ip.nip.io"
   # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io",
+  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io"
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
@@ -275,9 +280,10 @@ spec:
   clusterKind: "kubernetes"
   clusterType: "virtual"
   usage: "worker"
-  workerType: "deployment"
+  workerType: "pipeline"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
+  tektonHost: "tekton.vcluster-aliyun.8.217.50.114.nip.io"
   argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
@@ -286,17 +292,17 @@ spec:
 执行以下命令，将注册该虚拟集群。
 
 ```Shell
-# examples/demo-cluster-virtual-worker-deployment.yaml 指在代码库中模板文件的相对路径
+# examples/demo-cluster-virtual-worker-pipeline.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
-nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
 ## 初始化产品
 
-初始化产品是指创建 Nautes 产品模型中的各个实体，并在运行时集群中初始化一套用于执行自动化部署的资源，包括 namespace、serviceaccount、secret、以及 ArgoCD 相关资源等。
+初始化产品是指创建 Nautes 产品模型中的各个实体，并在运行时集群中初始化一套用于执行流水线的资源，包括 namespace、serviceaccount、secret、以及 argoevents 和 tekton 相关资源等。
 
-下文将描述通过命令行初始化产品的相关实体，包括产品、项目、代码库、权限、环境以及部署运行时等。
+下文将描述通过命令行初始化产品的相关实体，包括产品、项目、代码库、代码库权限、环境以及流水线运行时等。
 
 将命令行程序的代码库克隆到本地。
 
@@ -304,7 +310,9 @@ nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-product.yaml` 下产品属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+替换位于相对路径 `examples/demo-product.yaml` 下模板的变量，包括 `$suffix`。
+
+> 这里创建了两个代码库：“源码库”是用于存储项目源码和流水线配置文件，“部署配置库”是用于存储项目的部署清单文件。
 
 ```yaml
 # 产品
@@ -364,8 +372,8 @@ spec:
   # 代码库名称
   name: coderepo-deploy-demo-$suffix
   codeRepoProvider: gitlab
-  deploymentRuntime: false
-  pipelineRuntime: true
+  deploymentRuntime: true
+  pipelineRuntime: false
   # 代码库的所属产品
   product: demo-$suffix
   webhook:
@@ -426,8 +434,8 @@ kind: CodeRepo
 spec:
   name: coderepo-deploy-demo-quickstart
   codeRepoProvider: gitlab
-  deploymentRuntime: false
-  pipelineRuntime: true
+  deploymentRuntime: true
+  pipelineRuntime: false
   product: demo-quickstart
   webhook:
     events: ["push_events"]
@@ -439,57 +447,83 @@ spec:
       description: coderepo-deploy-demo-quickstart
 ```
 
-替换位于相对路径 `examples/demo-deployment.yaml` 下模板的变量，包括 `$suffix`、`$deployment-runtime-cluster`。
+替换位于相对路径 `examples/demo-pipeline.yaml` 下模板的变量，包括 `$suffix`、`$pipeline-runtime-cluster`。
 
 ```yaml
 ---
-# 测试环境
+# 开发环境
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
   # 环镜名称
-  name: env-test-demo-$suffix
+  name: env-dev-demo-$suffix
   # 环境的所属产品
   product: demo-$suffix
   # 环境关联的运行时集群
-  cluster: $deployment-runtime-cluster
+  cluster: $pipeline-runtime-cluster
   # 环境类型
-  envType: test
+  envType: dev
 ---
-# 部署配置库授权给部署运行时
+# 部署配置库授权给流水线
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepoBinding
 spec:
   # 代码库的所属产品
   productName: demo-$suffix
-  name: coderepobinding-deploy-dr-demo-$suffix
+  name: coderepobinding-deploy-pipeline-demo-$suffix
   # 被授权的代码库
   coderepo: coderepo-deploy-demo-$suffix
   # 授权给产品
   product: demo-$suffix
-  # 授予的权限：readonly, readwrite
-  permissions: readonly
----
-# 部署运行时
-apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: DeploymentRuntime
-spec:
-  # 部署运行时的名称
-  name: dr-demo-$suffix
-  # 承载部署运行时的环境
-  destination: env-test-demo-$suffix
-  manifestsource:
-    # 部署运行时监听的代码库
-    codeRepo: coderepo-deploy-demo-$suffix
-    # 部署运行时监听的代码库的相对路径
-    path: deployments/test
-    # 部署运行时监听的代码库版本或代码库分支
-    targetRevision: main
-  # 部署运行时的所属产品
-  product: demo-$suffix
-  # 部署运行时关联的项目
-  projectsRef:
+  # 授权给项目
+  projects: 
     - project-demo-$suffix
+  # 授予的权限：readonly, readwrite
+  permissions: readwrite
+---
+# 流水线运行时
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: ProjectPipelineRuntime
+spec:
+  # 流水线运行时的名称
+  name: pr-demo-$suffix
+  # 流水线运行时的所属产品
+  product: demo-$suffix
+  # 流水线运行时的所属项目
+  project: project-demo-$suffix
+  # 流水线配置的源码库
+  pipelineSource: coderepo-sc-demo-$suffix
+  # 流水线的定义
+  pipelines:
+    # 流水线名称
+  - name: pipeline-dev-demo-$suffix
+    # 流水线资源的标签
+    label: main
+    # 流水线配置文件的路径
+    path: pipelines/main.yaml
+  # 承载部署运行时的环境
+  destination: env-dev-demo-$suffix
+  # 触发流水线的事件源
+  eventSources:
+    # 事件源名称
+  - name: webhook
+    # gitlab 事件源
+    gitlab:
+      # 代码库名称
+      repoName: coderepo-sc-demo-$suffix
+      # 产生事件的代码库分支，"*"表示该事件源接收所有分支的事件
+      revision: main
+      # 该事件源接收的代码库的事件类型
+      events:
+      - push_events
+  # 流水线相关资源的隔离性定义，shared（默认）或 exclusive
+  isolation: exclusive
+  # 关联流水线和事件源
+  pipelineTriggers:
+    # 关联的事件源
+  - eventSource: webhook
+    # 关联的流水线
+    pipeline: pipeline-dev-demo-$suffix
 ```
 
 替换变量后的文件示例如下：
@@ -501,47 +535,83 @@ spec:
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Environment
 spec:
-  name: env-test-demo-quickstart
+  name: env-dev-demo-quickstart
   product: demo-quickstart
   cluster: vcluster-aliyun
-  envType: test
+  envType: dev
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepoBinding
 spec:
   productName: demo-quickstart
-  name: coderepobinding-deploy-dr-demo-quickstart
+  name: coderepobinding-deploy-pipeline-demo-quickstart
   coderepo: coderepo-deploy-demo-quickstart
   product: demo-quickstart
-  permissions: readonly
+  projects: 
+    - project-demo-quickstart
+  permissions: readwrite
 ---
 apiVersion: nautes.resource.nautes.io/v1alpha1
-kind: DeploymentRuntime
+kind: ProjectPipelineRuntime
 spec:
-  name: dr-demo-quickstart
-  destination: env-test-demo-quickstart
-  manifestsource:
-    codeRepo: coderepo-deploy-demo-quickstart
-    path: deployments/test
-    targetRevision: main
+  name: pr-demo-quickstart
   product: demo-quickstart
-  projectsRef:
-    - project-demo-quickstart
+  project: project-demo-quickstart
+  pipelineSource: coderepo-sc-demo-quickstart
+  pipelines:
+  - name: pipeline-dev-demo-quickstart
+    label: main
+    path: pipelines/main.yaml
+  destination: env-dev-demo-quickstart
+  eventSources:
+  - name: webhook
+    gitlab:
+      repoName: coderepo-sc-demo-quickstart
+      revision: main
+      events:
+      - push_events
+  isolation: exclusive
+  pipelineTriggers:
+  - eventSource: webhook
+    pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以初始化产品 。
 
 ```Shell
-# examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
+# examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes apply -f examples/demo-product.yaml -t $gitlab-access-token -s $api-server-address
-nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-server-address
+nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-## 部署
+在执行流水线之前，您需要先准备一个镜像仓库，用于存储流水线产生的容器镜像，下面将以 Github 的  `ghcr.io` 为例。
 
-将 Kubernetes 资源清单提交至产品的代码库，例如：deployment、service 等资源。
+您需要在 Github 上准备一个账号或组织，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
+
+当运行时集群中与流水线运行时同名的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
+
+ConfigMap 资源的模板位于相对路径 `examples/config.json` 下，您需要用以下命令生成的字符串替换其中的 `$auth` 变量：
+
+```shell
+# github-user 指您在 github 中的账号
+# github-token 指上述账号的 personal access token
+echo -n '$github-user:$github-token' | base64
+```
+
+替换变量后使用 `kubectl` 命令在运行时集群上创建 ConfigMap：
+
+```shell
+# pipeline-runtime-name 指流水线运行时名称，如：pr-demo-quickstart
+kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runtime-name
+```
+
+## 执行流水线
+
+将示例项目的源码和流水线配置文件推送到“源码库”，将示例项目的 Kubernetes 资源清单（例如：deployment、service 等）提交至“部署配置库”。
+
+### 提交部署清单
 
 克隆部署示例的代码库到本地。
 
@@ -549,7 +619,7 @@ nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-se
 git clone https://github.com/nautes-examples/user-deployment.git
 ```
 
-修改本地代码库中 Ingress 资源的域名：deployment/test/devops-sample-svc.yaml
+修改本地代码库中 Ingress 资源的域名：deployments/test/devops-sample-svc.yaml
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -565,9 +635,9 @@ spec:
       ...
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#初始化产品) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
-推送 Kubernetes 资源清单至产品的代码库。
+推送 Kubernetes 资源清单至部署配置库。
 
 ```Shell
 # 更改 origin 远程仓库为部署配置库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
@@ -577,20 +647,260 @@ git commit -m '提交 Kubernetes 资源清单'
 git push origin main -f
 ```
 
-## 查看部署结果
+### 提交流水线配置
 
-部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport` ，可以访问示例应用的 Web 界面。
+克隆流水线示例的代码库到本地。
 
->替换变量 $cluster-ip 为运行时集群的公网 IP。
->
->替换变量 $traefik-httpnodeport 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpNodePort`，例如：`30080`。
+```shell
+git clone https://github.com/nautes-examples/user-pipeline.git
+```
 
-您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
+替换本代码库中流水线配置文件 `pipelines/main.yaml` 中变量，包括：
 
-使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
+**$pipeline-runtime-name** 替换为流水线运行时名称，如：`pr-demo-quickstart`。
 
-> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+**$sc-repo-id** 替换为源码库 ID，您可以从 Gitlab 控制台的 Project 首页中找到这个 ID。
+
+**$sc-repo-url** 替换为源码库的 SSH URL，你可以 Gitlab 控制台的 Project 首页中找到这个 URL，如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
+
+**$deploy-repo-url** 替换为部署配置库的 SSH URL，来源同上。
+
+**$registry-url** 替换为容器镜像仓库的 URL，如：ghcr.io/nautes-labs。
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: main-pipiline
+spec:
+  params:
+  - name: REVISION
+    value: main
+  taskRunSpecs:
+  - pipelineTaskName: git-clone-sourcecode
+    taskServiceAccountName: nautes-sa
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
+        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/agent-run-as-user: '0' 
+        vault.hashicorp.com/agent-run-as-group: '0'
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readonly"
+        vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
+        vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
+        vault.hashicorp.com/agent-inject-template-id_ecdsa: |
+          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readonly" -}}
+          {{ .Data.data.deploykey }}
+          {{- end -}}
+  - pipelineTaskName: git-clone-deployment
+    taskServiceAccountName: nautes-sa
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
+        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/agent-run-as-user: '0' 
+        vault.hashicorp.com/agent-run-as-group: '0'
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
+        vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
+        vault.hashicorp.com/agent-inject-template-id_ecdsa: |
+          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{ .Data.data.deploykey }}
+          {{- end -}}
+  - pipelineTaskName: manifest-update
+    taskServiceAccountName: nautes-sa
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/tls-secret: "ca"
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
+        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/agent-run-as-user: '0' 
+        vault.hashicorp.com/agent-run-as-group: '0'
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
+        vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
+        vault.hashicorp.com/agent-inject-template-id_ecdsa: |
+          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{ .Data.data.deploykey }}
+          {{- end -}}
+  pipelineSpec:
+    params:
+      - name: REVISION
+        type: string
+        description: Revision to checkout. (branch, tag, sha, ref, etc...)
+        default: ""
+    tasks:
+    - name: git-clone-sourcecode
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+      - name: output
+        workspace: source-volume
+      params:
+      - name: url
+        value: $sc-repo-url
+      - name: revision
+        value: $(params.REVISION)
+      - name: subdirectory
+        value: sourcecode
+    - name: git-clone-deployment
+      runAfter:
+      - git-clone-sourcecode
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      workspaces:
+      - name: output
+        workspace: source-volume
+      params:
+      - name: url
+        value: $deploy-repo-url
+      - name: revision
+        value: $(params.REVISION)
+      - name: subdirectory
+        value: deployment
+    - name: mvn-build
+      runAfter:
+      - git-clone-deployment
+      taskRef:
+        name: maven
+        kind: ClusterTask
+      workspaces:
+      - name: source
+        workspace: source-volume
+      - name: maven-settings
+        workspace: empty-dir
+      - name: maven-repository
+        workspace: maven-repository-volume
+      params:
+      - name: GOALS
+        value: 
+          - -DskipTests
+          - clean
+          - install
+          - -f
+          - sourcecode/pom.xml
+    - name: image-build
+      runAfter:
+      - mvn-build
+      taskRef:
+        name: kaniko
+        kind: ClusterTask
+      workspaces:
+      - name: source
+        workspace: source-volume
+      - name: dockerconfig
+        workspace: dockerconfig-volume
+      params:
+      - name: IMAGE
+        value: $registry-url/devops-sample:0.0.1-$(tasks.git-clone-sourcecode.results.commit)
+      - name: DOCKERFILE
+        value: ./sourcecode/Dockerfile
+      - name: CONTEXT
+        value: ./sourcecode
+    - name: manifest-update
+      runAfter:
+      - image-build
+      taskRef:
+        name: git-cli
+        kind: ClusterTask
+      workspaces:
+      - name: source
+        workspace: source-volume
+      params:
+      - name: BASE_IMAGE
+        value: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.29.0
+      - name: GIT_USER_NAME
+        value: pipelinerobot
+      - name: GIT_USER_EMAIL
+        value: pipelinerobot@nautes.io
+      - name: GIT_SCRIPT
+        value: |
+          cd deployment
+          sed -i -e "s#ghcr.io/lanbingcloud/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml 
+          git add deployments/test/devops-sample.yaml
+          git commit -a -m "automatic update by pipeline bot: $(tasks.image-build.results.IMAGE_URL)"
+          git push origin HEAD:$(params.REVISION) --force
+    workspaces:
+    - name: source-volume
+    - name: empty-dir
+    - name: maven-repository-volume
+    - name: dockerconfig-volume
+  workspaces:
+  - name: empty-dir
+    emptyDir: {}
+  - name: source-volume
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50M
+  - name: maven-repository-volume
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 500M
+  - name: dockerconfig-volume
+    configMap:
+      name: registry-auth
+```
+
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+
+推送流水线配置至源码库。
+
+```Shell
+# 更改 origin 远程仓库为源码库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
+git add .
+git commit -m '提交流水线配置'
+git push origin main -f
+```
+
+## 查看流水线结果
+
+### 流水线
+
+当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
 >
 > 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
 
-在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。
+当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
+
+### 镜像库
+
+如果流水线已正常执行完成，您可以在镜像仓库（如：`https://github.com/orgs/nautes-labs/packages`）中看到新增的镜像信息，并可以通过类似下面的命令拉取镜像：
+
+```shell
+docker pull ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
+```
+
+### 部署清单
+
+如果流水线已正常执行完成，您可以在部署配置库的 `deployments/test/devops-sample.yaml` 文件中看到容器的镜像标签已被自动修改为包含最新的 commitid，配置片段如下：
+
+```yaml
+spec:
+  template:
+    spec:
+      containers:
+        - name: ks-sample
+          image: ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
+```
+
