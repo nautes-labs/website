@@ -291,7 +291,7 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
     "product": "$authorized-product-name",
     # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
     "projects": [
-        "$project_name"
+        "$project-name"
     ],
     # Permission: readwrite or readonly
     "permissions": "$permissions",
