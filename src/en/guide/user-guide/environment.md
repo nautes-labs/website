@@ -6,7 +6,7 @@ title: Maintain Environment
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
 
-The environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
+An environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
 
 Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining environments.
 
@@ -37,18 +37,18 @@ Compose an API request example by API definition `Environment_SaveEnvironment` a
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the environment belongs.
-    # Replace the variable $environment_name with the environment name.
+    # Replace the variable $product-name with the name of the product to which the environment belongs.
+    # Replace the variable $environment-name with the environment name.
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
       # Runtime cluster related to the environment
-      "cluster": $cluster_name,
+      "cluster": $cluster-name,
       # Environment type
-      "env_type": $env_type
+      "env_type": $env-type
     }'
 ```
 
@@ -70,7 +70,7 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to create an environment.
 
-After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. The example of a resource file for an environment is shown below:
+After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. An example of a resource file for an environment is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -101,7 +101,7 @@ Compose an API request example by API definition `Environment_DeleteEnvironment`
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -131,7 +131,7 @@ Compose an API request example by API definition `Environment_ListEnvironments` 
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -172,7 +172,7 @@ Compose an API request example by API definition `Environment_GetEnvironment` an
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$enviroment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$enviroment-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```

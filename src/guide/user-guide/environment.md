@@ -37,18 +37,18 @@ title: 维护环境
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $product_name 为环境所属产品的名称
-    # 替换变量 $environment_name 为环境名称
+    # 替换变量 $product-name 为环境所属产品的名称
+    # 替换变量 $environment-name 为环境名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
       # 环境关联的运行时集群
-      "cluster": $cluster_name,
+      "cluster": $cluster-name,
       # 环境类型
-      "env_type": $env_type
+      "env_type": $env-type
     }'
 ```
 
@@ -100,7 +100,7 @@ title: 维护环境
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -130,7 +130,7 @@ title: 维护环境
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -171,7 +171,7 @@ title: 维护环境
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$enviroment_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$enviroment-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
