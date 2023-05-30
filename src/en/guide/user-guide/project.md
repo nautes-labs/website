@@ -92,7 +92,7 @@ Compose an API request example by API definition `Project_DeleteProject` and add
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project-name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' 
 ```
