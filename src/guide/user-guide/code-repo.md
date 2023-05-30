@@ -384,7 +384,7 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
     -H 'accept: application/json'  \
     -H 'Authorization: Bearer $gitlab-access-token'
 ```
