@@ -10,7 +10,7 @@ By maintaining [products](product.md) and projects, you can build management uni
 
 A project corresponds to a microservice, and each project has its own code repositories. You can integrate and deploy projects using Kubernetes clusters, and store versioned artifacts in artifact repositories. A product can contain multiple projects.
 
-Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining projects.
+Support both [Command Line](run-a-pipeline.md#initialize-a-product) and API for maintaining projects.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ You need to create an access token to use as a request header for requesting API
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](run-a-pipeline.md#import-certificates).
 
 ### Create Product
 
@@ -35,16 +35,16 @@ Compose an API request example by API definition `Project_SaveProject` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the project belongs.
-    # Replace the variable $project_name with the project name.
+    # Replace the variable $product-name with the name of the product to which the project belongs.
+    # Replace the variable $project-name with the project name.
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
             # The programming language of the project
-            "language": $project_language
+            "language": $project-language
         }'
 ```
 
@@ -92,7 +92,7 @@ Compose an API request example by API definition `Project_DeleteProject` and add
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -122,7 +122,7 @@ Compose an API request example by API definition `Project_ListProjects` and add 
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/projects' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -167,7 +167,7 @@ Compose an API request example by API definition `Project_GetProject` and add th
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```

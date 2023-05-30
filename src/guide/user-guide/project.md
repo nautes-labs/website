@@ -37,16 +37,16 @@ access token 将作为请求 API 的请求头。
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-    # 替换变量 $product_name 为项目所属产品的名称
-    # 替换变量 $project_name 为项目名称
+    # 替换变量 $product-name 为项目所属产品的名称
+    # 替换变量 $project-name 为项目名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
           # 项目的开发语言
-          "language": $project_language
+          "language": $project-language
         }'
 ```
 
@@ -94,7 +94,7 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -124,7 +124,7 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/projects' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -169,7 +169,7 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/projects/$project_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
