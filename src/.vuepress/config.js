@@ -93,6 +93,7 @@ module.exports = {
               children: [
                 '/guide/user-guide/introduction',
                 '/guide/user-guide/installation',
+                '/guide/user-guide/run-a-pipeline',
                 '/guide/user-guide/deploy-an-application',
                 '/guide/user-guide/clean-environment'
               ],
@@ -168,6 +169,7 @@ module.exports = {
               children: [
                 '/en/guide/user-guide/introduction',
                 '/en/guide/user-guide/installation',
+                '/en/guide/user-guide/run-a-pipeline',
                 '/en/guide/user-guide/deploy-an-application',
                 '/en/guide/user-guide/clean-environment'
               ],
