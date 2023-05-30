@@ -8,17 +8,17 @@ Before starting this section, please ensure that you have read the [Main Process
 
 Runtime clusters are used to host the runtime environment for applications. The supported cluster types include physical clusters and virtual clusters.
 
-Support both [Command Line](deploy-an-application.md#register-runtime-cluster) and API for registering runtime clusters.
+Support both [Command Line](run-a-pipeline.md#register-runtime-cluster) and API for registering runtime clusters.
 
 ## Prerequisites
 
 ### Create Access Token
 
-You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](deploy-an-application.md#register-a-gitlab-account).
+You need to create an access token as a request header for requesting APIs. For more information, refer to [Register a GitLab Account](run-a-pipeline.md#register-a-gitlab-account).
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](run-a-pipeline.md#import-certificates).
 
 ## Register Physical Cluster（API）
 
@@ -29,34 +29,40 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
-    # Replace the variable $cluster_name with the cluster name
+    # Replace the variable $cluster-name with the cluster name
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
-      # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
-      "api_server": $api_server,
-      # Cluster kind. Currently only supports Kubernetes.
-      "cluster_kind": "kubernetes",
-      # Cluster type: virtual or physical
-      "cluster_type": $cluster_type,
-      # Cluster usage: host or worker
-      "usage": $usage,
-      # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the cluster IP.
-      "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
-      # Traefik configuration
-      "traefik": {
-        "http_node_port": "30080",
-        "https_node_port": "30443"
-      },
-      # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster.
-      "kubeconfig": $kubeconfig
-    }'
+            # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
+            "api_server": $api-server,
+            # Cluster kind. Currently only supports Kubernetes.
+            "cluster_kind": "kubernetes",
+            # Cluster type: virtual or physical
+            "cluster_type": $cluster-type,
+            # Cluster usage: host or worker
+            "usage": $usage,
+            # Work type: pipeline or deployment
+            "worker_type": $worker-type
+            # Primary domain: Replace $cluster-ip with the host cluster IP.
+            "primary_domain": "$cluster-ip.nip.io"
+            # Tekton domain：When the worker_type is set to 'pipeline', the property should be filled in. Replace $cluster-ip with the host cluster IP.
+            "tekton_host": "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
+            # ArgoCD domain. Replace $cluster-name with the cluster name, $cluster-ip with the cluster IP.
+            "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
+            # Traefik configuration
+            "traefik": {
+              "http_node_port": "30080",
+              "https_node_port": "30443"
+            },
+            # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster.
+            "kubeconfig": $kubeconfig
+        }'
 ```
 
-The request example after replacing the variables is shown below: 
+The request example for the deployment runtime cluster after replacing variables is shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -69,6 +75,8 @@ The request example after replacing the variables is shown below:
       "cluster_kind": "kubernetes",
       "cluster_type": "physical",
       "usage": "worker",
+      "worker_type": "deployment",
+      "primary_domain": "8.217.50.114.nip.io",
       "argocd_host": "argocd.host-worker-aliyun-0412.8.217.50.114.nip.io",
       "traefik": {
         "http_node_port": "30080",
@@ -101,13 +109,13 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to register a physical cluster.
 
-After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
+After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
 ## Register Virtual Cluster（API）
 
-When registering a virtual cluster as a deployment runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
+When registering a virtual cluster as a runtime cluster, you need to first register the physical cluster as the host cluster, and then register the virtual cluster to the host cluster.
 
 ### Compose Host Cluster Registration Request
 
@@ -116,21 +124,23 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
-    # Replace the variable $cluster_name with the cluster name
+    # Replace the variable $cluster-name with the cluster name
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
       # Cluster API SERVER URL. Replace the variable with the address of the host cluster.
-      "api_server": $api_server,
+      "api_server": $api-server,
       # Cluster kind. Currently only supports Kubernetes.
       "cluster_kind": "kubernetes",
       # Cluster type: virtual or physical
-      "cluster_type": $cluster_type,
+      "cluster_type": $cluster-type,
       # Cluster usage: host or worker
       "usage": $usage,
+      # Primary domain: Replace $cluster-ip with the host cluster IP.
+      "primary_domain": "$cluster-ip.nip.io"
       # Traefik configuration
       "traefik": {
         "http_node_port": "30080",
@@ -141,7 +151,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     }'
 ```
 
-The request example after replacing the variables is shown below: 
+The request example after replacing the variables is shown below:
 
 ```Shell
 curl -X 'POST' \
@@ -154,6 +164,7 @@ curl -X 'POST' \
   "cluster_kind": "kubernetes",
   "cluster_type": "physical",
   "usage": "host",
+  "primary_domain": "8.217.50.114.nip.io",
   "traefik": {
     "http_node_port": "30080",
     "https_node_port": "30443"
@@ -194,23 +205,29 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
-    # Replace the variable $cluster_name with the cluster name
+    # Replace the variable $cluster-name with the cluster name
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Content-Type: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' \
       -d '{
       # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
-      "api_server": $api_server,
+      "api_server": $api-server,
       # Cluster kind: Currently only supports Kubernetes
       "cluster_kind": "kubernetes",
       # Cluster type: virtual or physical
-      "cluster_type": $cluster_type,
+      "cluster_type": $cluster-type,
       # Cluster usage: host or worker
       "usage": $usage,
+      # Work type: pipeline or deployment
+      "worker_type": $worker_type,
       # Host cluster: the property is only available for virtual type clusters. Replace the parameter with the name of the host cluster.
       "host_cluster": $host_cluster,
+      # Primary domain: Replace $cluster-ip with the host cluster IP.
+      "primary_domain": "$cluster-ip.nip.io"
+      # Tekton domain：When the worker_type is set to 'pipeline', the property should be filled in. Replace $cluster-ip with the host cluster IP.
+      "tekton_host": "tekton.vcluster-$suffix.$cluster-ip.nip.io"
       # ArgoCD domain. Replace $cluster_name with the cluster name, $cluster_ip with the host cluster IP.
       "argocd_host": "argocd.$cluster_name.$cluster_ip.nip.io",
       # Virtual cluster configuration: the property is only available for virtual type clusters.
@@ -221,7 +238,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     }'
 ```
 
-The request example after replacing the variables is shown below: 
+The request example for the deployment runtime cluster after replacing variables is shown below:
 
 ```Shell
 curl -X 'POST' \
@@ -234,7 +251,9 @@ curl -X 'POST' \
   "cluster_kind": "kubernetes",
   "cluster_type": "virtual",
   "usage": "worker",
+  "worker_type": "deployment",
   "host_cluster": "cluster-host",
+  "primary_domain": "8.217.50.114.nip.io",
   "argocd_host": "argocd.cluster-virtual.8.217.50.114.nip.io",
   "vcluster": {
     "https_node_port": "31456"
@@ -246,7 +265,7 @@ curl -X 'POST' \
 
 Use the curl command or other tools to execute the API request to register a virtual cluster.
 
-After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a deployment runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
+After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
@@ -254,7 +273,7 @@ After the request is successful, the virtual cluster's resource file will be wri
 
 > Please ensure that a physical cluster has been successfully registered.
 >
-> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted. For more information, refer to the [Delete Product Configuration Manifest (Command-Line)](clean-environment.md#delete-runtime-environment) section or the deletion sections (API) in [Maintain Deployment Runtime](deployment-runtime.md), [Maintain Environment](environment.md), [Maintain Code Repository](code-repo.md), [Maintain Project](project.md), [Maintain Product](product.md).
+> Before deleting the cluster, please ensure that the product configuration manifest has been successfully deleted. For more information, refer to the [Delete Runtime (Command-Line)](clean-environment.md#delete-runtime) or the APIs in [Delete Deployment-Runtime](deployment-runtime.md#delete-deployment-runtime-api), [Delete Pipeline-Runtime](project-pipeline-runtime.md#delete-pipeline-runtime-api), [Delete Environment](environment.md#delete-environment-api), [Delete Repository](code-repo.md#delete-repository-api), [Delete Project](project.md#delete-project-api), [Delete Product](product.md#delete-product-api).
 
 ### Compose Physical Cluster Deletion Request
 
@@ -262,7 +281,7 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster_name' \
+      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```

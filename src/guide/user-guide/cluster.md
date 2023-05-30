@@ -247,18 +247,18 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
   -d '{
-  "api_server": "https://8.217.50.114:31456",
-  "cluster_kind": "kubernetes",
-  "cluster_type": "virtual",
-  "usage": "worker",
-  "worker_type": "deployment",
-  "host_cluster": "cluster-host",
-  "primary_domain": "8.217.50.114.nip.io",
-  "argocd_host": "argocd.vcluster-virtual.8.217.50.114.nip.io",
-  "vcluster": {
-    "https_node_port": "31456"
-  }
-}'
+        "api_server": "https://8.217.50.114:31456",
+        "cluster_kind": "kubernetes",
+        "cluster_type": "virtual",
+        "usage": "worker",
+        "worker_type": "deployment",
+        "host_cluster": "cluster-host",
+        "primary_domain": "8.217.50.114.nip.io",
+        "argocd_host": "argocd.vcluster-virtual.8.217.50.114.nip.io",
+        "vcluster": {
+          "https_node_port": "31456"
+        }
+    }'
 ```
 
 ### 执行注册虚拟集群的 API 请求
@@ -273,7 +273,7 @@ curl -X 'POST' \
 
 > 请确保已成功注册物理集群。
 >
-> 在删除集群之前请先[删除运行时(命令行)](clean-environment.md#删除运行时)，或者参考[删除部署运行时](deployment-runtime.md#删除部署运行时api)、[删除流水线运行时](project-pipeline-runtime.md#删除流水线运行时api)、[删除环境](environment.md#删除环境api)、 [删除代码库](code-repo.md#删除代码库api)、[删除项目](project.md#删除项目api)、[删除产品](product.md#删除产品api)等 API 接口。
+> 在删除集群之前请先删除产品配置清单。详情参考 [删除运行时(命令行)）](clean-environment.md#删除运行时) ，或者参考[删除部署运行时](deployment-runtime.md#删除部署运行时api)、[删除流水线运行时](project-pipeline-runtime.md#删除流水线运行时api)、[删除环境](environment.md#删除环境api)、 [删除代码库](code-repo.md#删除代码库api)、[删除项目](project.md#删除项目api)、[删除产品](product.md#删除产品api)等 API 接口。
 
 ### 生成删除物理集群的 API 请求
 
