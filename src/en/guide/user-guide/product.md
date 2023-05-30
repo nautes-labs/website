@@ -11,7 +11,7 @@ A product corresponds to a software system, which includes teams, projects, envi
 
 When using GitLab as a product provider, each product corresponds to a single GitLab Group. Nautes will maintain a repository with a fixed name (defaulted to `default.project`) under that Group to store the product metadata. Nautes will leverage the GitLab permission model to manage user access to different product data.
 
-Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining products.
+Support both [Command Line](run-a-pipeline.md#initialize-a-product) and API for maintaining products.
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ The access token will be used as a request header for requesting APIs.
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](deploy-an-application.md#import-certificates).
+If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](run-a-pipeline.md#import-certificates).
 
 ## Create Product (API)
 
@@ -36,7 +36,7 @@ Compose an API request example by API definition `Product_SaveProduct` and add t
     # Replace the variable $gitlab-access-token with the GitLab access token
     # Replace the variable $product_name with the product name
     curl -X 'POST' \
-        'HTTP://$api-server-address/api/v1/products/$product_name' \
+        'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' \
@@ -44,12 +44,12 @@ Compose an API request example by API definition `Product_SaveProduct` and add t
         "git": {
             "gitlab": {
                 # group name
-                "name": $product_name,
+                "name": $product-name,
                 # group path
-                "path": $product_name,
+                "path": $product-name,
                 # group visibility：private or public
-                "visibility": $product_visibility,
-                "description": $product_desc
+                "visibility": $product-visibility,
+                "description": $product-desc
                 }
            }
        }'
@@ -85,7 +85,7 @@ After the request is successful, a group with the same name as the product will 
 
 ## Delete Product (API)
 
-> Before deleting a product, please delete all entities and resources related to the product, such as deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
+> Before deleting a product, please delete all entities and resources related to the product, such as project pipeline runtimes, deployment runtimes, environments, code repositories, and projects, otherwise the deletion cannot be performed.
 
 ### Compose Delete Product Request
 
@@ -93,7 +93,7 @@ Compose an API request example by API definition `Product_DeleteProduct` and add
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://$api-server-address/api/v1/products/$product_name' \
+        'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' 
 ```
