@@ -84,7 +84,7 @@ After the request is successful, the resource file for the project will be gener
 
 ## Delete Project (API)
 
-> Before deleting a project, please delete all entities and resources related to the project, such as deployment runtimes and code repositories, otherwise the deletion cannot be performed.
+> Before deleting a project, please delete all entities and resources related to the project, such as project pipeline runtimes, deployment runtimes and code repositories, otherwise the deletion cannot be performed.
 
 ### Compose Delete Project Request
 
