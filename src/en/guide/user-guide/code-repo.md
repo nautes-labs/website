@@ -38,10 +38,10 @@ Compose an API request example by API definition `CodeRepo_SaveCodeRepo` and add
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the repository belongs.
-    # Replace the variable $coderepo_name with the repository name.
+    # Replace the variable $product-name with the name of the product to which the repository belongs.
+    # Replace the variable $coderepo-name with the repository name.
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
@@ -58,12 +58,12 @@ Compose an API request example by API definition `CodeRepo_SaveCodeRepo` and add
         "git": {
             "gitlab": {
                 # repository name
-                "name": $coderepo_name,
+                "name": $coderepo-name,
                 # repository path
-                "path": $coderepo_name,
+                "path": $coderepo-name,
                 # repository visibility：private or public 
-                "visibility": $coderepo_visibility,
-                "description": $coderepo_desc
+                "visibility": $coderepo-visibility,
+                "description": $coderepo-desc
                 }
             }
     }'
@@ -132,7 +132,7 @@ Compose an API request example by API definition `CodeRepo_DeleteCodeRepo` and a
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -162,7 +162,7 @@ Compose an API request example by API definition `CodeRepo_ListCodeRepos` and ad
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepos' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -219,7 +219,7 @@ Compose an API request example by API definition `CodeRepo_GetCodeRepo` and add 
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/coderepos/$coderepo_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token' 
 ```
@@ -279,16 +279,16 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the repository authorization belongs.
-    # Replace the variable $coderepo_binding_name with the repository authorization name.
+    # Replace the variable $product-name with the name of the product to which the repository authorization belongs.
+    # Replace the variable $coderepo-binding-name with the repository authorization name.
     curl -X 'POST' \
-    'HTTP://$api-server-addresss/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+    'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
     -H 'accept: application/json' \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token' \
     -d '{
-    # Granted Product: Currently, only the product to which the code repository belongs can be granted, which should be the same as the value of $product_name.
-    "product": "$authorized_product_name",
+    # Granted Product: Currently, only the product to which the code repository belongs can be granted, which should be the same as the value of $product-name.
+    "product": "$authorized-product-name",
     # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
     "projects": [
         "$project_name"
@@ -296,7 +296,7 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
     # Permission: readwrite or readonly
     "permissions": "$permissions",
     # Name of the authorized code repository
-    "coderepo": "$coderepo_name"
+    "coderepo": "$coderepo-name"
     }'
 ```
 
@@ -321,7 +321,7 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to create a repository authorization.
 
-After the request is successful, the resource file for the repository authorization will be generated in the `default.project` repository of the specified product, and the deploy keys of the related code repositories of the granted products or projects will be added to the deploy key list of the authorized code repository. The example of a resource file for a repository authorization is shown below:
+After the request is successful, the resource file for the repository authorization will be generated in the `default.project` repository of the specified product, and the deploy keys of the related code repositories of the granted products or projects will be added to the deploy key list of the authorized code repository. An example of a resource file for a repository authorization is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -354,7 +354,7 @@ Compose an API request example by API definition `CodeRepoBinding_DeleteCodeRepo
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
     -H 'accept: application/json' \
     -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -384,7 +384,7 @@ Compose an API request example by API definition `CodeRepoBinding_ListCodeRepoBi
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings' \
+    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
     -H 'accept: application/json'  \
     -H 'Authorization: Bearer $gitlab-access-token'
 ```
@@ -428,7 +428,7 @@ Compose an API request example by API definition `CodeRepoBinding_GetCodeRepoBin
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/coderepobindings/$coderepo_binding_name' \
+      'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer $gitlab-access-token'
 ```
