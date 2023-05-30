@@ -6,9 +6,9 @@ title: View Pipeline and Deployment Results
 
 Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes, and you have created at least one [pipeline runtime](project-pipeline-runtime.md#create-and-update-pipeline-runtime-api) or [deployment runtime](deployment-runtime.md#create-and-update-deployment-runtime-api).
 
-You can view the execution results of the pipelines using the Tekton Dashboard and the image repository console, and view the deployment information of the applications using the ArgoCD console and the kubectl command line.
+You can view the pipeline information using the Tekton Dashboard and the image repository console, and view the deployment information of the applications using the ArgoCD console and the kubectl command line.
 
-## View Pipeline Results
+## View Pipeline
 
 ### View Resources in Tekton Dashboard
 
@@ -20,9 +20,9 @@ You can view the pipelines in the Tekton Dashboard installed in the runtime clus
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 
-The Tekton Dashboard will present the namespaces authorized for you (with the same name as the pipeline runtimes) and their related resources, including pipelines, pipelineruns, tasks, taskruns, and pipelineresources, etc.
+The Tekton Dashboard will present the namespaces authorized for you (with the same name as the project pipeline runtimes) and their related resources, including pipelines, pipelineruns, tasks, taskruns, and pipelineresources, etc.
 
-By clicking on a pipeline record, you can view YAML, create a pipelinerun, and view related pipelineruns. By clicking on a pipelinerun record, you can view the status, execution time, and running time of the pipelinerun, the parameters, status, logs, and YAML of the taskruns, and perform operations such as rerunning, starting and stopping, and deleting the pipelinerun.
+By clicking on a pipeline record, you can view YAML, create pipelineruns, and view related pipelineruns. By clicking on a pipelinerun record, you can view the status, execution time, and running time of the pipelinerun, the parameters, status, logs, and YAML of the taskruns, and perform operations such as rerunning, starting and stopping, and deleting the pipelinerun.
 
 ![directive syntax graph](./../images/pipeline-results-1.png)
 
@@ -34,7 +34,7 @@ If the pipelines include tasks to build images and have been successfully execut
 docker pull ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
 ```
 
-### View Image Configurations in Deployment Manifests
+### View Image Configuration in Deployment Manifest
 
 If the pipelines include tasks to update Kubernetes manifests and have been successfully executed, you can observe that the container image tags have been automatically updated to the versions containing the latest commit ID in the files within the deployment configuration repository (for example: `deployments/test/devops-sample.yaml`). The configuration snippet is as follows:
 
