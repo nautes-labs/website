@@ -40,30 +40,30 @@ Compose an API request example by API definition `Environment_SaveEnvironment` a
     # Replace the variable $product-name with the name of the product to which the environment belongs.
     # Replace the variable $environment-name with the environment name.
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-      # Runtime cluster related to the environment
-      "cluster": $cluster-name,
-      # Environment type
-      "env_type": $env-type
-    }'
-```
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # Runtime cluster related to the environment
+                "cluster": $cluster-name,
+                # Environment type
+                "env_type": $env-type
+            }'
+        ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-      -d '{
-      "cluster": "cluster-dev",
-      "env_type": "development"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "cluster": "cluster-dev",
+                "env_type": "development"
+            }'
 ```
 
 ### Execute Create and Update Environment Request
@@ -101,18 +101,18 @@ Compose an API request example by API definition `Environment_DeleteEnvironment`
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute Delete Environment Request
@@ -131,18 +131,18 @@ Compose an API request example by API definition `Environment_ListEnvironments` 
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/environments' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments' \
-      -H 'accept: application/json'
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments' \
+        -H 'accept: application/json'
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute List Environments Request
@@ -172,18 +172,18 @@ Compose an API request example by API definition `Environment_GetEnvironment` an
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/environments/$enviroment-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$enviroment-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute View Environment Details Request
@@ -200,11 +200,11 @@ Taking creating an environment as an example, if the value of the `cluster` prop
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -d '{
-      "cluster": "cluster-invalid",
-      "env_type": "development"
-    }'
-```
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "cluster": "cluster-invalid",
+                "env_type": "development"
+            }'
+        ```
