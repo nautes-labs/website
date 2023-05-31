@@ -4,7 +4,7 @@ title: Maintain Pipeline-Runtime
 ---
 # Maintain Pipeline-Runtime
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 A pipeline Runtime defines the configuration declaration of a pipeline used to integrate projects, such as the storage location of pipeline configurations, the pipeline's triggering method and the target environment for running the pipeline, etc.
 
