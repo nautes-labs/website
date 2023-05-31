@@ -5,7 +5,7 @@ title: Maintain Product
 
 # Maintain Product 
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 A product corresponds to a software system, which includes teams, projects, environments, code repositories, artifact repositories, and runtimes. The tenant manager can authorize the product to use designated Kubernetes clusters.
 
