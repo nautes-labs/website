@@ -4,7 +4,7 @@ title: Maintain Project
 ---
 # Maintain Project
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 By maintaining [products](product.md) and projects, you can build management units consistent with the microservice architecture of your products.
 
