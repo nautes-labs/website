@@ -38,27 +38,27 @@ Compose an API request example by API definition `Project_SaveProject` and add t
     # Replace the variable $product-name with the name of the product to which the project belongs.
     # Replace the variable $project-name with the project name.
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-            # The programming language of the project
-            "language": $project-language
-        }'
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # The programming language of the project
+                "language": $project-language
+            }'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
-      -d '{
-          "language": "Go"
-        }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
+        -d '{
+                "language": "Go"
+            }'
 ```
 
 ### Execute Create and Update Project Request
@@ -92,18 +92,18 @@ Compose an API request example by API definition `Project_DeleteProject` and add
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute Delete Project Request
@@ -122,18 +122,18 @@ Compose an API request example by API definition `Project_ListProjects` and add 
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute List Projects Request
@@ -141,20 +141,20 @@ The request example after replacing the variables is shown below:
 Use the curl command or other tools to execute the API request to list projects. The response example for the project list is shown below:
 
 ```yaml
-    {
-        "items": [
-            {
-                "product": "nautes-labs",
-                "name": "api-server",
-                "language": "GO"
-            },
-            {
-                "product": "nautes-labs",
-                "name": "cluster-operator",
-                "language": "GO"
-            }
-        ]
-    }
+{
+    "items": [
+        {
+            "product": "nautes-labs",
+            "name": "api-server",
+            "language": "GO"
+        },
+        {
+            "product": "nautes-labs",
+            "name": "cluster-operator",
+            "language": "GO"
+        }
+    ]
+}
 ```
 
 > If your account is a member of the GitLab group and has read permission to the `default.project` repository, you can list projects authorized for you.
@@ -167,18 +167,18 @@ Compose an API request example by API definition `Project_GetProject` and add th
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute View Project Details Request
@@ -195,11 +195,11 @@ Taking the creation of a project as an example, if there are invalid resources (
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/cluster-operator?insecure_skip_check=true ' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
-      -d '{
-          "language": "Go"
-        }'
-```
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/cluster-operator?insecure_skip_check=true ' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
+        -d '{
+                "language": "Go"
+            }'
+    ```

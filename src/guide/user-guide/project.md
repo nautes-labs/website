@@ -40,27 +40,27 @@ access token 将作为请求 API 的请求头。
     # 替换变量 $product-name 为项目所属产品的名称
     # 替换变量 $project-name 为项目名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-          # 项目的开发语言
-          "language": $project-language
-        }'
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 项目的开发语言
+                "language": $project-language
+            }'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
-      -d '{
-          "language": "Go"
-        }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
+        -d '{
+                "language": "Go"
+            }'
 ```
 
 ### 执行创建/更新项目的 API 请求
@@ -94,18 +94,18 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除项目的 API 请求
@@ -124,18 +124,18 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查询项目列表的 API 请求
@@ -143,20 +143,20 @@ access token 将作为请求 API 的请求头。
 使用 curl 命令或者其他工具执行 API 请求，以查询项目列表。项目列表的返回值示例如下：
 
 ```yaml
-    {
-        "items": [
-            {
-                "product": "nautes-labs",
-                "name": "api-server",
-                "language": "GO"
-            },
-            {
-                "product": "nautes-labs",
-                "name": "cluster-operator",
-                "language": "GO"
-            }
-        ]
-    }
+{
+    "items": [
+        {
+            "product": "nautes-labs",
+            "name": "api-server",
+            "language": "GO"
+        },
+        {
+            "product": "nautes-labs",
+            "name": "cluster-operator",
+            "language": "GO"
+        }
+    ]
+}
 ```
 
 > 只有当您的账号是 GitLab 的 group 成员，并具备对 `default.project` 代码库的读取权限，才可以查询到产品的项目列表。
@@ -169,18 +169,18 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/projects/$project-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查看项目详情的 API 请求
@@ -197,11 +197,11 @@ access token 将作为请求 API 的请求头。
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/cluster-operator?insecure_skip_check=true ' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
-      -d '{
-          "language": "Go"
-        }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projects/cluster-operator?insecure_skip_check=true ' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'\
+        -d '{
+                "language": "Go"
+            }'
 ```
