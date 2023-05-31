@@ -49,83 +49,83 @@ title: 维护流水线运行时
     # $gitlab-access-token 指 GitLab access token
     # $product-name 指流水线运行时所属产品的名称
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-            "project": "api-server",
-            "pipeline_source": "api-server",
-            "pipelines": [
-                {
-                    "name": "pipeline-main",
-                    "path": "pipelines"
-                }，
-                {
-                    "name": "pipeline-feature-xxxx",
-                    "path": "pipelines"
-                }，
-                {
-                    "name": "pipeline-feature-yyyy",
-                    "path": "pipelines"
-                }
-            ],
-            "event_sources": [
-                {
-                    "name": "event-source-main",
-                    "gitlab": {
-                        "repo_name": "api-server",
-                        "revision": "main",
-                        "events": [
-                            "push_events"
-                        ]
-                    },
-                    "calendar": {
-                        "schedule": "0 15 17 ? * MON-FRI"
+        'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                "project": "api-server",
+                "pipeline_source": "api-server",
+                "pipelines": [
+                    {
+                        "name": "pipeline-main",
+                        "path": "pipelines"
+                    }，
+                    {
+                        "name": "pipeline-feature-xxxx",
+                        "path": "pipelines"
+                    }，
+                    {
+                        "name": "pipeline-feature-yyyy",
+                        "path": "pipelines"
                     }
-                },{
-                    "name": "event-source-feature-xxxx",
-                    "gitlab": {
-                        "repo_name": "api-server",
-                        "revision": "feature-xxxx",
-                        "events": [
-                            "push_events"
-                        ]
-                    },
-                    "calendar": {
-                        "schedule": "0 0 16 ? * MON-FRI"
+                ],
+                "event_sources": [
+                    {
+                        "name": "event-source-main",
+                        "gitlab": {
+                            "repo_name": "api-server",
+                            "revision": "main",
+                            "events": [
+                                "push_events"
+                            ]
+                        },
+                        "calendar": {
+                            "schedule": "0 15 17 ? * MON-FRI"
+                        }
+                    },{
+                        "name": "event-source-feature-xxxx",
+                        "gitlab": {
+                            "repo_name": "api-server",
+                            "revision": "feature-xxxx",
+                            "events": [
+                                "push_events"
+                            ]
+                        },
+                        "calendar": {
+                            "schedule": "0 0 16 ? * MON-FRI"
+                        }
+                    },{
+                        "name": "event-source-feature-yyyy",
+                        "gitlab": {
+                            "repo_name": "api-server",
+                            "revision": "feature-yyyy",
+                            "events": [
+                                "push_events"
+                            ]
+                        },
+                        "calendar": {
+                            "schedule": "0 0 16 ? * MON-FRI"
+                        }
                     }
-                },{
-                    "name": "event-source-feature-yyyy",
-                    "gitlab": {
-                        "repo_name": "api-server",
-                        "revision": "feature-yyyy",
-                        "events": [
-                            "push_events"
-                        ]
+                ],
+                "pipeline_triggers": [
+                    {
+                        "event_source": "event-source-main",
+                        "pipeline": "pipeline-main"
                     },
-                    "calendar": {
-                        "schedule": "0 0 16 ? * MON-FRI"
-                    }
-                }
-            ],
-            "pipeline_triggers": [
-                {
-                    "event_source": "event-source-main",
-                    "pipeline": "pipeline-main"
-                },
-                {
-                    "event_source": "event-source-feature-xxxx",
-                    "pipeline": "pipeline-feature-xxxx"
-                },
-                {
-                    "event_source": "event-source-feature-yyyy",
-                    "pipeline": "pipeline-feature-yyyy"
-                },
-            ],
-            "destination": "env-test",
-            "isolation": "exclusive"
-        }'  
+                    {
+                        "event_source": "event-source-feature-xxxx",
+                        "pipeline": "pipeline-feature-xxxx"
+                    },
+                    {
+                        "event_source": "event-source-feature-yyyy",
+                        "pipeline": "pipeline-feature-yyyy"
+                    },
+                ],
+                "destination": "env-test",
+                "isolation": "exclusive"
+            }'
 ```
 
 请求体中属性的注释如下：
@@ -141,7 +141,7 @@ title: 维护流水线运行时
     // 多分支流水线的配置示例：如果一个团队使用 GitHub flow 的分支策略对某个产品开展 CI/CD 活动
     // 该产品的源码库中存在 main、feature-xxxx、feature-yyyy 三条分支，每条分支的相同路径下（例如:pipelines）分别存储了不同名称的流水线配置
     // 这时您可以配置三组过滤条件（参见请求示例），流水线运行时将自动发现该代码库三条分支下的流水线
-       "pipelines": [
+    "pipelines": [
         {
             // 指流水线名称，用于过滤流水线
             "name": "$pipeline-name",
@@ -285,18 +285,18 @@ title: 维护流水线运行时
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除流水线运行时的 API 请求
@@ -315,18 +315,18 @@ title: 维护流水线运行时
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
-  curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+    curl -X 'GET' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查询流水线运行时列表的 API 请求
@@ -420,18 +420,18 @@ title: 维护流水线运行时
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查看流水线运行时详情的 API 请求
@@ -453,10 +453,10 @@ title: 维护流水线运行时
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
         -d '{
-            "project": "api-server",
-            "pipeline-source": "api-server",
-            ...
-            "destination": "env-invalid",
-            "isolation": "shared"
-        }'
+                "project": "api-server",
+                "pipeline-source": "api-server",
+                ...
+                "destination": "env-invalid",
+                "isolation": "shared"
+            }'
 ```
