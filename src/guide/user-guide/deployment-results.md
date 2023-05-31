@@ -4,7 +4,7 @@ title: 查看流水线和部署结果
 ---
 # 查看流水线和部署结果
 
-在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解部署应用的主体流程和相关术语，并且已经创建了至少一个[流水运行时](project-pipeline-runtime.md#创建和更新流水线运行时api)或者[部署运行时](deployment-runtime.md#创建和更新部署运行时api)。
+在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解执行流水线和部署应用的主体流程和相关术语，并且已经创建了至少一个[流水运行时](project-pipeline-runtime.md#创建和更新流水线运行时api)或者[部署运行时](deployment-runtime.md#创建和更新部署运行时api)。
 
 您可以通过 Tekton Dashboard 和镜像库控制台查看流水线的执行情况，通过 ArgoCD 控制台和 Kubectl 命令行查看应用的部署情况。
 

@@ -4,7 +4,7 @@ title: View Pipeline and Deployment Results
 ---
 # View Pipeline and Deployment Results
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes, and you have created at least one [pipeline runtime](project-pipeline-runtime.md#create-and-update-pipeline-runtime-api) or [deployment runtime](deployment-runtime.md#create-and-update-deployment-runtime-api).
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes, and you have created at least one [pipeline runtime](project-pipeline-runtime.md#create-and-update-pipeline-runtime-api) or [deployment runtime](deployment-runtime.md#create-and-update-deployment-runtime-api).
 
 You can view the pipeline information using the Tekton Dashboard and the image repository console, and view the deployment information of the applications using the ArgoCD console and the kubectl command line.
 
