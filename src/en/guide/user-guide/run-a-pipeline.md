@@ -312,7 +312,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 Replace the variables in the property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
-> Here are two code repositories created: "Source Code Repository" is used to store project source code and pipeline configuration files, while "Deployment Configuration Repository" is used to store project deployment manifests.
+> Here are two code repositories created: "source code repository" is used to store project source code and pipeline configuration files, while "deployment configuration repository" is used to store project deployment manifests.
 
 ```yaml
 # Product
@@ -609,7 +609,7 @@ kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runt
 
 ## Run a Pipeline
 
-Submit the source code and pipeline configuration files of the sample project to the source code repository, and submit the Kubernetes Manifests of the sample project to the deployment configuration repository, such as deployment, service, and other resources.
+Submit the source code and pipeline configuration files of the sample project to the source code repository, and submit the Kubernetes manifests of the sample project to the deployment configuration repository, such as deployment, service, and other resources.
 
 ### Submit Kubernetes Manifest
 
@@ -640,7 +640,8 @@ Access [GitLab](installation.md#check-the-installation-results), and configure y
 Push the Kubernetes Manifests to the deployment configuration repository.
 
 ```Shell
-# Change the URL of the remote repository 'origin' to that of the deployment configuration repository, the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
+# Change the URL of the remote repository 'origin' to that of the deployment configuration repository, 
+# the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
 git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-deploy-demo-quickstart.git
 git add .
 git commit -m 'submit the kubernetes manifests.'
@@ -864,7 +865,8 @@ Access [GitLab](installation.md#check-the-installation-results), and configure y
 Push the pipeline configuration files to the source code repository.
 
 ```Shell
-# Change the URL of the remote repository 'origin' to that of the source code repository, the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
+# Change the URL of the remote repository 'origin' to that of the source code repository,
+# the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
 git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
 git add .
 git commit -m 'submit the pipeline configurations.'
