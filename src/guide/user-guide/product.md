@@ -40,17 +40,17 @@ access token 将作为请求 API 的请求头。
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' \
         -d '{
-            "git": {
-                "gitlab": {
-                    # group 的名称
-                    "name": $product-name,
-                    # group 的路径
-                    "path": $product-name,
-                    # group 的可见性，例如：private、public
-                    "visibility": $product-visibility,
-                    "description": $product-desc
+                "git": {
+                    "gitlab": {
+                        # group 的名称
+                        "name": $product-name,
+                        # group 的路径
+                        "path": $product-name,
+                        # group 的可见性，例如：private、public
+                        "visibility": $product-visibility,
+                        "description": $product-desc
+                        }
                     }
-                }
             }'
 ```
 
@@ -63,14 +63,14 @@ access token 将作为请求 API 的请求头。
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
         -d '{
-            "git": {
-                "gitlab": {
-                    "name": "nautes-labs",
-                    "path": "nautes-labs",
-                    "visibility": "private",
-                    "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
+                "git": {
+                    "gitlab": {
+                        "name": "nautes-labs",
+                        "path": "nautes-labs",
+                        "visibility": "private",
+                        "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
+                        }
                     }
-                }
             }'
 ```
 
