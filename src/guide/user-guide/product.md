@@ -31,27 +31,27 @@ access token 将作为请求 API 的请求头。
 通过接口定义 `Product_SaveProduct` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
-   # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
-   # 替换变量 $gitlab-access-token 为 GitLab access token
-   # 替换变量 $product-name 为产品名称
-   curl -X 'POST' \
-       'HTTP://$api-server-address/api/v1/products/$product-name' \
-       -H 'accept: application/json' \
-       -H 'Content-Type: application/json' \
-       -H 'Authorization: Bearer $gitlab-access-token' \
-       -d '{
-       "git": {
-           "gitlab": {
-               # group 的名称
-               "name": $product-name,
-               # group 的路径
-               "path": $product-name,
-               # group 的可见性，例如：private、public
-               "visibility": $product-visibility,
-               "description": $product-desc
-               }
-           }
-       }'
+    # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
+    # 替换变量 $gitlab-access-token 为 GitLab access token
+    # 替换变量 $product-name 为产品名称
+    curl -X 'POST' \
+        'HTTP://$api-server-address/api/v1/products/$product-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+            "git": {
+                "gitlab": {
+                    # group 的名称
+                    "name": $product-name,
+                    # group 的路径
+                    "path": $product-name,
+                    # group 的可见性，例如：private、public
+                    "visibility": $product-visibility,
+                    "description": $product-desc
+                    }
+                }
+            }'
 ```
 
 替换变量后的请求示例如下：
@@ -63,15 +63,15 @@ access token 将作为请求 API 的请求头。
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
         -d '{
-        "git": {
-            "gitlab": {
-            "name": "nautes-labs",
-            "path": "nautes-labs",
-            "visibility": "private",
-            "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
-            }
-        }
-      }'
+            "git": {
+                "gitlab": {
+                    "name": "nautes-labs",
+                    "path": "nautes-labs",
+                    "visibility": "private",
+                    "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
+                    }
+                }
+            }'
 ```
 
 ### 执行创建产品的 API 请求
@@ -140,7 +140,7 @@ access token 将作为请求 API 的请求头。
 使用 curl 命令或者其他工具执行 API 请求，以查询产品列表。产品列表的返回值示例如下：
 
 ```json
-  {
+{
     "items": [
         {
             "name": "nautes-labs",
@@ -164,7 +164,7 @@ access token 将作为请求 API 的请求头。
         },
         ......
     ]
-  }
+}
 ```
 
 > 只有当您的账号对于 GitLab 的 group 有查询权限时，才可以查询产品列表。
