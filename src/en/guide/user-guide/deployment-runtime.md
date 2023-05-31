@@ -44,47 +44,47 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
     # Replace the variable $product-name with the name of the product to which the deployment runtime belongs.
     # Replace the variable $deploymentruntime-name with the deployment runtime name.
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-        # The project to which the deployment runtime belongs
-        "projects_ref": [
-            $project
-        ],
-        "manifest_source": {
-            # The source coderepo of the deployment runtime
-            "code_repo": $coderepo-name,
-            # The revision or branch of the source coderepo
-            "target_revision": $coderepo-target-revision,
-            # The revision or branch of the source coderepo
-            "path": $coderepo-path
-        },
-        # The target environment of the deployment runtime
-        "destination": $destination
-    }'
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # The project to which the deployment runtime belongs
+                "projects_ref": [
+                    $project
+                ],
+                "manifest_source": {
+                    # The name of the code repository watched by the deployment runtime
+                    "code_repo": $coderepo-name,
+                    # The revision or branch of the code repository watched by the deployment runtime
+                    "target_revision": $coderepo-target-revision,
+                    # The relative path of the code repository watched by the deployment runtime
+                    "path": $coderepo-path
+                },
+                # The target environment of the deployment runtime
+                "destination": $destination
+            }'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-        "projects_ref": [
-            "api-server"
-        ],
-        "manifest_source": {
-            "code_repo": "api-server",
-            "target_revision": "HEAD",
-            "path": "manifests/development"
-        },
-        "destination": "env-dev"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "projects_ref": [
+                    "api-server"
+                ],
+                "manifest_source": {
+                    "code_repo": "api-server",
+                    "target_revision": "HEAD",
+                    "path": "manifests/development"
+                },
+                "destination": "env-dev"
+            }'
 ```
 
 ### Execute Create and Update Deployment-Runtime Request
@@ -123,18 +123,18 @@ After the request is successful, the resource file for the deployment runtime wi
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute Delete Deployment-Runtime Request
@@ -152,19 +152,19 @@ After the request is successful, the resource file for the deployment runtime wi
 Compose an API request example by API definition `Deploymentruntime_ListDeploymentRuntimes` and add the access token as a request header.
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token'
+    curl -X 'GET' \
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+    curl -X 'GET' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute List Deployment-Runtimes Request
@@ -198,19 +198,19 @@ Use the curl command or other tools to execute the API request to list deploymen
 Compose an API request example by API definition `Deploymentruntime_GetDeploymentRuntime` and add the access token as a request header.
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token'
+    curl -X 'GET' \
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+    curl -X 'GET' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute View Deployment-Runtime Details Request
@@ -227,18 +227,18 @@ Taking creating a deployment runtime as an example, if the value of the `destina
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -d '{
-            "projects_ref": [
-                "api-server"
-            ],
-            "manifest_source": {
-                "code_repo": "api-server",
-                "target_revision": "HEAD",
-                "path": "manifests/development"
-            },
-            "destination": "env-demo"
-        }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "projects_ref": [
+                    "api-server"
+                ],
+                "manifest_source": {
+                    "code_repo": "api-server",
+                    "target_revision": "HEAD",
+                    "path": "manifests/development"
+                },
+                "destination": "env-demo"
+            }'
 ```

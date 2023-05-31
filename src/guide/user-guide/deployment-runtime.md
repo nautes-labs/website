@@ -44,47 +44,47 @@ title: 维护部署运行时
     # 替换变量 $product-name 为部署运行时所属产品的名称
     # 替换变量 $deploymentruntime-name 为部署运行时的名称
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-        # 部署运行时关联的项目
-        "projects_ref": [
-            $project
-        ],
-        "manifest_source": {
-            # 部署运行时监听的代码库名称
-            "code_repo": $coderepo-name,
-            # 部署运行时监听的代码库版本
-            "target_revision": $coderepo-target-revision,
-            # 部署运行时监听的代码库路径
-            "path": $coderepo-path
-        },
-        # 部署运行时下发部署的目标环境
-        "destination": $destination
-    }'    
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 部署运行时关联的项目
+                "projects_ref": [
+                    $project
+                ],
+                "manifest_source": {
+                    # 部署运行时监听的代码库名称
+                    "code_repo": $coderepo-name,
+                    # 部署运行时监听的代码库版本
+                    "target_revision": $coderepo-target-revision,
+                    # 部署运行时监听的代码库路径
+                    "path": $coderepo-path
+                },
+                # 部署运行时下发部署的目标环境
+                "destination": $destination
+            }'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-        "projects_ref": [
-            "api-server"
-        ],
-        "manifest_source": {
-            "code_repo": "api-server",
-            "target_revision": "HEAD",
-            "path": "manifests/development"
-        },
-        "destination": "env-dev"
-    }' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "projects_ref": [
+                    "api-server"
+                ],
+                "manifest_source": {
+                    "code_repo": "api-server",
+                    "target_revision": "HEAD",
+                    "path": "manifests/development"
+                },
+                "destination": "env-dev"
+            }'
 ```
 
 ### 执行创建/更新部署运行时的 API 请求
@@ -123,18 +123,18 @@ title: 维护部署运行时
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除部署运行时的 API 请求
@@ -152,19 +152,19 @@ title: 维护部署运行时
 通过接口定义 `Deploymentruntime_ListDeploymentRuntimes` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token'
+    curl -X 'GET' \
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+    curl -X 'GET' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查询部署运行时列表的 API 请求
@@ -198,19 +198,19 @@ curl -X 'GET' \
 通过接口定义 `Deploymentruntime_GetDeploymentRuntime` 生成 API 请求示例，并添加 access token 作为请求头。
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer $gitlab-access-token'
+    curl -X 'GET' \
+        'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
-curl -X 'GET' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
-  -H 'accept: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+    curl -X 'GET' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查看部署运行时详情的 API 请求
@@ -227,18 +227,18 @@ curl -X 'GET' \
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -d '{
-      "projects_ref": [
-        "api-server"
-      ],
-      "manifest_source": {
-        "code_repo": "api-server",
-        "target_revision": "HEAD",
-        "path": "manifests/development"
-      },
-      "destination": "env-demo"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/deploymentruntimes/dr-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "projects_ref": [
+                    "api-server"
+                ],
+                "manifest_source": {
+                    "code_repo": "api-server",
+                    "target_revision": "HEAD",
+                    "path": "manifests/development"
+                },
+                "destination": "env-demo"
+            }'
 ```
