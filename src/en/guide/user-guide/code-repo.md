@@ -5,7 +5,7 @@ title: Maintain Code Repository and its Authorization
 
 # Maintain Code Repository and its Authorization
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 A code repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
