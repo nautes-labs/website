@@ -4,7 +4,7 @@ title: Register Runtime Cluster
 ---
 # Register Runtime Cluster
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 Runtime clusters are used to host the runtime environment for applications. The supported cluster types include physical clusters and virtual clusters.
 
