@@ -40,58 +40,58 @@ title: 维护代码库及其授权
     # 替换变量 $product-name 为代码库所属产品的名称
     # 替换变量 $coderepo-name 为代码库名称
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-        # 代码库关联的项目
-        "project": $project,
-        # 代码库的 webhook 事件
-        "webhook": {
-            "events": ["push_events"]
-        },
-        # 是否用于部署运行时
-        "deployment_runtime": true,
-        "pipeline_runtime": false,
-        "git": {
-            "gitlab": {
-                # 代码库的名称
-                "name": $coderepo-name,
-                # 代码库的路径
-                "path": $coderepo-name,
-                # 代码库的可见性，例如：private、public 
-                "visibility": $coderepo-visibility,
-                "description": $coderepo-desc
-                }
-            }
-    }'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 代码库关联的项目
+                "project": $project,
+                # 代码库的 webhook 事件
+                "webhook": {
+                    "events": ["push_events"]
+                },
+                # 是否用于部署运行时
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        # 代码库的名称
+                        "name": $coderepo-name,
+                        # 代码库的路径
+                        "path": $coderepo-name,
+                        # 代码库的可见性，例如：private、public 
+                        "visibility": $coderepo-visibility,
+                        "description": $coderepo-desc
+                        }
+                    }
+            }'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-        "project": "api-server",
-        "webhook": {
-            "events": ["push_events"]
-        },
-        "deployment_runtime": true,
-        "pipeline_runtime": false,
-        "git": {
-            "gitlab": {
-                "name": "api-server",
-                "path": "api-server",
-                "visibility": "private",
-                "description": "Providing REST APIs for creating configuration declarations of environments."
-                }
-            }
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "project": "api-server",
+                "webhook": {
+                    "events": ["push_events"]
+                },
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        "name": "api-server",
+                        "path": "api-server",
+                        "visibility": "private",
+                        "description": "Providing REST APIs for creating configuration declarations of environments."
+                        }
+                    }
+            }'
 ```
 
 ### 执行创建/更新代码库的 API 请求
@@ -131,18 +131,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
 ### 执行删除代码库的 API 请求
@@ -161,18 +161,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
 ### 执行查询代码库列表的 API 请求
@@ -180,7 +180,7 @@ title: 维护代码库及其授权
 使用 curl 命令或者其他工具执行 API 请求，以查询代码库列表。代码库列表的返回值示例如下：
 
 ```yaml
-    {
+{
     "items": [
         {
             "product": "nautes-labs",
@@ -218,18 +218,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查看代码库详情的 API 请求
@@ -246,28 +246,28 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/coderepo-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-      -d '{
-      "project": "project-demo-invalid",
-      "webhook": {
-        "events": [
-          "push_events"
-        ]
-      },
-      "deployment_runtime": true,
-      "pipeline_runtime": false,
-      "git": {
-        "gitlab": {
-          "name": "coderepo-demo",
-          "path": "coderepo-demo",
-          "visibility": "private",
-          "description": "This is a code repository for testing purposes."
-        }
-      }
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/coderepo-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "project": "project-demo-invalid",
+                "webhook": {
+                    "events": [
+                        "push_events"
+                    ]
+                },
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        "name": "coderepo-demo",
+                        "path": "coderepo-demo",
+                        "visibility": "private",
+                        "description": "This is a code repository for testing purposes."
+                    }
+                }
+            }'
 ```
 
 ## 创建和更新代码库授权（API）
@@ -282,40 +282,40 @@ title: 维护代码库及其授权
     # 替换变量 $product-name 为代码库授权所属产品的名称
     # 替换变量 $coderepo-binding-name 为代码库授权的名称
     curl -X 'POST' \
-    'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-        # 授权产品：目前只支持将代码库授权给其所属的产品，与 $product-name 的值相同
-        "product": "$authorized-product-name",
-        # 授权项目：如果为空，将代码库授权给产品； 如果不为空，将代码库授权给产品内的指定项目
-        "projects": [
-            "$project-name"
-        ],
-        # 权限：readwrite 或 readonly
-        "permissions": "$permissions",
-        # 授权代码库的名称
-        "coderepo": "$coderepo-name"
-    }'
+        'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 授权产品：目前只支持将代码库授权给其所属的产品，与 $product-name 的值相同
+                "product": "$authorized-product-name",
+                # 授权项目：如果为空，将代码库授权给产品； 如果不为空，将代码库授权给产品内的指定项目
+                "projects": [
+                    "$project-name"
+                ],
+                # 权限：readwrite 或 readonly
+                "permissions": "$permissions",
+                # 授权代码库的名称
+                "coderepo": "$coderepo-name"
+            }'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-        "product": "nautes-labs",
-        "projects": [
-            "argo-operator"
-        ],
-        "permissions": "readonly",
-        "coderepo": "vault-proxy"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "product": "nautes-labs",
+                "projects": [
+                    "argo-operator"
+                ],
+                "permissions": "readonly",
+                "coderepo": "vault-proxy"
+            }'
 ```
 
 ### 执行创建/更新代码库授权 API 请求
@@ -355,18 +355,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除代码库授权 API 请求
@@ -385,18 +385,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
-    -H 'accept: application/json'  \
-    -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
+        -H 'accept: application/json'  \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查询代码库授权列表 API 请求
@@ -404,19 +404,19 @@ title: 维护代码库及其授权
 使用 curl 命令或者其他工具执行 API 请求，以查询代码库授权列表。代码库授权列表的返回值示例如下：
 
 ```yaml
-    {
-        "items": [
-            {
-                "product": "nautes-labs",
-                "name": "coderepo-binding-vault-proxy",
-                "projects": [
-                    "argo-operator"
-                ],
-                "permissions": "readonly",
-                "coderepo": "vault-proxy"
-            }
-        ]
-    }
+{
+    "items": [
+        {
+            "product": "nautes-labs",
+            "name": "coderepo-binding-vault-proxy",
+            "projects": [
+                "argo-operator"
+            ],
+            "permissions": "readonly",
+            "coderepo": "vault-proxy"
+        }
+    ]
+}
 ```
 
 > 只有当您的账号是 GitLab 的 group 成员，并具备对 `default.project` 代码库的读取权限，才可以查询代码库授权列表。
@@ -429,18 +429,18 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行查看代码库授权详情 API 请求
@@ -457,16 +457,16 @@ title: 维护代码库及其授权
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-    "product": "nautes-labs",
-    "projects": [
-        "project-invalid"
-    ],
-    "permissions": "readonly",
-    "coderepo": "vault-proxy"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "product": "nautes-labs",
+                "projects": [
+                    "project-invalid"
+                ],
+                "permissions": "readonly",
+                "coderepo": "vault-proxy"
+            }'
 ```

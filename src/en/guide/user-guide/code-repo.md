@@ -41,58 +41,58 @@ Compose an API request example by API definition `CodeRepo_SaveCodeRepo` and add
     # Replace the variable $product-name with the name of the product to which the repository belongs.
     # Replace the variable $coderepo-name with the repository name.
     curl -X 'POST' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-        # The project to which the repository belongs.
-        "project": $project,
-        # Webhook events
-        "webhook": {
-            "events": ["push_events"]
-        },
-        # Whether the repository is used for deploying runtime.
-        "deployment_runtime": true,
-        "pipeline_runtime": false,
-        "git": {
-            "gitlab": {
-                # repository name
-                "name": $coderepo-name,
-                # repository path
-                "path": $coderepo-name,
-                # repository visibility：private or public 
-                "visibility": $coderepo-visibility,
-                "description": $coderepo-desc
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # The project to which the repository belongs.
+                "project": $project,
+                # Webhook events
+                "webhook": {
+                    "events": ["push_events"]
+                },
+                # Whether the repository is used for deploying runtime.
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        # repository name
+                        "name": $coderepo-name,
+                        # repository path
+                        "path": $coderepo-name,
+                        # repository visibility：private or public 
+                        "visibility": $coderepo-visibility,
+                        "description": $coderepo-desc
+                    }
                 }
-            }
-    }'
+            }'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-        "project": "api-server",
-        "webhook": {
-            "events": ["push_events"]
-        },
-        "deployment_runtime": true,
-        "pipeline_runtime": false,
-        "git": {
-            "gitlab": {
-                "name": "api-server",
-                "path": "api-server",
-                "visibility": "private",
-                "description": "Providing REST APIs for creating configuration declarations of environments."
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "project": "api-server",
+                "webhook": {
+                    "events": ["push_events"]
+                },
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        "name": "api-server",
+                        "path": "api-server",
+                        "visibility": "private",
+                        "description": "Providing REST APIs for creating configuration declarations of environments."
+                    }
                 }
-            }
-    }'
+            }'
 ```
 
 ### Execute Create and Update Repository Request
@@ -132,18 +132,18 @@ Compose an API request example by API definition `CodeRepo_DeleteCodeRepo` and a
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
 ### Execute Delete Repository Request
@@ -162,18 +162,18 @@ Compose an API request example by API definition `CodeRepo_ListCodeRepos` and ad
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepos' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
 ### Execute List Repositories Request
@@ -181,7 +181,7 @@ The request example after replacing the variables is shown below:
 Use the curl command or other tools to execute the API request to list repositories. The response example for the repository list is shown below:
 
 ```yaml
-    {
+{
     "items": [
         {
             "product": "nautes-labs",
@@ -219,18 +219,18 @@ Compose an API request example by API definition `CodeRepo_GetCodeRepo` and add 
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' 
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepos/$coderepo-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' 
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/api-server' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' 
 ```
 
 ### Execute View Repository Details Request
@@ -247,27 +247,27 @@ Taking the creation of a repository as an example, if the value of the `project`
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/coderepo-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -d '{
-      "project": "project-demo-invalid",
-      "webhook": {
-        "events": [
-          "push_events"
-        ]
-      },
-      "deployment_runtime": true,
-      "pipeline_runtime": false,
-      "git": {
-        "gitlab": {
-          "name": "coderepo-demo",
-          "path": "coderepo-demo",
-          "visibility": "private",
-          "description": "This is a code repository for testing purposes."
-        }
-      }
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepos/coderepo-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "project": "project-demo-invalid",
+                "webhook": {
+                "events": [
+                    "push_events"
+                ]
+                },
+                "deployment_runtime": true,
+                "pipeline_runtime": false,
+                "git": {
+                    "gitlab": {
+                        "name": "coderepo-demo",
+                        "path": "coderepo-demo",
+                        "visibility": "private",
+                        "description": "This is a code repository for testing purposes."
+                    }
+                }
+            }'
 ```
 
 ## Create and Update Repository Authorization(API)
@@ -282,39 +282,39 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
     # Replace the variable $product-name with the name of the product to which the repository authorization belongs.
     # Replace the variable $coderepo-binding-name with the repository authorization name.
     curl -X 'POST' \
-    'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token' \
-    -d '{
-    # Granted Product: Currently, only the product to which the code repository belongs can be granted, which should be the same as the value of $product-name.
-    "product": "$authorized-product-name",
-    # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
-    "projects": [
-        "$project-name"
-    ],
-    # Permission: readwrite or readonly
-    "permissions": "$permissions",
-    # Name of the authorized code repository
-    "coderepo": "$coderepo-name"
-    }'
+        'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # Granted Product: Currently, only the product to which the code repository belongs can be granted, which should be the same as the value of $product-name.
+                "product": "$authorized-product-name",
+                # Granted Project: If empty, the code repository grants authorization to the product. If not empty, the code repository grants authorization to the specified projects within the product.
+                "projects": [
+                    "$project-name"
+                ],
+                # Permission: readwrite or readonly
+                "permissions": "$permissions",
+                # Name of the authorized code repository
+                "coderepo": "$coderepo-name"
+            }'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -d '{
-    "product": "nautes-labs",
-    "projects": [
-        "argo-operator"
-    ],
-    "permissions": "readonly",
-    "coderepo": "vault-proxy"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "product": "nautes-labs",
+                "projects": [
+                    "argo-operator"
+                ],
+                "permissions": "readonly",
+                "coderepo": "vault-proxy"
+            }'
 ```
 
 ### Execute Create and Update Repository Authorization Request
@@ -354,18 +354,18 @@ Compose an API request example by API definition `CodeRepoBinding_DeleteCodeRepo
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute Delete Repository Authorization Request
@@ -384,18 +384,18 @@ Compose an API request example by API definition `CodeRepoBinding_ListCodeRepoBi
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
-    -H 'accept: application/json'  \
-    -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
+        -H 'accept: application/json'  \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings' \
-    -H 'accept: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute List Repository Authorizations Request
@@ -403,19 +403,19 @@ The request example after replacing the variables is shown below:
 Use the curl command or other tools to execute the API request to list repository authorizations. The response example for the repository authorization list is shown below:
 
 ```yaml
-    {
-        "items": [
-            {
-                "product": "nautes-labs",
-                "name": "coderepo-binding-vault-proxy",
-                "projects": [
-                    "argo-operator"
-                ],
-                "permissions": "readonly",
-                "coderepo": "vault-proxy"
-            }
-        ]
-    }
+{
+    "items": [
+        {
+            "product": "nautes-labs",
+            "name": "coderepo-binding-vault-proxy",
+            "projects": [
+                "argo-operator"
+            ],
+            "permissions": "readonly",
+            "coderepo": "vault-proxy"
+        }
+    ]
+}
 ```
 
 > If your account is a member of the GitLab group, and has read permission to the `default.project` repository, you can list repository authorizations.
@@ -428,18 +428,18 @@ Compose an API request example by API definition `CodeRepoBinding_GetCodeRepoBin
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute View Repository Authorization Details Request
@@ -456,16 +456,16 @@ Taking the creation of a repository authorization as an example, if the value of
 
 ```Shell
     curl -X 'POST' \
-    'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
-    -H 'accept: application/json' \
-    -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-    -d '{
-    "product": "nautes-labs",
-    "projects": [
-        "project-invalid"
-    ],
-    "permissions": "readonly",
-    "coderepo": "vault-proxy"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/coderepobindings/coderepo-binding-vault-proxy?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "product": "nautes-labs",
+                "projects": [
+                    "project-invalid"
+                ],
+                "permissions": "readonly",
+                "coderepo": "vault-proxy"
+            }'
 ```
