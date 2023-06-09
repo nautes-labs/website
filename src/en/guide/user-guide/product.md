@@ -34,7 +34,7 @@ Compose an API request example by API definition `Product_SaveProduct` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
-    # Replace the variable $product_name with the product name
+    # Replace the variable $product-name with the product name
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
