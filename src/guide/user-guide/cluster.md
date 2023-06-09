@@ -6,7 +6,7 @@ title: 注册运行时集群
 
 在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解执行流水线和部署应用的主体流程和相关术语。
 
-运行时集群用于承载应用的运行时环境。集群形态支持物理集群和虚拟集群。
+运行时集群用于承载应用的运行时。集群形态支持物理集群和虚拟集群。
 
 支持通过 [命令行](run-a-pipeline.md#注册运行时集群) 和 API 两种方式注册运行时集群。
 
@@ -31,85 +31,66 @@ title: 注册运行时集群
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-        # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
-        "api_server": $api-server,
-        # 集群种类：目前只支持 kubernetes
-        "cluster_kind": "kubernetes",
-        # 集群类型：virtual或physical
-        "cluster_type": $cluster-type,
-        # 集群用途：host或worker
-        "usage": $usage,
-        # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
-        "worker_type": $worker-type
-        # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
-        "primary_domain": "$cluster-ip.nip.io"
-        # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
-        "tekton_host": "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
-        # argocd 域名：$cluster-name 替换为集群名称,$cluster-ip 替换为集群IP
-        "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
-        # traefik 配置
-        "traefik": {
-          "http_node_port": "30080",
-          "https_node_port": "30443"
-        },
-        # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
-        "kubeconfig": $kubeconfig
-    }'
+        'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
+                "api_server": $api-server,
+                # 集群种类：目前只支持 kubernetes
+                "cluster_kind": "kubernetes",
+                # 集群类型：virtual 或 physical
+                "cluster_type": $cluster-type,
+                # 集群用途：host 或 worker
+                "usage": $usage,
+                # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
+                "worker_type": $worker-type
+                # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+                "primary_domain": "$cluster-ip.nip.io"
+                # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
+                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
+                # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
+                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
+                # traefik 配置
+                "traefik": {
+                  "http_node_port": "30080",
+                  "https_node_port": "30443"
+                },
+                # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量，并且 kubeconfig 需要转义换行符
+                "kubeconfig": $kubeconfig
+            }'
 ```
 
 替换变量后部署运行时集群的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-physical' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
-      -d '{
-      "api_server": "https://8.217.50.114:6443",
-      "cluster_kind": "kubernetes",
-      "cluster_type": "physical",
-      "usage": "worker",
-      "worker_type": "deployment",
-      "primary_domain": "8.217.50.114.nip.io",
-      "argocd_host": "argocd.host-worker-aliyun-0412.8.217.50.114.nip.io",
-      "traefik": {
-        "http_node_port": "30080",
-        "https_node_port": "30443"
-      },
-      "kubeconfig": |
-         apiVersion: v1
-         clusters:
-         - cluster:
-             certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlRENDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUyT0RFeU9UQXdPVFV3SGhjTk1qTXdOREV5TURrd01UTTFXaGNOTXpNd05EQTVNRGt3TVRNMQpXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUyT0RFeU9UQXdPVFV3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFSMzRuTjVPWWhxb3MrekV1YXZsVDRleXE4ZFRVZ2pxcUdoN2Z6NkpMZEMKem1FN0cwZjE5K0hLcEw5cU1tSXVBaStRelBZZFNzWGJpR20rNjR0R0NuVkRvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVUp0WVUxbkNvTXNNYWpVeUJGN3RVCndjZWJ6TW93Q2dZSUtvWkl6ajBFQXdJRFNRQXdSZ0loQU9hR2pWNlRpK2o1Yy9kWlV5a1pERml0OU9DdkFmZjEKWjJSVUJ6TkJTOUlhQWlFQTB1bzM2YUVGRnkvdWQ0eHREZnNkWmhYWmZOaXQ3c2N4SXREa1k5STlQUkU9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-             server: https://127.0.0.1:6443
-           name: default
-         contexts:
-         - context:
-             cluster: default
-             user: default
-           name: default
-         current-context: default
-         kind: Config
-         preferences: {}
-         users:
-         - name: default
-           user:
-             client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrVENDQVRlZ0F3SUJBZ0lJSjYyRGdFT3JiM3d3Q2dZSUtvWkl6ajBFQXdJd0l6RWhNQjhHQTFVRUF3d1kKYXpOekxXTnNhV1Z1ZEMxallVQXhOamd4TWprd01EazFNQjRYRFRJek1EUXhNakE1TURFek5Wb1hEVEkwTURReApNVEE1TURFek5Wb3dNREVYTUJVR0ExVUVDaE1PYzNsemRHVnRPbTFoYzNSbGNuTXhGVEFUQmdOVkJBTVRESE41CmMzUmxiVHBoWkcxcGJqQlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJJNnlLRlBKNENmS25BUFkKQ0Q5ZFVtZlZ5ekR2aFpEQUdhU1lYODVoWWRYZ0NKdmxHRmlad3dGN2ExKzEzdlQ5ZjE2MUJwSGhKTm9mYi9oeAozUVo1MWs2alNEQkdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQVRCZ05WSFNVRUREQUtCZ2dyQmdFRkJRY0RBakFmCkJnTlZIU01FR0RBV2dCVHhiVTM2eC9iMnl3WU14SmpuUjF5L2w2cHZCREFLQmdncWhrak9QUVFEQWdOSUFEQkYKQWlFQS9rZ3FCOGJLZnNLSGNmaDBUSFQ2bTZNLzdrMzlNWmFGYlVCaE9GTzVDSW9DSURiRWNaeUxkc055R3lVVQpSTDl5K0hHcVJ3b1FTWGhOa1NrQjhlbkpsQTEzCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdFkyeHAKWlc1MExXTmhRREUyT0RFeU9UQXdPVFV3SGhjTk1qTXdOREV5TURrd01UTTFXaGNOTXpNd05EQTVNRGt3TVRNMQpXakFqTVNFd0h3WURWUVFEREJock0zTXRZMnhwWlc1MExXTmhRREUyT0RFeU9UQXdPVFV3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFTbnNEVkxLTU4xTWl4cHAwclRMRTBOVGdjamFRWFhmUmZmOThiOTRqd1gKYjRPNVh1aCtFclZwZ3BjamxRYjVZKzM0T1NwaG03TnVXWlA2OHBkUWhMTW5vMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVThXMU4rc2YyOXNzR0RNU1k1MGRjCnY1ZXFid1F3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUtXSStXQ2wwRFlJME5oVDBzbDkwSVRHRW05V2EyaE0KQXV4UXkrcDVUcGpzQWlBdWxFd0NkK2lWYXNVY2VHa2I4WU81dlduQitaTVJmSU1rYWRHSGhpSmlrdz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-             client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/host-worker-aliyun' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "api_server": "https://8.217.50.114:6443",
+                "cluster_kind": "kubernetes",
+                "cluster_type": "physical",
+                "usage": "worker",
+                "worker_type": "deployment",
+                "primary_domain": "8.217.50.114.nip.io",
+                "argocd_host": "argocd.host-worker-aliyun.8.217.50.114.nip.io",
+                "traefik": {
+                  "http_node_port": "30080",
+                  "https_node_port": "30443"
+                },
+                "kubeconfig": "apiVersion: v1\nclusters:\n- cluster:\n    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkakNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFRdnRkRTdSVW1BSHYxOHdEWDF2L2pucWFFU3NmcjduUm5wbTViYjZ0NmEKRDZmZHg0NnVRYitDYWFjVXJUMVVycTVOSTJNTHhHSC8yS0xBL2Y0T2V4WjRvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVW13L1FHSXc1N2VtQjhnaDhwQVpGCmdrVG1sQzB3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnU0FCZDdMdEVxYnY3Q0pqQ2VHa1ljL1ZqUkh3NnNTSkUKMHJFV3ZyVFFoSFlDSUJoZXpPOXRTVVpxV3dlVGk1SFZTUEhYNnRmR2E0SkpkTlNuN01ma0RMZnMKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=\n    server: https://10.204.118.23:6443\n  name: default\ncontexts:\n- context:\n    cluster: default\n    user: default\n  name: default\ncurrent-context: default\nkind: Config\npreferences: {}\nusers:\n- name: default\n  user:\n    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrRENDQVRlZ0F3SUJBZ0lJT0MvTUZodzFVSXd3Q2dZSUtvWkl6ajBFQXdJd0l6RWhNQjhHQTFVRUF3d1kKYXpOekxXTnNhV1Z1ZEMxallVQXhOamcyTVRRd05EYzBNQjRYRFRJek1EWXdOekV5TWpFeE5Gb1hEVEkwTURZdwpOakV5TWpFeE5Gb3dNREVYTUJVR0ExVUVDaE1PYzNsemRHVnRPbTFoYzNSbGNuTXhGVEFUQmdOVkJBTVRESE41CmMzUmxiVHBoWkcxcGJqQlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJDdmFlak9Yc09NVWtsd1oKU25nL1dXTy9zTE5XRG9rMzF3Z3A4ditVVWZ6b25SRGtGRzRJK3RYNXpwYUF6TXlsZndmWWc2aUZ1RmkzaWRkKwpQRlpod0d1alNEQkdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQVRCZ05WSFNVRUREQUtCZ2dyQmdFRkJRY0RBakFmCkJnTlZIU01FR0RBV2dCUStpcXZQYVQxRW5qZVA0SlhqWkxSYWd1NnRzVEFLQmdncWhrak9QUVFEQWdOSEFEQkUKQWlCMVFtQ2NyRHZGSUxVMUl3K01laURkZERMQkhoQVdhOUJ1T3NCRFZLU0F5Z0lnSEgyOVF5UDg1aEZQUkd6dQpQZENjdjdVN01NL2lpOG5zbGQrTy8ySW8yYnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdFkyeHAKWlc1MExXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRZMnhwWlc1MExXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFReXM3c3JZWEFFczBPa2lqWkt0R1hEZk1HWlhzMGJySGx4T1dwRGZ0d2cKK2xFMGRaNFJ4U1hYVWhCNEo0ZjB0ZUhXRk5NVmU3c1pjN2kyNTAwbWVoUUVvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVVBvcXJ6Mms5Uko0M2orQ1Y0MlMwCldvTHVyYkV3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUxjQlllRGFEMTc0YVpaUU1CQm53NHAvNmY5S1hVb2YKM2tpRFFXNUNLTWgzQWlCdWFPR252Yml2ajRDeHJPckgxWEZSUS9VR2tXYmtGWEUweExWc1VJZmprQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\n    client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUZ6TDY2TDZMWGkvM3IzUEdFYTRMUmxlUXoybGUwU0R4cFdPV1dMRzZIamhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFSzlwNk01ZXc0eFNTWEJsS2VEOVpZNyt3czFZT2lUZlhDQ255LzVSUi9PaWRFT1FVYmdqNgoxZm5PbG9ETXpLVi9COWlEcUlXNFdMZUoxMzQ4Vm1IQWF3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo="
+            }'
 ```
 
 ### 执行注册物理集群的 API 请求
 
 使用 curl 命令或者其他工具执行 API 请求，以注册物理集群。
 
-请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为运行时集群。注册成功后，将在物理集群中安装 ArgoCD、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
+请求成功后，将向租户配置库写入物理集群的资源文件，并根据资源文件向租户管理集群注册物理集群作为运行时集群。注册成功后，将在物理集群中安装 ArgoCD、ArgoRollouts、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
 
 > 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以注册运行时集群。
 
@@ -126,70 +107,51 @@ title: 注册运行时集群
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-        # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
-        "api_server": $api-server,
-        # 集群种类：目前只支持 kubernetes
-        "cluster_kind": "kubernetes",
-        # 集群类型：virtual或physical
-        "cluster_type": $cluster-type,
-        # 集群用途：host或worker
-        "usage": $usage,
-        # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
-        "primary_domain": "$cluster-ip.nip.io"
-        # traefik 配置
-        "traefik": {
-          "http_node_port": "30080",
-          "https_node_port": "30443"
-        },
-        # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
-        "kubeconfig": $kubeconfig
-      }'
+        'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
+                "api_server": $api-server,
+                # 集群种类：目前只支持 kubernetes
+                "cluster_kind": "kubernetes",
+                # 集群类型：virtual 或 physical
+                "cluster_type": $cluster-type,
+                # 集群用途：host 或 worker
+                "usage": $usage,
+                # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
+                "primary_domain": "$cluster-ip.nip.io"
+                # traefik 配置
+                "traefik": {
+                  "http_node_port": "30080",
+                  "https_node_port": "30443"
+                },
+                # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量，并且 kubeconfig 需要转义换行符
+                "kubeconfig": $kubeconfig
+            }'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
-curl -X 'POST' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  -d '{
-  "api_server": "https://8.217.50.114:6443",
-  "cluster_kind": "kubernetes",
-  "cluster_type": "physical",
-  "usage": "host",
-  "primary_domain": "8.217.50.114.nip.io",
-  "traefik": {
-    "http_node_port": "30080",
-    "https_node_port": "30443"
-  },
-  "kubeconfig": | 
-    apiVersion: v1
-    clusters:
-    - cluster:
-        certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJlRENDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUyT0RFeU9UQXdPVFV3SGhjTk1qTXdOREV5TURrd01UTTFXaGNOTXpNd05EQTVNRGt3TVRNMQpXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUyT0RFeU9UQXdPVFV3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFSMzRuTjVPWWhxb3MrekV1YXZsVDRleXE4ZFRVZ2pxcUdoN2Z6NkpMZEMKem1FN0cwZjE5K0hLcEw5cU1tSXVBaStRelBZZFNzWGJpR20rNjR0R0NuVkRvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVUp0WVUxbkNvTXNNYWpVeUJGN3RVCndjZWJ6TW93Q2dZSUtvWkl6ajBFQXdJRFNRQXdSZ0loQU9hR2pWNlRpK2o1Yy9kWlV5a1pERml0OU9DdkFmZjEKWjJSVUJ6TkJTOUlhQWlFQTB1bzM2YUVGRnkvdWQ0eHREZnNkWmhYWmZOaXQ3c2N4SXREa1k5STlQUkU9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-        server: https://127.0.0.1:6443
-      name: default
-    contexts:
-    - context:
-        cluster: default
-        user: default
-      name: default
-    current-context: default
-    kind: Config
-    preferences: {}
-    users:
-    - name: default
-      user:
-        client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrVENDQVRlZ0F3SUJBZ0lJSjYyRGdFT3JiM3d3Q2dZSUtvWkl6ajBFQXdJd0l6RWhNQjhHQTFVRUF3d1kKYXpOekxXTnNhV1Z1ZEMxallVQXhOamd4TWprd01EazFNQjRYRFRJek1EUXhNakE1TURFek5Wb1hEVEkwTURReApNVEE1TURFek5Wb3dNREVYTUJVR0ExVUVDaE1PYzNsemRHVnRPbTFoYzNSbGNuTXhGVEFUQmdOVkJBTVRESE41CmMzUmxiVHBoWkcxcGJqQlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJJNnlLRlBKNENmS25BUFkKQ0Q5ZFVtZlZ5ekR2aFpEQUdhU1lYODVoWWRYZ0NKdmxHRmlad3dGN2ExKzEzdlQ5ZjE2MUJwSGhKTm9mYi9oeAozUVo1MWs2alNEQkdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQVRCZ05WSFNVRUREQUtCZ2dyQmdFRkJRY0RBakFmCkJnTlZIU01FR0RBV2dCVHhiVTM2eC9iMnl3WU14SmpuUjF5L2w2cHZCREFLQmdncWhrak9QUVFEQWdOSUFEQkYKQWlFQS9rZ3FCOGJLZnNLSGNmaDBUSFQ2bTZNLzdrMzlNWmFGYlVCaE9GTzVDSW9DSURiRWNaeUxkc055R3lVVQpSTDl5K0hHcVJ3b1FTWGhOa1NrQjhlbkpsQTEzCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdFkyeHAKWlc1MExXTmhRREUyT0RFeU9UQXdPVFV3SGhjTk1qTXdOREV5TURrd01UTTFXaGNOTXpNd05EQTVNRGt3TVRNMQpXakFqTVNFd0h3WURWUVFEREJock0zTXRZMnhwWlc1MExXTmhRREUyT0RFeU9UQXdPVFV3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFTbnNEVkxLTU4xTWl4cHAwclRMRTBOVGdjamFRWFhmUmZmOThiOTRqd1gKYjRPNVh1aCtFclZwZ3BjamxRYjVZKzM0T1NwaG03TnVXWlA2OHBkUWhMTW5vMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVThXMU4rc2YyOXNzR0RNU1k1MGRjCnY1ZXFid1F3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUtXSStXQ2wwRFlJME5oVDBzbDkwSVRHRW05V2EyaE0KQXV4UXkrcDVUcGpzQWlBdWxFd0NkK2lWYXNVY2VHa2I4WU81dlduQitaTVJmSU1rYWRHSGhpSmlrdz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
-        client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
-}'
+    curl -X 'POST' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "api_server": "https://8.217.50.114:6443",
+                "cluster_kind": "kubernetes",
+                "cluster_type": "physical",
+                "usage": "host",
+                "primary_domain": "8.217.50.114.nip.io",
+                "traefik": {
+                  "http_node_port": "30080",
+                  "https_node_port": "30443"
+                },
+                "kubeconfig": "apiVersion: v1\nclusters:\n- cluster:\n    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkakNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFRdnRkRTdSVW1BSHYxOHdEWDF2L2pucWFFU3NmcjduUm5wbTViYjZ0NmEKRDZmZHg0NnVRYitDYWFjVXJUMVVycTVOSTJNTHhHSC8yS0xBL2Y0T2V4WjRvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVW13L1FHSXc1N2VtQjhnaDhwQVpGCmdrVG1sQzB3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnU0FCZDdMdEVxYnY3Q0pqQ2VHa1ljL1ZqUkh3NnNTSkUKMHJFV3ZyVFFoSFlDSUJoZXpPOXRTVVpxV3dlVGk1SFZTUEhYNnRmR2E0SkpkTlNuN01ma0RMZnMKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=\n    server: https://10.204.118.23:6443\n  name: default\ncontexts:\n- context:\n    cluster: default\n    user: default\n  name: default\ncurrent-context: default\nkind: Config\npreferences: {}\nusers:\n- name: default\n  user:\n    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrRENDQVRlZ0F3SUJBZ0lJT0MvTUZodzFVSXd3Q2dZSUtvWkl6ajBFQXdJd0l6RWhNQjhHQTFVRUF3d1kKYXpOekxXTnNhV1Z1ZEMxallVQXhOamcyTVRRd05EYzBNQjRYRFRJek1EWXdOekV5TWpFeE5Gb1hEVEkwTURZdwpOakV5TWpFeE5Gb3dNREVYTUJVR0ExVUVDaE1PYzNsemRHVnRPbTFoYzNSbGNuTXhGVEFUQmdOVkJBTVRESE41CmMzUmxiVHBoWkcxcGJqQlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJDdmFlak9Yc09NVWtsd1oKU25nL1dXTy9zTE5XRG9rMzF3Z3A4ditVVWZ6b25SRGtGRzRJK3RYNXpwYUF6TXlsZndmWWc2aUZ1RmkzaWRkKwpQRlpod0d1alNEQkdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQVRCZ05WSFNVRUREQUtCZ2dyQmdFRkJRY0RBakFmCkJnTlZIU01FR0RBV2dCUStpcXZQYVQxRW5qZVA0SlhqWkxSYWd1NnRzVEFLQmdncWhrak9QUVFEQWdOSEFEQkUKQWlCMVFtQ2NyRHZGSUxVMUl3K01laURkZERMQkhoQVdhOUJ1T3NCRFZLU0F5Z0lnSEgyOVF5UDg1aEZQUkd6dQpQZENjdjdVN01NL2lpOG5zbGQrTy8ySW8yYnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdFkyeHAKWlc1MExXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRZMnhwWlc1MExXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFReXM3c3JZWEFFczBPa2lqWkt0R1hEZk1HWlhzMGJySGx4T1dwRGZ0d2cKK2xFMGRaNFJ4U1hYVWhCNEo0ZjB0ZUhXRk5NVmU3c1pjN2kyNTAwbWVoUUVvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVVBvcXJ6Mms5Uko0M2orQ1Y0MlMwCldvTHVyYkV3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUxjQlllRGFEMTc0YVpaUU1CQm53NHAvNmY5S1hVb2YKM2tpRFFXNUNLTWgzQWlCdWFPR252Yml2ajRDeHJPckgxWEZSUS9VR2tXYmtGWEUweExWc1VJZmprQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\n    client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUZ6TDY2TDZMWGkvM3IzUEdFYTRMUmxlUXoybGUwU0R4cFdPV1dMRzZIamhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFSzlwNk01ZXc0eFNTWEJsS2VEOVpZNyt3czFZT2lUZlhDQ255LzVSUi9PaWRFT1FVYmdqNgoxZm5PbG9ETXpLVi9COWlEcUlXNFdMZUoxMzQ4Vm1IQWF3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo="
+            }'
 ```
 
 ### 执行注册宿主集群的 API 请求
@@ -207,65 +169,65 @@ curl -X 'POST' \
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $cluster-name 为集群名称
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-        # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
-        "api_server": $api-server,
-        # 集群种类：目前只支持 kubernetes
-        "cluster_kind": "kubernetes",
-        # 集群类型：virtual或physical
-        "cluster_type": $cluster-type,
-        # 集群用途：host或worker
-        "usage": $usage,
-        # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
-        "worker_type": $worker_type,
-        # 所属宿主集群：virtual类型集群才有此属性，使用宿主集群的名称替换参数
-        "host_cluster": $host-cluster,
-        # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
-        "primary_domain": "$cluster-ip.nip.io"
-        # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
-        "tekton_host": "tekton.vcluster-$suffix.$cluster-ip.nip.io"
-        # argocd 域名：$cluster-name 替换为集群名称,$cluster-ip 替换为宿主集群IP
-        "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
-        # 虚拟集群配置：virtual类型集群才有此属性
-        "vcluster": {
-          # API SERVER 端口号
-          "https_node_port": $api-server-port,
-        }
-    }'
+        'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+                "api_server": $api-server,
+                # 集群种类：目前只支持 kubernetes
+                "cluster_kind": "kubernetes",
+                # 集群类型：virtual 或 physical
+                "cluster_type": $cluster-type,
+                # 集群用途：host 或 worker
+                "usage": $usage,
+                # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
+                "worker_type": $worker_type,
+                # 所属宿主集群：virtual 类型集群才有此属性，使用宿主集群的名称替换参数
+                "host_cluster": $host-cluster,
+                # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
+                "primary_domain": "$cluster-ip.nip.io"
+                # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
+                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
+                # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
+                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
+                # 虚拟集群配置：virtual 类型集群才有此属性
+                "vcluster": {
+                  # API SERVER 端口号
+                  "https_node_port": $api-server-port,
+                }
+            }'
 ```
 
 替换变量后的部署运行时集群的请求示例如下：
 
 ```Shell
-curl -X 'POST' \
-  'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  -d '{
-        "api_server": "https://8.217.50.114:31456",
-        "cluster_kind": "kubernetes",
-        "cluster_type": "virtual",
-        "usage": "worker",
-        "worker_type": "deployment",
-        "host_cluster": "cluster-host",
-        "primary_domain": "8.217.50.114.nip.io",
-        "argocd_host": "argocd.vcluster-virtual.8.217.50.114.nip.io",
-        "vcluster": {
-          "https_node_port": "31456"
-        }
-    }'
+    curl -X 'POST' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "api_server": "https://8.217.50.114:31456",
+                "cluster_kind": "kubernetes",
+                "cluster_type": "virtual",
+                "usage": "worker",
+                "worker_type": "deployment",
+                "host_cluster": "cluster-host",
+                "primary_domain": "8.217.50.114.nip.io",
+                "argocd_host": "argocd.cluster-virtual.8.217.50.114.nip.io",
+                "vcluster": {
+                  "https_node_port": "31456"
+                }
+            }'
 ```
 
 ### 执行注册虚拟集群的 API 请求
 
 使用 curl 命令或者其他工具执行 API 请求，以注册虚拟集群。
 
-请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
+请求成功后，将向租户配置库写入虚拟集群的资源文件，并根据资源文件向租户管理集群注册虚拟集群作为运行时集群。注册成功后，将在虚拟集群中安装 ArgoCD、ArgoRollouts、Tekton、ExternalSecret、HNC、Vault-agent 等组件。
 
 > 只有当您的账号是租户配置库的成员，并且具备 main 分支的写入权限，才可以注册运行时集群。
 
@@ -273,7 +235,7 @@ curl -X 'POST' \
 
 > 请确保已成功注册物理集群。
 >
-> 在删除集群之前请先删除产品配置清单。详情参考 [删除运行时(命令行)）](clean-environment.md#删除运行时) ，或者参考[删除部署运行时](deployment-runtime.md#删除部署运行时api)、[删除流水线运行时](project-pipeline-runtime.md#删除流水线运行时api)、[删除环境](environment.md#删除环境api)、 [删除代码库](code-repo.md#删除代码库api)、[删除项目](project.md#删除项目api)、[删除产品](product.md#删除产品api)等 API 接口。
+> 在删除集群之前请先删除产品配置清单。详情参考 [删除运行时(命令行)](clean-environment.md#删除运行时)，或者参考[删除部署运行时](deployment-runtime.md#删除部署运行时api)、[删除流水线运行时](project-pipeline-runtime.md#删除流水线运行时api)、[删除环境](environment.md#删除环境api)、[删除代码库](code-repo.md#删除代码库api)、[删除项目](project.md#删除项目api)、[删除产品](product.md#删除产品api)等 API 接口。
 
 ### 生成删除物理集群的 API 请求
 
@@ -281,18 +243,18 @@ curl -X 'POST' \
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 替换变量后的请求示例如下：
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-physical' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/host-worker-aliyun' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除物理集群的 API 请求
@@ -315,9 +277,9 @@ curl -X 'POST' \
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除虚拟集群的 API 请求
@@ -331,9 +293,9 @@ curl -X 'POST' \
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-host' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### 执行删除宿主集群的 API 请求
