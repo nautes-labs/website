@@ -14,6 +14,88 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 
 <h1 id="cluster-api-cluster">Cluster</h1>
 
+## Cluster_ListClusters
+
+<a id="opIdCluster_ListClusters"></a>
+
+`GET /api/v1/clusters`
+
+<h3 id="cluster_listclusters-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|field_selector|query|string|false|Filter the list by field.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "items": [
+    {
+      "name": "string",
+      "cluster_kind": "string",
+      "cluster_type": "string",
+      "usage": "string",
+      "host_cluster": "string",
+      "primary_domain": "string",
+      "worker_type": "string",
+      "api_server": "string"
+    }
+  ]
+}
+```
+
+<h3 id="cluster_listclusters-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.ListsReply](#schemaapi.cluster.v1.listsreply)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Cluster_GetCluster
+
+<a id="opIdCluster_GetCluster"></a>
+
+`GET /api/v1/clusters/{cluster_name}`
+
+<h3 id="cluster_getcluster-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cluster_name|path|string|true|cluster_name is the name of the cluster.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "name": "string",
+  "cluster_kind": "string",
+  "cluster_type": "string",
+  "usage": "string",
+  "host_cluster": "string",
+  "primary_domain": "string",
+  "worker_type": "string",
+  "api_server": "string"
+}
+```
+
+<h3 id="cluster_getcluster-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.GetReply](#schemaapi.cluster.v1.getreply)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
 ## SaveCluster
 
 <a id="opIdSaveCluster"></a>
@@ -48,7 +130,7 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|cluster_name|path|string|true|clusterName specifies the name of the cluster.|
+|cluster_name|path|string|true|cluster_name specifies the name of the cluster.|
 |insecure_skip_check|query|boolean|false|insecureSkipCheck specifies whether to skip the certificate check when connecting to the API server.|
 |body|body|[api.cluster.v1.SaveRequest_Body](#schemaapi.cluster.v1.saverequest_body)|true|none|
 
@@ -84,7 +166,6 @@ BearerAuth
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |cluster_name|path|string|true|ClusterName is the name of the cluster.|
-|product_name|query|string|false|ProductName is the name of the product.|
 |insecure_skip_check|query|boolean|false|InsecureSkipCheck specifies whether to skip security checks.|
 
 > Example responses
@@ -124,13 +205,82 @@ BearerAuth
 
 ```
 
-Represents a response to a DeleteRequest message.
+DeleteReply represents a response to a delete request.
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |message|string|false|none|msg specifies the message of the delete response.|
+
+<h2 id="tocS_api.cluster.v1.GetReply">api.cluster.v1.GetReply</h2>
+<!-- backwards compatibility -->
+<a id="schemaapi.cluster.v1.getreply"></a>
+<a id="schema_api.cluster.v1.GetReply"></a>
+<a id="tocSapi.cluster.v1.getreply"></a>
+<a id="tocsapi.cluster.v1.getreply"></a>
+
+```json
+{
+  "name": "string",
+  "cluster_kind": "string",
+  "cluster_type": "string",
+  "usage": "string",
+  "host_cluster": "string",
+  "primary_domain": "string",
+  "worker_type": "string",
+  "api_server": "string"
+}
+
+```
+
+GetReply represents a response to a get request.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|false|none|name is the name of the cluster.|
+|cluster_kind|string|false|none|cluster_kind is the kind of the cluster.|
+|cluster_type|string|false|none|cluster_type is the type of the cluster.|
+|usage|string|false|none|usage is the usage of the cluster.|
+|host_cluster|string|false|none|host_cluster specifies the host cluster name if the cluster is a virtual cluster.|
+|primary_domain|string|false|none|primary_domain is used to build the domain of components within the cluster.|
+|worker_type|string|false|none|worker_type maybe pipeline or deployment, when the cluster usage is 'worker', the WorkType is required.|
+|api_server|string|false|none|api_server specifies the API server address of the cluster.|
+
+<h2 id="tocS_api.cluster.v1.ListsReply">api.cluster.v1.ListsReply</h2>
+<!-- backwards compatibility -->
+<a id="schemaapi.cluster.v1.listsreply"></a>
+<a id="schema_api.cluster.v1.ListsReply"></a>
+<a id="tocSapi.cluster.v1.listsreply"></a>
+<a id="tocsapi.cluster.v1.listsreply"></a>
+
+```json
+{
+  "items": [
+    {
+      "name": "string",
+      "cluster_kind": "string",
+      "cluster_type": "string",
+      "usage": "string",
+      "host_cluster": "string",
+      "primary_domain": "string",
+      "worker_type": "string",
+      "api_server": "string"
+    }
+  ]
+}
+
+```
+
+ListsReply represents a response to a list request.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|items|[[api.cluster.v1.GetReply](#schemaapi.cluster.v1.getreply)]|false|none|[GetReply represents a response to a get request.]|
 
 <h2 id="tocS_api.cluster.v1.SaveReply">api.cluster.v1.SaveReply</h2>
 <!-- backwards compatibility -->
@@ -190,18 +340,18 @@ Body represents the body of the save request.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|api_server|string|false|none|apiServer specifies the API server address of the cluster.|
-|cluster_kind|string|false|none|clusterKind specifies the kind of the cluster.|
-|cluster_type|string|false|none|clusterType specifies the type of the cluster. It can be "physical" or "virtual".|
+|api_server|string|false|none|api_server specifies the API server address of the cluster.|
+|cluster_kind|string|false|none|cluster_kind specifies the kind of the cluster.|
+|cluster_type|string|false|none|cluster_type specifies the type of the cluster. It can be "physical" or "virtual".|
 |usage|string|false|none|usage specifies the usage of the cluster. It can be "host" or "worker".|
-|host_cluster|string|false|none|hostCluster specifies the host cluster name if the cluster is a virtual cluster.|
-|argocd_host|string|false|none|argocdHost specifies the ArgoCD host name.|
+|host_cluster|string|false|none|host_cluster specifies the host cluster name if the cluster is a virtual cluster.|
+|argocd_host|string|false|none|argocd_host specifies the ArgoCD host name.|
 |vcluster|[api.cluster.v1.Vcluster](#schemaapi.cluster.v1.vcluster)|false|none|Vcluster represents the configuration for the virtual cluster.|
 |traefik|[api.cluster.v1.Traefik](#schemaapi.cluster.v1.traefik)|false|none|Traefik represents the configuration for the Traefik ingress controller.|
 |kubeconfig|string|false|none|kubeconfig specifies the Kubeconfig file of the cluster.|
-|worker_type|string|false|none|pipeline or deployment, when the cluster usage is 'worker', the WorkType is required.|
-|primary_domain|string|false|none|PrimaryDomain is used to build the domain of components within the cluster.|
-|tekton_host|string|false|none|TektonHost is the domain for the tekton dashboard, and it must be a subdomain of the PrimaryDomain|
+|worker_type|string|false|none|worker_type maybe pipeline or deployment, when the cluster usage is 'worker', the WorkType is required.|
+|primary_domain|string|false|none|primary_domain is used to build the domain of components within the cluster.|
+|tekton_host|string|false|none|tekton_host is the domain for the tekton dashboard, and it must be a subdomain of the PrimaryDomain|
 
 <h2 id="tocS_api.cluster.v1.Traefik">api.cluster.v1.Traefik</h2>
 <!-- backwards compatibility -->

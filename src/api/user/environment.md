@@ -24,7 +24,8 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|product_name|path|string|true|The name of the product|
+|product_name|path|string|true|To list the product name of the repository.|
+|field_selector|query|string|false|Filter the list by field.|
 
 > Example responses
 
