@@ -4,7 +4,7 @@ title: Deployment Runtime
 ---
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="deployment-runtime-api">Deployment Runtime API v0.3.0</h1>
+<h1 id="deployment-runtime-api">Deployment Runtime API v0.3.1</h1>
 
 License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
 
