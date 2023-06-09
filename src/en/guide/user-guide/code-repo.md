@@ -340,7 +340,7 @@ After the request is successful, the resource file for the repository authorizat
 >
 > If your account is a member of the GitLab group, and has a `Maintainer` or higher-level role, and has write permission to the `main` branch of the `default.project` repository, you can create or update repository authorization.
 >
-> You can create multiple resource files of repository authorizations for a code repository. For example, you may create two resource files, one authorized for the product and another for the project, or alternatively, assign each of the two resource files to different projects. The authorization scope of the code repository will be determined by the union of the product and the project authorizations.
+> You can create multiple resource files for repository authorizations in a code repository. For example, you may create two resource files—one for the product and another for the project. Alternatively, you can assign each of the two resource files to different projects. The authorization scope of the code repository will be determined by the union of the product and project authorizations.
 >
 > After the repository authorization is successful, if you need to update the related code repositories of the granted products or projects, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically update to reflect the changes of the corresponding code repository.
 >
