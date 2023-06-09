@@ -4,7 +4,7 @@ title: 集群
 ---
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="cluster-api">Cluster API v0.3.0</h1>
+<h1 id="cluster-api">Cluster API v0.3.1</h1>
 
 License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
 
@@ -14,13 +14,13 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 
 <h1 id="cluster-api-cluster">Cluster</h1>
 
-## Cluster_ListClusters
+## ListClusters
 
-<a id="opIdCluster_ListClusters"></a>
+<a id="opIdListClusters"></a>
 
 `GET /api/v1/clusters`
 
-<h3 id="cluster_listclusters-parameters">Parameters</h3>
+<h3 id="listclusters-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -47,23 +47,24 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 }
 ```
 
-<h3 id="cluster_listclusters-responses">Responses</h3>
+<h3 id="listclusters-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.ListsReply](#schemaapi.cluster.v1.listsreply)|
 
-<aside class="success">
-This operation does not require authentication
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
 </aside>
 
-## Cluster_GetCluster
+## GetCluster
 
-<a id="opIdCluster_GetCluster"></a>
+<a id="opIdGetCluster"></a>
 
 `GET /api/v1/clusters/{cluster_name}`
 
-<h3 id="cluster_getcluster-parameters">Parameters</h3>
+<h3 id="getcluster-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -86,14 +87,15 @@ This operation does not require authentication
 }
 ```
 
-<h3 id="cluster_getcluster-responses">Responses</h3>
+<h3 id="getcluster-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[api.cluster.v1.GetReply](#schemaapi.cluster.v1.getreply)|
 
-<aside class="success">
-This operation does not require authentication
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BearerAuth
 </aside>
 
 ## SaveCluster

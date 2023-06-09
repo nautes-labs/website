@@ -4,7 +4,7 @@ title: Product
 ---
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="product-api">Product API v0.3.0</h1>
+<h1 id="product-api">Product API v0.3.1</h1>
 
 License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>
 
