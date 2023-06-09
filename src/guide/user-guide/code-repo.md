@@ -8,7 +8,7 @@ title: 维护代码库及其授权
 
 代码库是用于存储项目的源代码、流水线配置、部署清单的版本库。只支持 Git。
 
-流水线运行时需要获取代码库中的源代码、流水线配置和其他相关文件，以实现项目集成。通过将代码库授权给产品或项目，并且将关联产品或项目的代码库密钥授权给流水线运行时，流水线运行时就能够使用该密钥来读取/读写授权代码库，从而推进项目集成。
+流水线运行时需要获取代码库中的源代码、流水线配置和其他相关文件，以实现项目集成。通过将代码库授权给产品或项目，流水线运行时就能够使用该密钥来读写授权代码库，从而推进项目集成。
 
 与流水线运行时类似，部署运行时也需要从代码库中获取部署清单和其他相关文件, 并且使用相同的授权方式，以实现应用部署。
 
@@ -279,7 +279,7 @@ title: 维护代码库及其授权
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab 访问令牌
-    # 替换变量 $product-name 为代码库授权所属产品的名称
+    # 替换变量 $product-name 为被授权代码库所属产品的名称
     # 替换变量 $coderepo-binding-name 为代码库授权的名称
     curl -X 'POST' \
         'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
@@ -322,7 +322,7 @@ title: 维护代码库及其授权
 
 使用 curl 命令或者其他工具执行 API 请求，以新增代码库授权。
 
-请求成功后，将在指定产品的 `default.project` 代码库中生成代码库授权的资源文件，并在授权代码库的 deploy key 列表中添加被授权产品或项目的关联代码库的 deploy key。代码库授权的资源文件示例如下：
+请求成功后，将在指定产品的 `default.project` 代码库中生成代码库授权的资源文件，并在被授权代码库的 deploy key 列表中添加授权产品或项目的关联代码库的 deploy key。代码库授权的资源文件示例如下：
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
@@ -343,9 +343,9 @@ title: 维护代码库及其授权
 >
 > 您可以为一个代码库创建多个代码库授权的资源文件。例如：您可以创建两份资源文件，一份授权给产品、另一份授权给项目，或者将两份资源文件分别授权给不同的项目。代码库的授权范围将由产品和项目授权的并集决定。
 >
-> 代码库授权成功后，如果您需要更新被授权产品或项目相关联的代码库，例如：新增或删除关联的代码库，授权代码库的 deploy key 列表将自动更新以反映相应代码库的变更。
+> 代码库授权成功后，如果您需要更新授权产品或项目相关联的代码库，例如：新增或删除关联的代码库，被授权代码库的 deploy key 列表将自动更新以反映相应代码库的变更。
 >
-> 代码库授权的资源文件创建成功后，不能变更 `coderepo` 的属性值，如果您需要变更授权的代码库，请先[删除代码库授权](#删除代码库授权api)再重新授权。
+> 代码库授权的资源文件创建成功后，不能变更 `coderepo` 的属性值，如果您需要变更被授权的代码库，请先[删除代码库授权](#删除代码库授权api)再重新授权。
 
 ## 删除代码库授权（API）
 
@@ -373,7 +373,7 @@ title: 维护代码库及其授权
 
 使用 curl 命令或者其他工具执行 API 请求，以删除代码库授权。
 
-请求成功后，将在指定产品的 `default.project`代码库中删除相应的代码库授权资源文件，并重新计算代码库的授权范围，根据计算结果进一步更新代码库的 deploy key 列表。
+请求成功后，将在指定产品的 `default.project`代码库中删除相应的代码库授权资源文件，并重新计算代码库的授权范围，根据计算结果进一步更新被授权代码库的 deploy key 列表。
 
 > 只有当您的账号是 GitLab 的 group 成员且拥有 Maintainer 或更高级别的角色，并具备对 `default.project` 代码库的 main 分支的写入权限，才可以删除代码库授权。
 
@@ -386,7 +386,7 @@ title: 维护代码库及其授权
 ```Shell
     curl -X 'GET' \
         'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
-        -H 'accept: application/json'  \
+        -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token'
 ```
 

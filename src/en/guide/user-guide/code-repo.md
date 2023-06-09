@@ -9,7 +9,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A code repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-The pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, and granting the code repository secrets related to products or projects to the pipeline runtime, the pipeline runtime can use the secrets to read or write to the authorized code repository for project integration.
+The pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, the pipeline runtime can use the secrets to read or write to the authorized code repository for project integration.
 
 Similar to the pipeline runtime, the deployment runtime also needs to fetch the deployment manifest and other related files from the code repository, and it uses the same authorization method for application deployment.
 
@@ -279,7 +279,7 @@ Compose an API request example by API definition `CodeRepoBinding_SaveCodeRepoBi
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product-name with the name of the product to which the repository authorization belongs.
+    # Replace the variable $product-name with the name of the product to which the authorized code repository belongs.
     # Replace the variable $coderepo-binding-name with the repository authorization name.
     curl -X 'POST' \
         'HTTP://$api-server-addresss/api/v1/products/$product-name/coderepobindings/$coderepo-binding-name' \
@@ -385,7 +385,7 @@ Compose an API request example by API definition `CodeRepoBinding_ListCodeRepoBi
 ```Shell
     curl -X 'GET' \
         'HTTP://$api-server-address/api/v1/products/$product-name/coderepobindings' \
-        -H 'accept: application/json'  \
+        -H 'accept: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
