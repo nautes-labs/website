@@ -65,7 +65,7 @@ The request example after replacing the variables is shown below:
 
 Use the curl command or other tools to execute the API request to create a project.
 
-After the request is successful, the resource file for the project will be generated in the `default.project` repository of the specified product. The example of a resource file for a project is shown below:
+After the request is successful, the resource file for the project will be generated in the `default.project` repository of the specified product. An example of a resource file for a project is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
