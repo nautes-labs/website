@@ -57,7 +57,8 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   "http_node_port": "30080",
                   "https_node_port": "30443"
                 },
-                # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster, and ensure that the kubeconfig has escaped newline characters.
+                # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the physical cluster, 
+                # and ensure that the kubeconfig has escaped newline characters.
                 "kubeconfig": $kubeconfig
             }'
 ```
@@ -152,7 +153,8 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   "http_node_port": "30080",
                   "https_node_port": "30443"
                 },
-                # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster, and ensure that the kubeconfig has escaped newline characters.
+                # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster,
+                # and ensure that the kubeconfig has escaped newline characters.
                 "kubeconfig": $kubeconfig
             }'
 ```
@@ -199,7 +201,9 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' \
         -d '{
-                # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
+                # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port',
+                # where $hostcluster-ip refers to the IP of the host cluster 
+                # and $api-server-port refers to the API SERVER port of the virtual cluster.
                 "api_server": $api-server,
                 # Cluster kind: Currently only supports Kubernetes
                 "cluster_kind": "kubernetes",

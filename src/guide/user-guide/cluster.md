@@ -199,7 +199,8 @@ title: 注册运行时集群
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' \
         -d '{
-                # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
+                # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，
+                # 其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
                 "api_server": $api-server,
                 # 集群种类：目前只支持 kubernetes
                 "cluster_kind": "kubernetes",
