@@ -62,11 +62,36 @@ title: 注册运行时集群
             }'
 ```
 
+替换变量后流水线运行时集群的请求示例如下：
+
+```Shell
+    curl -X 'POST' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/physical-worker-pipeline' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "api_server": "https://8.217.50.114:6443",
+                "cluster_kind": "kubernetes",
+                "cluster_type": "physical",
+                "usage": "worker",
+                "worker_type": "pipeline",
+                "primary_domain": "8.217.50.114.nip.io",
+                "tekton_host": "tekton.physical-worker-pipeline.8.217.50.114.nip.io",
+                "argocd_host": "argocd.physical-worker-pipeline.8.217.50.114.nip.io",
+                "traefik": {
+                  "http_node_port": "30080",
+                  "https_node_port": "30443"
+                },
+                "kubeconfig": "apiVersion: v1\nclusters:\n- cluster:\n    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkakNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdGMyVnkKZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRjMlZ5ZG1WeUxXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFRdnRkRTdSVW1BSHYxOHdEWDF2L2pucWFFU3NmcjduUm5wbTViYjZ0NmEKRDZmZHg0NnVRYitDYWFjVXJUMVVycTVOSTJNTHhHSC8yS0xBL2Y0T2V4WjRvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVW13L1FHSXc1N2VtQjhnaDhwQVpGCmdrVG1sQzB3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnU0FCZDdMdEVxYnY3Q0pqQ2VHa1ljL1ZqUkh3NnNTSkUKMHJFV3ZyVFFoSFlDSUJoZXpPOXRTVVpxV3dlVGk1SFZTUEhYNnRmR2E0SkpkTlNuN01ma0RMZnMKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=\n    server: https://10.204.118.23:6443\n  name: default\ncontexts:\n- context:\n    cluster: default\n    user: default\n  name: default\ncurrent-context: default\nkind: Config\npreferences: {}\nusers:\n- name: default\n  user:\n    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJrRENDQVRlZ0F3SUJBZ0lJT0MvTUZodzFVSXd3Q2dZSUtvWkl6ajBFQXdJd0l6RWhNQjhHQTFVRUF3d1kKYXpOekxXTnNhV1Z1ZEMxallVQXhOamcyTVRRd05EYzBNQjRYRFRJek1EWXdOekV5TWpFeE5Gb1hEVEkwTURZdwpOakV5TWpFeE5Gb3dNREVYTUJVR0ExVUVDaE1PYzNsemRHVnRPbTFoYzNSbGNuTXhGVEFUQmdOVkJBTVRESE41CmMzUmxiVHBoWkcxcGJqQlpNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQTBJQUJDdmFlak9Yc09NVWtsd1oKU25nL1dXTy9zTE5XRG9rMzF3Z3A4ditVVWZ6b25SRGtGRzRJK3RYNXpwYUF6TXlsZndmWWc2aUZ1RmkzaWRkKwpQRlpod0d1alNEQkdNQTRHQTFVZER3RUIvd1FFQXdJRm9EQVRCZ05WSFNVRUREQUtCZ2dyQmdFRkJRY0RBakFmCkJnTlZIU01FR0RBV2dCUStpcXZQYVQxRW5qZVA0SlhqWkxSYWd1NnRzVEFLQmdncWhrak9QUVFEQWdOSEFEQkUKQWlCMVFtQ2NyRHZGSUxVMUl3K01laURkZERMQkhoQVdhOUJ1T3NCRFZLU0F5Z0lnSEgyOVF5UDg1aEZQUkd6dQpQZENjdjdVN01NL2lpOG5zbGQrTy8ySW8yYnc9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KLS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJkekNDQVIyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQWpNU0V3SHdZRFZRUUREQmhyTTNNdFkyeHAKWlc1MExXTmhRREUyT0RZeE5EQTBOelF3SGhjTk1qTXdOakEzTVRJeU1URTBXaGNOTXpNd05qQTBNVEl5TVRFMApXakFqTVNFd0h3WURWUVFEREJock0zTXRZMnhwWlc1MExXTmhRREUyT0RZeE5EQTBOelF3V1RBVEJnY3Foa2pPClBRSUJCZ2dxaGtqT1BRTUJCd05DQUFReXM3c3JZWEFFczBPa2lqWkt0R1hEZk1HWlhzMGJySGx4T1dwRGZ0d2cKK2xFMGRaNFJ4U1hYVWhCNEo0ZjB0ZUhXRk5NVmU3c1pjN2kyNTAwbWVoUUVvMEl3UURBT0JnTlZIUThCQWY4RQpCQU1DQXFRd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBZEJnTlZIUTRFRmdRVVBvcXJ6Mms5Uko0M2orQ1Y0MlMwCldvTHVyYkV3Q2dZSUtvWkl6ajBFQXdJRFNBQXdSUUloQUxjQlllRGFEMTc0YVpaUU1CQm53NHAvNmY5S1hVb2YKM2tpRFFXNUNLTWgzQWlCdWFPR252Yml2ajRDeHJPckgxWEZSUS9VR2tXYmtGWEUweExWc1VJZmprQT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\n    client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSUZ6TDY2TDZMWGkvM3IzUEdFYTRMUmxlUXoybGUwU0R4cFdPV1dMRzZIamhvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFSzlwNk01ZXc0eFNTWEJsS2VEOVpZNyt3czFZT2lUZlhDQ255LzVSUi9PaWRFT1FVYmdqNgoxZm5PbG9ETXpLVi9COWlEcUlXNFdMZUoxMzQ4Vm1IQWF3PT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo="
+            }'
+```
+
 替换变量后部署运行时集群的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/host-worker-aliyun' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/physical-worker-deployment' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
@@ -77,7 +102,7 @@ title: 注册运行时集群
                 "usage": "worker",
                 "worker_type": "deployment",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.host-worker-aliyun.8.217.50.114.nip.io",
+                "argocd_host": "argocd.physical-worker-deployment.8.217.50.114.nip.io",
                 "traefik": {
                   "http_node_port": "30080",
                   "https_node_port": "30443"
@@ -200,11 +225,35 @@ title: 注册运行时集群
             }'
 ```
 
+替换变量后的流水线运行时集群的请求示例如下：
+
+```Shell
+    curl -X 'POST' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/virtual-worker-pipeline' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "api_server": "https://8.217.50.114:31456",
+                "cluster_kind": "kubernetes",
+                "cluster_type": "virtual",
+                "usage": "worker",
+                "worker_type": "pipeline",
+                "host_cluster": "cluster-host",
+                "primary_domain": "8.217.50.114.nip.io",
+                "teoken_host": "tekton.virtual-worker-pipeline.8.217.50.114.nip.io",
+                "argocd_host": "argocd.virtual-worker-pipeline.8.217.50.114.nip.io",
+                "vcluster": {
+                  "https_node_port": "31456"
+                }
+            }'
+```
+
 替换变量后的部署运行时集群的请求示例如下：
 
 ```Shell
     curl -X 'POST' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/virtual-worker-deployment' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
@@ -216,7 +265,7 @@ title: 注册运行时集群
                 "worker_type": "deployment",
                 "host_cluster": "cluster-host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.cluster-virtual.8.217.50.114.nip.io",
+                "argocd_host": "argocd.virtual-worker-deployment.8.217.50.114.nip.io",
                 "vcluster": {
                   "https_node_port": "31456"
                 }
@@ -252,7 +301,7 @@ title: 注册运行时集群
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/host-worker-aliyun' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/physical-worker-deployment' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
@@ -277,7 +326,7 @@ title: 注册运行时集群
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/virtual-worker-pipeline' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
