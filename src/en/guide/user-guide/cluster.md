@@ -305,7 +305,7 @@ The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-physical' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/physical-worker-deployment' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
@@ -330,7 +330,7 @@ Compose an API request example by API definition `Cluster_DeleteCluster` and add
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/cluster-virtual' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/clusters/virtual-worker-pipeline' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
