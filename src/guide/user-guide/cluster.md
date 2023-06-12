@@ -45,9 +45,9 @@ title: 注册运行时集群
                 # 集群用途：host 或 worker
                 "usage": $usage,
                 # 运行时类型：pipeline（流水线运行时）或者 deployment（部署运行时）
-                "worker_type": $worker-type
+                "worker_type": $worker-type,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
-                "primary_domain": "$cluster-ip.nip.io"
+                "primary_domain": "$cluster-ip.nip.io",
                 # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
                 "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
                 # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
@@ -146,7 +146,7 @@ title: 注册运行时集群
                 # 集群用途：host 或 worker
                 "usage": $usage,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
-                "primary_domain": "$cluster-ip.nip.io"
+                "primary_domain": "$cluster-ip.nip.io",
                 # traefik 配置
                 "traefik": {
                   "http_node_port": "30080",
@@ -212,7 +212,7 @@ title: 注册运行时集群
                 # 所属宿主集群：virtual 类型集群才有此属性，使用宿主集群的名称替换参数
                 "host_cluster": $host-cluster,
                 # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
-                "primary_domain": "$cluster-ip.nip.io"
+                "primary_domain": "$cluster-ip.nip.io",
                 # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
                 "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
                 # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
