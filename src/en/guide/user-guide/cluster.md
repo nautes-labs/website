@@ -115,7 +115,7 @@ The request example for the deployment runtime cluster after replacing variables
 
 Use the curl command or other tools to execute the API request to register a physical cluster.
 
-After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD,  ArgoRollouts, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
+After the request is successful, the physical cluster's resource file will be written to the tenant configuration repository, and the physical cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the physical cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
@@ -276,7 +276,7 @@ The request example for the deployment runtime cluster after replacing variables
 
 Use the curl command or other tools to execute the API request to register a virtual cluster.
 
-After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD,  ArgoRollouts, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
+After the request is successful, the virtual cluster's resource file will be written to the tenant configuration repository, and the virtual cluster will be registered as a runtime cluster in the tenant management cluster based on the resource file. Upon successful registration, components such as ArgoCD, ArgoRollouts, Tekton, ExternalSecret, HNC, and Vault-agent will be installed in the virtual cluster.
 
 > If your account is a member of the tenant configuration repository and has write permission to the `main` branch, you can register runtime clusters.
 
