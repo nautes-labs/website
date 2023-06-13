@@ -25,7 +25,7 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |product_name|path|string|true|To list the product name of the repository.|
-|field_selector|query|string|false|Filter the list by field.|
+|field_selector|query|string|false|Filter the list by field. eg: field_selector=project=project1,pipeline_runtime=true,deployment_runtime=false Field Support: project: fuzzy match pipeline_runtime: exact match deployment_runtime: exact match|
 
 > Example responses
 
