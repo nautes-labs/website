@@ -5,7 +5,7 @@ title: Maintain Product
 
 # Maintain Product 
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
 A product corresponds to a software system, which includes teams, projects, environments, code repositories, artifact repositories, and runtimes. The tenant manager can authorize the product to use designated Kubernetes clusters.
 
@@ -34,25 +34,25 @@ Compose an API request example by API definition `Product_SaveProduct` and add t
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
-    # Replace the variable $product_name with the product name
+    # Replace the variable $product-name with the product name
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer $gitlab-access-token' \
         -d '{
-        "git": {
-            "gitlab": {
-                # group name
-                "name": $product-name,
-                # group path
-                "path": $product-name,
-                # group visibility：private or public
-                "visibility": $product-visibility,
-                "description": $product-desc
+                "git": {
+                    "gitlab": {
+                        # group name
+                        "name": $product-name,
+                        # group path
+                        "path": $product-name,
+                        # group visibility：private or public
+                        "visibility": $product-visibility,
+                        "description": $product-desc
+                    }
                 }
-           }
-       }'
+            }'
 ```
 
 The request example after replacing the variables is shown below:
@@ -64,15 +64,15 @@ The request example after replacing the variables is shown below:
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
         -d '{
-        "git": {
-            "gitlab": {
-            "name": "nautes-labs",
-            "path": "nautes-labs",
-            "visibility": "private",
-            "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
-            }
-        }
-      }'
+                "git": {
+                    "gitlab": {
+                        "name": "nautes-labs",
+                        "path": "nautes-labs",
+                        "visibility": "private",
+                        "description": "Nautes-Labs is an open-source, one-stop developer platform based on Kubernetes."
+                    }
+                }
+            }'
 ```
 
 ### Execute Create Product Request
@@ -142,7 +142,7 @@ The request example after replacing the variables is shown below:
 Use the curl command or other tools to execute the API request to list products. The response example for the product list is shown below:
 
 ```json
-  {
+{
     "items": [
         {
             "name": "nautes-labs",
@@ -166,7 +166,7 @@ Use the curl command or other tools to execute the API request to list products.
         },
         ......
     ]
-  }
+}
 ```
 
 > If your account has read permission for the GitLab group, you can list products authorized for you.
