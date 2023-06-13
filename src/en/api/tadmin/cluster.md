@@ -24,7 +24,7 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|field_selector|query|string|false|Filter the list by field.|
+|field_selector|query|string|false|Filter the list by field.  eg: field_selector=cluster_type=physical,usage=worker,worker_type=pipeline Field Support: cluster_type: exact match usage: exact match worker_type: exact match|
 
 > Example responses
 

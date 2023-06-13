@@ -25,7 +25,7 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |product_name|path|string|true|To list the product name of the repository.|
-|field_selector|query|string|false|Filter the list by field.|
+|field_selector|query|string|false|Filter the list by field. eg: field_selector=projects_ref.in=project1,manifestSource.codeRepo=codeRepo1,destination=env1 Field Support: projects_ref: fuzzy match  manifestSource.codeRepo: fuzzy match destination: fuzzy match|
 
 > Example responses
 
