@@ -4,9 +4,9 @@ title: Maintain Environment
 ---
 # Maintain Environment
 
-Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for deploying applications in Nautes.
+Before starting this section, please ensure that you have read the [Main Process](main-process.md) section to understand the main process and related terminology for running pipelines and deploying applications in Nautes.
 
-The environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
+An environment is a management unit that uses a cluster to host the integration and deployment of various microservices in the product. Currently, we only support the Kubernetes cluster type. A product contains multiple environments, such as development, testing, pre-production, and production environments.
 
 Support both [Command Line](deploy-an-application.md#initialize-a-product) and API for maintaining environments.
 
@@ -26,7 +26,7 @@ Environments belong to products, so you need to create at least one [product](pr
 
 ### Register Runtime Cluster
 
-An environment needs to be related to a runtime cluster in order to host the product's runtime environment, so you need to register at least one [physical runtime cluster](cluster.md#register-physical-clusterapi) or one [virtual runtime cluster](cluster.md#register-virtual-clusterapi).
+An environment needs to be related to a runtime cluster, so you need to register at least one [physical runtime cluster](cluster.md#register-physical-clusterapi) or [virtual runtime cluster](cluster.md#register-virtual-clusterapi).
 
 ## Create and Update Environment (API)
 
@@ -37,64 +37,63 @@ Compose an API request example by API definition `Environment_SaveEnvironment` a
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the environment belongs.
-    # Replace the variable $environment_name with the environment name.
+    # Replace the variable $product-name with the name of the product to which the environment belongs.
+    # Replace the variable $environment-name with the environment name.
     curl -X 'POST' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token' \
-      -d '{
-      # Runtime cluster related to the environment
-      "cluster": $cluster_name,
-      # Environment type
-      "env_type": $env_type
-    }'
-```
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token' \
+        -d '{
+                # Runtime cluster related to the environment
+                "cluster": $cluster-name,
+                # Environment type
+                "env_type": $env-type
+            }'
+        ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
-      -d '{
-      "cluster": "cluster-dev",
-      "env_type": "development"
-    }'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx' \
+        -d '{
+                "cluster": "cluster-dev",
+                "env_type": "development"
+            }'
 ```
 
 ### Execute Create and Update Environment Request
 
-Use the curl command or other tools to execute the API request to create a environment.
+Use the curl command or other tools to execute the API request to create an environment.
 
-After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. The example of a resource file for a repository is shown below:
+After the request is successful, the resource file for the environment will be generated in the `default.project` repository of the specified product. An example of a resource file for an environment is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
     kind: Environment
     metadata:
         name: env-dev
-        namespace: nautes
     spec:
-        cluster: "cluster-dev"
-        envType: "development"
-        product: "nautes-labs"
+        cluster: cluster-dev
+        envType: development
+        product: product-xxxx
 ```
 
-> Within the same product, the same runtime cluster cannot be related to different environments.
+> Within the same product, the same runtime cluster cannot relate to different environments.
 >
-> If the environment has already hosted the deployment runtime environment of a product, it is not currently supported to change the related cluster of the environment.
+> If the environment has already hosted the runtimes of a product, it is not currently supported to change the cluster which relates to the environment.
 >
-> When requesting the API to update a environment, the resource file for the environment will also be updated.
+> When requesting the API to update an environment, the resource file for the environment will also be updated.
 >
 > If your account is a member of the GitLab group and has write permission to the `main` branch of the `default.project` repository, you can create or update environments.
 
 ## Delete Environment (API)
 
-> Before deleting an environment, please delete all entities and resources related to the environment, such as deployment runtimes, otherwise the deletion cannot be performed.
+> Before deleting an environment, please delete all entities and resources related to the environment, such as project pipeline runtimes and deployment runtimes, otherwise the deletion cannot be performed.
 
 ### Compose Delete Environment Request
 
@@ -102,23 +101,23 @@ Compose an API request example by API definition `Environment_DeleteEnvironment`
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$environment_name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$environment-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute Delete Environment Request
 
-Use the curl command or other tools to execute the API request to delete a environment.
+Use the curl command or other tools to execute the API request to delete an environment.
 
 After the request is successful, the resource file for the environment will be deleted in the `default.project` repository of the specified product.
 
@@ -132,18 +131,18 @@ Compose an API request example by API definition `Environment_ListEnvironments` 
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments' \
-      -H 'accept: application/json'
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments' \
+        -H 'accept: application/json'
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute List Environments Request
@@ -173,18 +172,18 @@ Compose an API request example by API definition `Environment_GetEnvironment` an
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://$api-server-address/api/v1/products/$product_name/environments/$enviroment_name' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer $gitlab-access-token'
+        'HTTP://$api-server-address/api/v1/products/$product-name/environments/$enviroment-name' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer $gitlab-access-token'
 ```
 
 The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
-      -H 'accept: application/json' \
-      -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-dev' \
+        -H 'accept: application/json' \
+        -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
 
 ### Execute View Environment Details Request
@@ -201,11 +200,11 @@ Taking creating an environment as an example, if the value of the `cluster` prop
 
 ```Shell
     curl -X 'POST' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-demo?insecure_skip_check=true' \
-      -H 'accept: application/json' \
-      -H 'Content-Type: application/json' \
-      -d '{
-      "cluster": "cluster-invalid",
-      "env_type": "development"
-    }'
-```
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/environments/env-demo?insecure_skip_check=true' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+                "cluster": "cluster-invalid",
+                "env_type": "development"
+            }'
+        ```
