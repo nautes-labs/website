@@ -144,22 +144,25 @@ title: 维护流水线运行时
     "pipeline_source": "$pipeline-coderepo-name",
     // pipelines 表示流水线运行时从代码库中获取流水线配置的查询条件，请至少填写一组数据
     // 支持多分支流水线：如果代码库中有多条分支，流水线运行时将根据查询条件获取多个分支的流水线
-    // 多分支流水线的配置示例：如果一个团队使用基于主干的分支策略对某个产品开展 CI/CD 活动
+    // 多分支流水线的示例：如果一个团队使用基于主干的分支策略对某个产品开展 CI/CD 活动
     // 该产品的源码库中存在 main、feature-xxx、feature-yyy、fix-zzz 三条分支，每条分支的相同路径下均存储了流水线配置
+    // 开发阶段，开发人员向 feature-xxx、feature-yyy、fix-zz 分支推送代码时，均触发 dev.yaml 的流水线配置，执行编译、构建等活动
+    // 集成测试阶段，开发人员申请将 feature、fix 作为前缀的分支向 main 分支合并，代码审核通过后将触发 main.yaml 的流水线配置，执行集成、验证等活动
+    // 发布阶段，发布人员向 main 分支打标签，触发 release.yaml 的流水线配置，向镜像仓库推送特定标签的镜像
     // 为了实现多分支流水线的场景，您需要配置多组查询条件（参见请求示例）
     "pipelines": [
         {
             // name 用于关联流水线和事件源
             "name": "$pipeline-name",
             // 选填项
-            // label 表示流水线运行时对流水线打标签时的标签属性
+            // label 表示流水线运行时给流水线打标签时的标签属性
             "label": "$pipeline-label",
             // path 指流水线配置在代码库中的相对路径，用于查询流水线
             "path": "$pipeline-path"
         }
     ],
     // event_sources 指触发流水线的事件源，目前支持 GitLab webhook 和 Calendar，请至少填写一组事件源
-    // 一组事件源中至少定义一类事件源
+    // 一组事件源中至少定义一种类型的事件源
     "event_sources": [
         {
             "name": "$event-source-name",
@@ -200,9 +203,9 @@ title: 维护流水线运行时
     // pipeline_triggers 表示待执行的流水线及其触发方式，请至少填写一组数据
     "pipeline_triggers": [
         {
-            // event_source 需填写 event_sources 中 name 的属性值
+            // event_source 需填写为 event_sources 中 name 的属性值
             "event_source": "$event-source-name",
-            // pipeline 需填写 pipelines 中 name 的属性值
+            // pipeline 需填写为 pipelines 中 name 的属性值
             // 不同事件源可以和相同流水线组成多组数据，表示流水线可以被多个事件触发
             "pipeline": "$pipeline-name",
             // 选填项
