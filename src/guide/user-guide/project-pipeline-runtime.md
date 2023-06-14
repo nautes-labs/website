@@ -147,8 +147,9 @@ title: 维护流水线运行时
     // 多分支流水线的示例：如果一个团队使用基于主干的分支策略对某个产品开展 CI/CD 活动
     // 该产品的源码库中存在 main、feature-xxx、feature-yyy、fix-zzz 三条分支，每条分支的相同路径下均存储了流水线配置
     // 开发阶段，开发人员向 feature-xxx、feature-yyy、fix-zz 分支推送代码时，均触发 dev.yaml 的流水线配置，执行编译、构建等活动
-    // 集成测试阶段，开发人员申请将 feature、fix 作为前缀的分支向 main 分支合并，代码审核通过后将触发 main.yaml 的流水线配置，执行集成、验证等活动
-    // 发布阶段，发布人员向 main 分支打标签，触发 release.yaml 的流水线配置，向镜像仓库推送特定标签的镜像
+    // 集成测试阶段，开发人员申请将 feature、fix 作为前缀的分支向 main 分支合并，
+    // 代码审核通过后将触发 main.yaml 的流水线配置，执行集成、验证等活动
+    // 发布阶段，发布人员向 main 分支打标签，触发 release.yaml 的流水线配置，向镜像仓库推送指定标签的镜像
     // 为了实现多分支流水线的场景，您需要配置多组查询条件（参见请求示例）
     "pipelines": [
         {
@@ -161,8 +162,8 @@ title: 维护流水线运行时
             "path": "$pipeline-path"
         }
     ],
-    // event_sources 指触发流水线的事件源，目前支持 GitLab webhook 和 Calendar，请至少填写一组事件源
-    // 一组事件源中至少定义一种类型的事件源
+    // event_sources 指触发流水线的事件源，目前支持 GitLab webhook 和 Calendar
+    // 请至少填写一组事件源，每组事件源中至少定义一种类型的事件源
     "event_sources": [
         {
             "name": "$event-source-name",
@@ -172,6 +173,7 @@ title: 维护流水线运行时
                 // repo_name 指 webhook 所属的 Gitlab project 的名称
                 "repo_name": "$repo-name",
                 // revision 指需要被处理的分支，支持 Lua 正则表达式
+                // 受限于底层工具的约束，需要约定分支的关键字，例如分支的前缀或后缀，以匹配待处理的分支（参见请求示例）
                 "revision": "$repo-revision",
                 // events 指触发 webhook 的 Gitlab 事件，例如：push_events，tag_push_events 等
                 // 参见：https://docs.gitlab.com/ee/api/projects.html#add-project-hook
@@ -217,9 +219,9 @@ title: 维护流水线运行时
     // destination 指执行流水线的目标环境
     "destination": "$destination",
     // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
-    // shared 指多个 event_sources 共享资源。例如：当某个 event_source 需要重启时，将影响其他的 event_sources
+    // shared 表示多个 event_sources 共享资源。例如：当某个 event_source 需要重启时，将影响其他的 event_sources
     // shared 相较于 exclusive 模式，更节省资源
-    // exclusive 指每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
+    // exclusive 表示每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
     // exclusive 相较于 shared 模式，将占用更多资源
     "isolation": "$isolation"
 }
