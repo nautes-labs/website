@@ -142,15 +142,15 @@ title: 维护流水线运行时
     "project": "$project-name",
     // pipeline_source 指存储流水线配置的代码库的名称
     "pipeline_source": "$pipeline-coderepo-name",
-    // pipelines 表示流水线运行时从代码库中获取流水线配置的查询条件，请至少填写一组数据
-    // 支持多分支流水线：如果代码库中有多条分支，流水线运行时将根据查询条件获取多个分支的流水线
+    // pipelines 主要用于流水线运行时从代码库中获取流水线配置，请至少填写一组数据
+    // 支持多分支流水线：如果代码库中有多条分支，流水线运行时将根据 pipelines 获取多个分支的流水线
     // 多分支流水线的示例：如果一个团队使用基于主干的分支策略对某个产品开展 CI/CD 活动
     // 该产品的源码库中存在 main、feature-xxx、feature-yyy、fix-zzz 三条分支，每条分支的相同路径下均存储了流水线配置
     // 开发阶段，开发人员向 feature-xxx、feature-yyy、fix-zz 分支推送代码时，均触发 dev.yaml 的流水线配置，执行编译、构建等活动
     // 集成测试阶段，开发人员申请将 feature、fix 作为前缀的分支向 main 分支合并，
     // 代码审核通过后将触发 main.yaml 的流水线配置，执行集成、验证等活动
     // 发布阶段，发布人员向 main 分支打标签，触发 release.yaml 的流水线配置，向镜像仓库推送指定标签的镜像
-    // 为了实现多分支流水线的场景，您需要配置多组查询条件（参见请求示例）
+    // 为了实现多分支流水线的场景，您需要配置多组 pipelines（参见请求示例）
     "pipelines": [
         {
             // name 用于关联流水线和事件源
@@ -173,7 +173,7 @@ title: 维护流水线运行时
                 // repo_name 指 webhook 所属的 Gitlab project 的名称
                 "repo_name": "$repo-name",
                 // revision 指需要被处理的分支，支持 Lua 正则表达式
-                // 受限于底层工具的约束，需要约定分支的关键字，例如分支的前缀或后缀，以匹配待处理的分支（参见请求示例）
+                // 受限于底层工具，暂不支持
                 "revision": "$repo-revision",
                 // events 指触发 webhook 的 Gitlab 事件，例如：push_events，tag_push_events 等
                 // 参见：https://docs.gitlab.com/ee/api/projects.html#add-project-hook
