@@ -142,16 +142,20 @@ The property comments in the request body are shown below:
     "project": "$project-name"
     // pipeline_source refers to the name of the code repository that stores the pipeline configurations.
     "pipeline_source": "$pipeline-coderepo-name",
-    // pipelines are primarily used to retrieve the pipeline configuration from the code repository, please provide at least one set of data. 
+    // pipelines are primarily used to retrieve the pipeline configuration from the code repository, 
+    // please provide at least one set of data. 
     // Support for multi-branch pipelines: If there are multiple branches in the code repository, 
     // the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
-    // An example of a multi-branch pipeline: If a team uses a trunk-based branching strategy to carry out the CI/CD activities of a product,
+    // An example of a multi-branch pipeline: 
+    // If a team uses a trunk-based branching strategy to carry out the CI/CD activities of a product,
     // the source code repository of the product has multiple branches: main, feature-xxx, feature-yyy, and fix-zzz. 
     // Each branch has pipeline configurations stored in the same path.
     // During the development phase, when developers push code to the feature-xxx, feature-yyy, and fix-zz branches, 
     // it triggers the pipeline configuration of dev.yaml to perform activities such as compilation and building.
-    // During the integration and testing phase, developers request to merge branches prefixed with feature and fix into the main branch. 
-    // After code review approval, it will trigger the pipeline configuration of main.yaml to perform integration, testing and other activities.
+    // During the integration and testing phase, 
+    // developers request to merge branches prefixed with feature and fix into the main branch. 
+    // After code review approval, 
+    // it will trigger the pipeline configuration of main.yaml to perform integration, testing and other activities.
     // During the release phase, when release manager or release engineer tags the main branch, 
     // it triggers the pipeline configuration of release.yaml to push images with the specified tags to the image repository.
     // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipelines (refer to the request example).  
