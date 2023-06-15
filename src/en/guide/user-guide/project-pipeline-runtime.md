@@ -143,14 +143,17 @@ The property comments in the request body are shown below:
     // pipeline_source refers to the name of the code repository that stores the pipeline configurations.
     "pipeline_source": "$pipeline-coderepo-name",
     // pipelines are primarily used to retrieve the pipeline configuration from the code repository, please provide at least one set of data. 
-    // Support for multi-branch pipelines: If there are multiple branches in the code repository, the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
+    // Support for multi-branch pipelines: If there are multiple branches in the code repository, 
+    // the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
     // An example of a multi-branch pipeline: If a team uses a trunk-based branching strategy to carry out the CI/CD activities of a product,
-    // the source code repository of the product has multiple branches: main, feature-xxx, feature-yyy, and fix-zzz. Each branch has pipeline configurations stored in the same path.
+    // the source code repository of the product has multiple branches: main, feature-xxx, feature-yyy, and fix-zzz. 
+    // Each branch has pipeline configurations stored in the same path.
     // During the development phase, when developers push code to the feature-xxx, feature-yyy, and fix-zz branches, 
     // it triggers the pipeline configuration of dev.yaml to perform activities such as compilation and building.
     // During the integration and testing phase, developers request to merge branches prefixed with feature and fix into the main branch. 
     // After code review approval, it will trigger the pipeline configuration of main.yaml to perform integration, testing and other activities.
-    // During the release phase, when release manager or release engineer tags the main branch, it triggers the pipeline configuration of release.yaml to push images with the specified tags to the image repository.
+    // During the release phase, when release manager or release engineer tags the main branch, 
+    // it triggers the pipeline configuration of release.yaml to push images with the specified tags to the image repository.
     // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipelines (refer to the request example).  
     "pipelines": [
         {
@@ -159,7 +162,8 @@ The property comments in the request body are shown below:
             // optional
             // label refers to the label property when the pipeline is tagged by the project pipeline runtime.
             "label": "$pipeline-label",
-            // path refers to the relative path of the pipeline configuration in the code repository, used to query the pipeline.
+            // path refers to the relative path of the pipeline configuration in the code repository, 
+            // which is used to retrieve the pipeline configuration.
             "path": "$pipeline-path"
         }
     ],
@@ -174,7 +178,8 @@ The property comments in the request body are shown below:
                 // repo_name refers to the name of the GitLab project to which the webhook belongs.
                 "repo_name": "$repo-name",
                 // revision refers to the branch that needs to be processed, supporting Lua regular expressions.
-                // Due to the limitations of the underlying tools, please define keywords for branches, such as prefixes or suffixes, to match the branches to be processed(refer to the request example).
+                // Due to the limitations of the underlying tools, please define keywords for branches, 
+                // such as prefixes or suffixes, to match the branches to be processed(refer to the request example).
                 "revision": "$repo-revision",
                 // events refer to the GitLab events that trigger the webhook, such as push_events, tag_push_events, etc.
                 // Refer to: https://docs.gitlab.com/ee/api/projects.html#add-project-hook
@@ -185,31 +190,35 @@ The property comments in the request body are shown below:
             // optional
             // calendar refers to the calendar type of event source, which will generate events on schedule to trigger the pipeline.
             // If you use this type of event source, please provide at least one of the properties "schedule" or "interval". 
-             // If both are defined, the "schedule" property has higher priority.
+            // If both are defined, the "schedule" property has higher priority.
             "calendar": {
                 // schedule refers to the scheduling rule, supporting cron expressions. Refer to: https://en.wikipedia.org/wiki/Cron
                 "schedule": "$cron-expression",
                 // interval refers to the time interval period between two events, such as: 1s, 30m, 2h, etc. 
                 "interval": "$interval",
                 // optional
-                // exclusion_dates refers to the exception dates and times of the calendar type event source, and no events will be triggered during these times.
+                // exclusion_dates refers to the exception dates and times of the calendar type event source, 
+                // and no events will be triggered during these times.
                 // The date and time format follows the ISO8601 format. Refer to: https://en.wikipedia.org/wiki/ISO_8601
                 "exclusion_dates": [
                     "$exclusion-date"
                 ],
                 // optional
-                // timezone refers to the timezone for executing the schedule. Refer to: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+                // timezone refers to the timezone for executing the schedule. 
+                // Refer to: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
                 "timezone": "$timezone"
             }
         }
     ],
-    // pipeline_triggers represent the pipelines to be executed and their triggering methods. Please provide at least one set of data.
+    // pipeline_triggers represent the pipelines to be executed and their triggering methods. 
+    // Please provide at least one set of data.
     "pipeline_triggers": [
         {
             // event_source should be filled with the 'name' property value from event_sources.
             "event_source": "$event-source-name",
             // pipeline should be filled with the 'name' property value from pipelines.
-            // Different event sources can form multiple sets of data with the same pipeline, indicating that the pipeline can be triggered by multiple events. 
+            // Different event sources can form multiple sets of data with the same pipeline, 
+            // indicating that the pipeline can be triggered by multiple events. 
             "pipeline": "$pipeline-name",
             // optional
             // revision refers to the branch for retrieving the pipeline configuration. 
@@ -220,7 +229,8 @@ The property comments in the request body are shown below:
     // destination refers to the target environment for executing the pipeline.
     "destination": "$destination",
     // isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
-    // shared means that multiple event_sources share resources. For example, when a certain event_source needs to be restarted, it will affect other event_sources. 
+    // shared means that multiple event_sources share resources. 
+    // For example, when a certain event_source needs to be restarted, it will affect other event_sources. 
     // Compared with exclusive mode, shared mode saves more resources. 
     // exclusive means that each event_sources has exclusive resources, and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
@@ -232,7 +242,7 @@ The property comments in the request body are shown below:
 
 Use the curl command or other tools to execute the API request to create a project pipeline runtime.
 
-After the request is successful, the resource file for the project pipeline runtime will be generated in the `default.project` repository of the specified product. The example of a resource file for a project pipeline runtime is shown below:
+After the request is successful, the resource file for the project pipeline runtime will be generated in the `default.` `project` repository of the specified product. The example of a resource file for a project pipeline runtime is shown below:
 
 ```yaml
     apiVersion: nautes.resource.nautes.io/v1alpha1
