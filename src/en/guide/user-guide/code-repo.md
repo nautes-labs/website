@@ -9,7 +9,7 @@ Before starting this section, please ensure that you have read the [Main Process
 
 A code repository used for storing a project's source code, pipeline configurations, or deployment manifests. Only Git is supported.
 
-The pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, the pipeline runtime can use the secrets to read or write to the authorized code repository for project integration.
+The project pipeline runtime needs to fetch the source code, pipeline configurations, and other related files from the code repository to implement project integration. By granting code repository authorization to products or projects, the project pipeline runtime of the relevant project can read or write to the authorized code repository for project integration.
 
 Similar to the pipeline runtime, the deployment runtime also needs to fetch the deployment manifest and other related files from the code repository, and it uses the same authorization method for application deployment.
 
@@ -340,7 +340,7 @@ After the request is successful, the resource file for the repository authorizat
 >
 > If your account is a member of the GitLab group, and has a `Maintainer` or higher-level role, and has write permission to the `main` branch of the `default.project` repository, you can create or update repository authorization.
 >
-> You can create multiple resource files for repository authorizations in a code repository. For example, you may create two resource files—one for the product and another for the project. Alternatively, you can assign each of the two resource files to different projects. The authorization scope of the code repository will be determined by the union of the product and project authorizations.
+> You can create multiple resource files for repository authorizations in a code repository. For example, you may create two resource files, one for the product and another for the project. Alternatively, you can assign each of the two resource files to different projects. The authorization scope of the code repository will be determined by the union of the product and project authorizations.
 >
 > After the repository authorization is successful, if you need to update the related code repositories of the granted products or projects, such as adding or deleting related code repositories, the deploy key list of the authorized code repository will automatically update to reflect the changes of the corresponding code repository.
 >
