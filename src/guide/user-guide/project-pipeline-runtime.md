@@ -289,7 +289,7 @@ title: 维护流水线运行时
         - label: release
           name: pipeline-release
           path: pipelines/release.yaml
-        project: project-demo-0614
+        project: project-demo
 ```
 
 > 请求 API 更新流水线运行时也将更新流水线运行时的资源文件。
@@ -313,7 +313,7 @@ title: 维护流水线运行时
 
 ```Shell
     curl -X 'DELETE' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
@@ -394,7 +394,7 @@ title: 维护流水线运行时
                 {
                     "name": "webhook-main-tag",
                     "gitlab": {
-                        "repo_name": "coderepo-sc-demo-0614",
+                        "repo_name": "coderepo-sc-demo",
                         "revision": ".*",
                         "events": [
                             "tag_push_events"
@@ -437,7 +437,7 @@ title: 维护流水线运行时
                     "pipeline": "pipeline-release"
                 }
             ],
-            "destination": "env-dev-demo-0614",
+            "destination": "env-dev-demo",
             "isolation": "exclusive"
         }
     ]
@@ -463,7 +463,7 @@ title: 维护流水线运行时
 
 ```Shell
     curl -X 'GET' \
-        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+        'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo' \
         -H 'accept: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```

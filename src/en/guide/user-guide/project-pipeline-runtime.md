@@ -306,7 +306,7 @@ After the request is successful, the resource file for the project pipeline runt
         - label: release
           name: pipeline-release
           path: pipelines/release.yaml
-        project: project-demo-0614
+        project: project-demo
 ```
 
 > When requesting the API to update a project pipeline runtime, the resource file for the project pipeline runtime will also be updated.
@@ -330,7 +330,7 @@ The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'DELETE' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
@@ -411,7 +411,7 @@ Use the curl command or other tools to execute the API request to list project P
                 {
                     "name": "webhook-main-tag",
                     "gitlab": {
-                        "repo_name": "coderepo-sc-demo-0614",
+                        "repo_name": "coderepo-sc-demo",
                         "revision": ".*",
                         "events": [
                             "tag_push_events"
@@ -454,7 +454,7 @@ Use the curl command or other tools to execute the API request to list project P
                     "pipeline": "pipeline-release"
                 }
             ],
-            "destination": "env-dev-demo-0614",
+            "destination": "env-dev-demo",
             "isolation": "exclusive"
         }
     ]
@@ -480,7 +480,7 @@ The request example after replacing the variables is shown below:
 
 ```Shell
     curl -X 'GET' \
-      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr' \
+      'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo' \
       -H 'accept: application/json' \
       -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'
 ```
