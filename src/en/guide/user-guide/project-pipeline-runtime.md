@@ -196,14 +196,16 @@ The property comments in the request body are shown below:
             // If you use this type of event source, please provide at least one of the properties "schedule" or "interval". 
             // If both are defined, the "schedule" property has higher priority.
             "calendar": {
-                // schedule refers to the scheduling rule, supporting cron expressions. Refer to: https://en.wikipedia.org/wiki/Cron
+                // schedule refers to the scheduling rule, supporting cron expressions. 
+                // Refer to: https://en.wikipedia.org/wiki/Cron
                 "schedule": "$cron-expression",
                 // interval refers to the time interval period between two events, such as: 1s, 30m, 2h, etc. 
                 "interval": "$interval",
                 // optional
                 // exclusion_dates refers to the exception dates and times of the calendar type event source, 
                 // and no events will be triggered during these times.
-                // The date and time format follows the ISO8601 format. Refer to: https://en.wikipedia.org/wiki/ISO_8601
+                // The date and time format follows the ISO8601 format. 
+                // Refer to: https://en.wikipedia.org/wiki/ISO_8601
                 "exclusion_dates": [
                     "$exclusion-date"
                 ],
