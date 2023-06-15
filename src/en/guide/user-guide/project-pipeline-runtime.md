@@ -47,8 +47,8 @@ The request example is shown below:
 ```Shell
     # Replace the variable $api-server-address with the access address of the Nautes API Server.
     # Replace the variable $gitlab-access-token with the GitLab access token.
-    # Replace the variable $product_name with the name of the product to which the project pipeline runtime belongs.
-    # Replace the variable $project_pipeline_runtime_name with the project pipeline runtime name.
+    # Replace the variable $product-name with the name of the product to which the project pipeline runtime belongs.
+    # Replace the variable $project-pipeline-runtime-name with the project pipeline runtime name.
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name' \
         -H 'accept: application/json' \
