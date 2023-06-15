@@ -173,7 +173,7 @@ title: 维护流水线运行时
                 // repo_name 指 webhook 所属的 Gitlab project 的名称
                 "repo_name": "$repo-name",
                 // revision 指需要被处理的分支，支持 Lua 正则表达式
-                // 受限于底层工具，暂不支持
+                // 受限于底层工具的约束，需要约定分支的关键字，例如分支的前缀或后缀，以匹配待处理的分支（参见请求示例）
                 "revision": "$repo-revision",
                 // events 指触发 webhook 的 Gitlab 事件，例如：push_events，tag_push_events 等
                 // 参见：https://docs.gitlab.com/ee/api/projects.html#add-project-hook
