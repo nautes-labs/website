@@ -146,3 +146,17 @@ deploy.kubernetes.node_num: 3
 ### 完整参数清单
 
 请参考 [vars.yaml.sample](https://github.com/nautes-labs/installer/blob/main/vars.yaml.sample)。
+
+## 常见问题
+
+**安装过程中出现 “code: 403, The resource is out of stock in the specified zone” 错误，应该怎么解决？**
+
+安装 Nautes 的过程中，安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建规格为 ecs.c6.large(2C4G) 和 ecs.g5.large(2C8G) 的云服务器。
+
+如果默认规格的云服务器库存不足，将出现以上错误。
+
+在 `vars.yaml` 配置文件中，添加参数以修改云服务器的默认规格，再重新执行安装程序即可解决该问题。
+
+```yaml
+gitlab_instance_type: ecs.g6.large
+```

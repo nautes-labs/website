@@ -147,3 +147,17 @@ deploy.kubernetes.node_num: 3
 ### Complete parameter list
 
 Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob/main/vars.yaml.sample).
+
+## FAQ
+
+**How to resolve the error "code: 403, The resource is out of stock in the specified zone" during the installation process?**
+
+During the installation of Nautes, the installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers of the specifications ecs.c6.large(2C4G) and ecs.g5.large(2C8G).
+
+If the cloud server of the default specifications is out of stock, the above error will occur.
+
+To resolve this issue, you can add parameters in the `vars.yaml` configuration file to modify the default specifications of the cloud server, and then re-execute the installer.
+
+```yaml
+gitlab_instance_type: ecs.g6.large
+```
