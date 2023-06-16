@@ -41,6 +41,8 @@ chmod +x installer.sh
 ```
 
 > 默认安装单节点的 K3s ，根据安装机公网带宽大小，整个安装过程预计耗时15~25分钟。安装成功后，您可以在 /opt/nautes 目录下找到安装后的组件信息。如果安装失败，您可以通过 /opt/nautes/out/logs 目录下的日志排查问题。
+>
+> 安装过程中出现任何问题，请参考 [常见问题](#常见问题)。
 
 ## 查看安装结果
 
@@ -149,9 +151,9 @@ deploy.kubernetes.node_num: 3
 
 ## 常见问题
 
-**安装过程中出现 “code: 403, The resource is out of stock in the specified zone” 错误，应该怎么解决？**
+**安装 Nautes 过程中的步骤 [init-host : Create instance] ，出现 “code: 403, The resource is out of stock in the specified zone” 错误，应该怎么解决？**
 
-安装 Nautes 的过程中，安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建规格为 ecs.c6.large(2C4G) 和 ecs.g5.large(2C8G) 的云服务器。
+安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建规格为 ecs.c6.large(2C4G) 和 ecs.g5.large(2C8G) 的云服务器。
 
 如果默认规格的云服务器库存不足，将出现以上错误。
 
@@ -159,4 +161,6 @@ deploy.kubernetes.node_num: 3
 
 ```yaml
 gitlab_instance_type: ecs.g6.large
+kubernetes_instance_type: ecs.c5.large
+vault_instance_type: ecs.c5.large
 ```
