@@ -152,16 +152,20 @@ Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob
 
 ## FAQ
 
-**During the installation process of Nautes, an error occurred in the step [init-host: Create instance], displaying "code: 403, The resource is out of stock in the specified zone". How should this be resolved?**
+**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource \\"alicloud_instance\\" \\"gitlab\\"、in resource \\"alicloud_instance\\" \\"kubernetes\\"、in resource \\"alicloud_instance\\" \\"vault\\". How should this be resolved?**
 
-The installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers of the specifications ecs.c6.large(2C4G) and ecs.g5.large(2C8G).
+The installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers with specifications of ecs.c6.large(2C4G) and ecs.g5.large(2C8G).
 
 If the cloud server of the default specifications is out of stock, the above error will occur.
 
-To resolve this issue, you can add parameters in the `vars.yaml` configuration file to modify the default specifications of the cloud server, and then re-execute the installer.
+To resolve this issue, according to the instance type in the error message `in resource \"alicloud_instance\" ${instance_type}`, you can add the corresponding parameters in the `vars.yaml` configuration file to modify the default specifications of the cloud server. After destroying the environment, and then re-execute the installer.
 
 ```yaml
+# Please add parameters for the default specifications of the cloud server as needed according to the error message.
+# The cloud server instance type for gitlab
 gitlab_instance_type: ecs.g6.large
+# The cloud server instance type for kubernetes
 kubernetes_instance_type: ecs.c5.large
+# The cloud server instance type for vault
 vault_instance_type: ecs.c5.large
 ```
