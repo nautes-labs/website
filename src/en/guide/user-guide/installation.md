@@ -164,7 +164,7 @@ To resolve this issue, according to the instance name, you can add the correspon
 
 ```yaml
 # The following parameter values are only suggested instance types. 
-# You can change the instance type to other types with specification not lower than the suggested instance types.
+# You can change the instance type to other types with specifications not lower than the suggested instance types.
 # The cloud server instance type for GitLab
 gitlab_instance_type: ecs.g6.large
 # The cloud server instance type for Kubernetes
