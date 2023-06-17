@@ -152,20 +152,37 @@ Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob
 
 ## FAQ
 
-**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource \\"alicloud_instance\\" \\"gitlab\\"、in resource \\"alicloud_instance\\" \\"kubernetes\\"、in resource \\"alicloud_instance\\" \\"vault\\". How should this be resolved?**
+**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "gitlab". How should this be resolved?**
 
-The installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers with specifications of ecs.c6.large(2C4G) and ecs.g5.large(2C8G).
+The installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers of specified specifications.
 
-If the cloud server of the default specifications is out of stock, the above error will occur.
+If the cloud servers of the default specifications are out of stock, the above error will occur.
 
-To resolve this issue, according to the instance type in the error message `in resource \"alicloud_instance\" ${instance_type}`, you can add the corresponding parameters in the `vars.yaml` configuration file to modify the default specifications of the cloud server. After destroying the environment, and then re-execute the installer.
+To resolve this issue, you can add the parameter in the `vars.yaml` configuration file to modify the default specification of the cloud server for GitLab. After destroying the environment, you should then re-execute the installer.
 
 ```yaml
-# Please add parameters for the default specifications of the cloud server as needed according to the error message.
-# The cloud server instance type for gitlab
+# The cloud server instance type for GitLab
 gitlab_instance_type: ecs.g6.large
-# The cloud server instance type for kubernetes
+```
+
+**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "kubernetes". How should this be resolved?**
+
+The cloud servers with the default specifications are out of stock, which has led to the above error.
+
+To resolve this issue, you can add the parameter in the `vars.yaml` configuration file to modify the default specification of the cloud server for Kubernetes. After destroying the environment, you should then re-execute the installer.
+
+```yaml
+# The cloud server instance type for Kubernetes
 kubernetes_instance_type: ecs.c5.large
-# The cloud server instance type for vault
+```
+
+**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "vault". How should this be resolved?**
+
+The cloud servers with the default specifications are out of stock, which has led to the above error.
+
+To resolve this issue, you can add the parameter in the `vars.yaml` configuration file to modify the default specification of the cloud server for Vault. After destroying the environment, you should then re-execute the installer.
+
+```yaml
+# The cloud server instance type for Vault
 vault_instance_type: ecs.c5.large
 ```

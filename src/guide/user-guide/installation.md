@@ -151,33 +151,37 @@ deploy.kubernetes.node_num: 3
 
 ## 常见问题
 
-**安装 Nautes 过程中的步骤 [init-host : Create instance] ，呈现报错信息：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "gitlab"，应该怎么解决？**
+**安装 Nautes 过程中的步骤 [init-host : Create instance] 报错：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "gitlab"，应该怎么解决？**
 
-安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建规格为 ecs.c6.large(2C4G) 和 ecs.g5.large(2C8G) 的云服务器。
+安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建指定规格的云服务器。
 
 如果默认规格的云服务器库存不足，将出现以上错误。
 
-在 `vars.yaml` 配置文件中，添加参数以修改云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
+在 `vars.yaml` 配置文件中，添加参数以修改 `gitlab` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
 # gitlab 的云服务器实例类型
 gitlab_instance_type: ecs.g6.large
 ```
 
-**安装 Nautes 过程中的步骤 [init-host : Create instance] ，呈现报错信息：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "kubernetes"，应该怎么解决？**
+**安装 Nautes 过程中的步骤 [init-host : Create instance] 报错：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "kubernetes"，应该怎么解决？**
 
-在 `vars.yaml` 配置文件中，添加参数以修改云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
+默认规格的云服务器库存不足，导致以上错误。
+
+在 `vars.yaml` 配置文件中，添加参数以修改 `kubernetes` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
 # kubernetes 的云服务器实例类型
-kubernetes_instance_type: ecs.g6.large
+kubernetes_instance_type: ecs.c5.large
 ```
 
-**安装 Nautes 过程中的步骤 [init-host : Create instance] ，呈现报错信息：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "vault"，应该怎么解决？**
+**安装 Nautes 过程中的步骤 [init-host : Create instance] 报错：code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "vault"，应该怎么解决？**
 
-在 `vars.yaml` 配置文件中，添加参数以修改云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
+默认规格的云服务器库存不足，导致以上错误。
+
+在 `vars.yaml` 配置文件中，添加参数以修改 `vault` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
-# kubernetes 的云服务器实例类型
-vault_instance_type: ecs.g6.large
+# vault 的云服务器实例类型
+vault_instance_type: ecs.c5.large
 ```
