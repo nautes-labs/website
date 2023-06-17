@@ -907,3 +907,13 @@ spec:
         - name: ks-sample
           image: ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
 ```
+
+## FAQ
+
+**After creating ProjectPipelineRuntime resources, why is the status of some pods in the `argo-events` namespace `CrashLoopBackOff`, with the pod logs displaying `too many open files`?**
+
+When you have created ProjectPipelineRuntime resources and submitted pipeline configurations, if you find that the pipelines have not been triggered when accessing the Tekton Dashboard, in the runtime cluster you also find that the status of some pods in the `argo-events` namespace is `CrashLoopBackOff`, and the pod logs display `too many open files`.
+
+This is a known issue with Argo Events, and you can find more details [here](https://github.com/argoproj/argo-events/issues/1791).
+
+To resolve this issue, you need to modify the `fs.inotify.max_user_instances` value in the `/etc/sysctl.conf` file on the server where the runtime cluster is located to `65535`, and then restart the server.

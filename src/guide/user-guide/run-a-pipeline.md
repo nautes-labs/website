@@ -904,3 +904,12 @@ spec:
           image: ghcr.io/nautes-labs/devops-sample:0.0.1-bdcdba83f17169db12e95bc9ff0592ace612016b
 ```
 
+## 常见问题
+
+**创建 ProjectPipelineRuntime 资源后，为什么 `argo-events` 命名空间中的某些 pods 状态为 `CrashLoopBackOff`，pods 日志显示 `too many open files` ？**
+
+当您创建了 ProjectPipelineRuntime 资源，并提交了流水线配置，如果您在访问 Tekton Dashboard 时发现流水线并未执行，同时，您在流水线运行时集群中，发现 `argo-events` 命名空间中的 pods 状态为 `CrashLoopBackOff`，pods 日志显示 `too many open files`。
+
+这是 Argo Events 的已知问题，您可以在 [这里](https://github.com/argoproj/argo-events/issues/1791) 查看更多详情。
+
+为了解决该问题，您需要在运行时集群所在的服务器上修改 `/etc/sysctl.conf` 文件中的 `fs.inotify.max_user_instances` 值为 `65535` ，然后重启服务器。
