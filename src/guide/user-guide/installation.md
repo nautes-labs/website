@@ -41,6 +41,8 @@ chmod +x installer.sh
 ```
 
 > 默认安装单节点的 K3s ，根据安装机公网带宽大小，整个安装过程预计耗时15~25分钟。安装成功后，您可以在 /opt/nautes 目录下找到安装后的组件信息。如果安装失败，您可以通过 /opt/nautes/out/logs 目录下的日志排查问题。
+>
+> 安装过程中出现任何问题，请参考 [常见问题](#常见问题)。
 
 ## 查看安装结果
 
@@ -146,3 +148,25 @@ deploy.kubernetes.node_num: 3
 ### 完整参数清单
 
 请参考 [vars.yaml.sample](https://github.com/nautes-labs/installer/blob/main/vars.yaml.sample)。
+
+## 常见问题
+
+**安装 Nautes 过程中的步骤 [init-host : Create instance] 报错：code: 403, The resource is out of stock in the specified zone，应该怎么解决？**
+
+安装程序默认使用 [抢占式实例模式](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) 创建指定规格的云服务器。
+
+如果默认规格的云服务器库存不足，将出现以上错误。
+
+查找报错信息中 `in resource "alicloud_instance" ` 之后的实例名称，例如：gitlab、kubernetes、vault。
+
+根据不同的实例名称，在 `vars.yaml` 文件中，按需添加对应参数以修改云服务器的默认规格。修改配置之后，请先[销毁环境](#销毁环境)，再重新[执行安装程序](#执行安装)即可解决该问题。
+
+```yaml
+# 以下参数值仅为建议实例类型，您可以修改实例类型为资源规格不低于建议实例类型的其他类型
+# GitLab 的云服务器实例类型
+gitlab_instance_type: ecs.g6.large
+# Kubernetes 的云服务器实例类型
+kubernetes_instance_type: ecs.c5.large
+# Vault 的云服务器实例类型
+vault_instance_type: ecs.c5.large
+```

@@ -41,6 +41,8 @@ chmod +x installer.sh
 ```
 
 > By default, install a single-node K3s. Depending on the public network bandwidth of the installation machine, the entire installation process is expected to take 15~25 minutes. After the installation is successful, you can find the installed component information in the `/opt/nautes` directory. If the installation fails, you can troubleshoot issues through the logs in the `/opt/nautes/out/logs` directory.
+>
+> If you encounter any problems during the installation process, please refer to the [FAQ](#faq).
 
 ## Check the Installation Results
 
@@ -103,7 +105,7 @@ The default specifications of the cloud server applied by the installer are as f
 - Number: 1
 - Usage: GitLab
 
-The installer uses the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers by default, which carries the risk of instances being automatically released. If you prefer a more stable environment, please add the following configuration to vars.yaml to switch to the [Pay-As-You-Go Mode](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) for resources apply.
+The installer uses the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers by default, which carries the risk of instances being automatically released. If you prefer a more stable environment, please add the following configuration to vars.yaml to switch to the [Pay-As-You-Go Mode](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) for resources apply.
 
 ```yaml
 alicloud.save_money: false
@@ -147,3 +149,26 @@ deploy.kubernetes.node_num: 3
 ### Complete parameter list
 
 Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob/main/vars.yaml.sample).
+
+## FAQ
+
+**During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone. How should this be resolved?**
+
+The installer defaults to using the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers of specified instance types.
+
+If the cloud servers of the default instance types are out of stock, the above error will occur.
+
+Look for the instance name after `in resource "alicloud_instance"` in the error message, such as gitlab, kubernetes, or vault.
+
+To resolve this issue, according to the instance name, you can add the corresponding parameter in the `vars.yaml` file as needed to change the default instance type of the cloud server. After changing the `vars.yaml` file, you should [destroy the environment](#destroy-the-environment), and then [re-execute the installer](#execute-the-installation).
+
+```yaml
+# The following parameter values are only suggested instance types. 
+# You can change the instance type to other types with specifications not lower than the suggested instance types.
+# The cloud server instance type for GitLab
+gitlab_instance_type: ecs.g6.large
+# The cloud server instance type for Kubernetes
+kubernetes_instance_type: ecs.c5.large
+# The cloud server instance type for Vault
+vault_instance_type: ecs.c5.large
+```
