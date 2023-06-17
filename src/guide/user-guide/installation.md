@@ -157,11 +157,12 @@ deploy.kubernetes.node_num: 3
 
 如果默认规格的云服务器库存不足，将出现以上错误。
 
-查找报错信息中 `in resource "alicloud_instance" ` 之后的实例类型，例如：GitLab、Kubernetes、Vault。
+查找报错信息中 `in resource "alicloud_instance" ` 之后的实例名称，例如：gitlab、kubernetes、vault。
 
-根据不同的实例类型，在 `vars.yaml` 文件中，按需添加对应参数以修改云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
+根据不同的实例名称，在 `vars.yaml` 文件中，按需添加对应参数以修改云服务器的默认规格。修改配置之后，请先[销毁环境](#销毁环境)，再重新[执行安装程序](#执行安装)即可解决该问题。
 
 ```yaml
+# 以下参数值仅为建议实例类型，您可以修改实例类型为资源规格不低于建议实例类型的其他类型
 # GitLab 的云服务器实例类型
 gitlab_instance_type: ecs.g6.large
 # Kubernetes 的云服务器实例类型

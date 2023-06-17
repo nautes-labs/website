@@ -154,15 +154,17 @@ Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob
 
 **During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone. How should this be resolved?**
 
-The installer defaults to using the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers of specified specifications.
+The installer defaults to using the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers of specified instance types.
 
-If the cloud servers of the default specifications are out of stock, the above error will occur.
+If the cloud servers of the default instance types are out of stock, the above error will occur.
 
-Look for the instance type after `in resource "alicloud_instance"` in the error message, such as GitLab, Kubernetes, or Vault.
+Look for the instance name after `in resource "alicloud_instance"` in the error message, such as gitlab, kubernetes, or vault.
 
-To resolve this issue, according to the instance type, you can add the corresponding parameter in the `vars.yaml` file as needed to modify the default specification of the cloud server. After destroying the environment, you should then re-execute the installer.
+To resolve this issue, according to the instance name, you can add the corresponding parameter in the `vars.yaml` file as needed to change the default instance type of the cloud server. After changing the `vars.yaml` file, you should [destroy the environment](#destroy-the-environment), and then [re-execute the installer](#execute-the-installation).
 
 ```yaml
+# The following parameter values are only suggested instance types. 
+# You can change the instance type to other types with specification not lower than the suggested instance types.
 # The cloud server instance type for GitLab
 gitlab_instance_type: ecs.g6.large
 # The cloud server instance type for Kubernetes
