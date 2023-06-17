@@ -105,7 +105,7 @@ The default specifications of the cloud server applied by the installer are as f
 - Number: 1
 - Usage: GitLab
 
-The installer uses the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers by default, which carries the risk of instances being automatically released. If you prefer a more stable environment, please add the following configuration to vars.yaml to switch to the [Pay-As-You-Go Mode](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) for resources apply.
+The installer uses the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers by default, which carries the risk of instances being automatically released. If you prefer a more stable environment, please add the following configuration to vars.yaml to switch to the [Pay-As-You-Go Mode](https://help.aliyun.com/document_detail/40653.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) for resources apply.
 
 ```yaml
 alicloud.save_money: false
@@ -154,7 +154,7 @@ Please refer to [vars.yaml.sample](https://github.com/nautes-labs/installer/blob
 
 **During the installation process of Nautes, the step [init-host : Create instance] encounters errors: code: 403, The resource is out of stock in the specified zone、in resource "alicloud_instance" "gitlab". How should this be resolved?**
 
-The installer defaults to using the [Preemptible Instance Mode](https://help.aliyun.com/document_detail/52088.html?spm=5176.ecsbuyv3.0.0.2a2736756P0dh1) to create cloud servers of specified specifications.
+The installer defaults to using the [Preemptible Instance Mode](https://www.alibabacloud.com/help/en/elastic-compute-service/latest/preemptible-instances-overview) to create cloud servers of specified specifications.
 
 If the cloud servers of the default specifications are out of stock, the above error will occur.
 

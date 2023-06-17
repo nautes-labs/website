@@ -160,7 +160,7 @@ deploy.kubernetes.node_num: 3
 在 `vars.yaml` 配置文件中，添加参数以修改 `gitlab` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
-# gitlab 的云服务器实例类型
+# GitLab 的云服务器实例类型
 gitlab_instance_type: ecs.g6.large
 ```
 
@@ -171,7 +171,7 @@ gitlab_instance_type: ecs.g6.large
 在 `vars.yaml` 配置文件中，添加参数以修改 `kubernetes` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
-# kubernetes 的云服务器实例类型
+# Kubernetes 的云服务器实例类型
 kubernetes_instance_type: ecs.c5.large
 ```
 
@@ -182,6 +182,6 @@ kubernetes_instance_type: ecs.c5.large
 在 `vars.yaml` 配置文件中，添加参数以修改 `vault` 云服务器的默认规格，销毁环境后再重新执行安装程序即可解决该问题。
 
 ```yaml
-# vault 的云服务器实例类型
+# Vault 的云服务器实例类型
 vault_instance_type: ecs.c5.large
 ```
