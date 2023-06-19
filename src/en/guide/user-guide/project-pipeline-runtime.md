@@ -146,23 +146,16 @@ The property comments in the request body are shown below:
     // please provide at least one set of data. 
     // Support for multi-branch pipelines: If there are multiple branches in the code repository, 
     // the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
-    
     // An example of multi-branch pipelines: 
     // A team adopts trunk-based development and there are a trunk named 'main' and multiple short-lived feature branches in the code repository.
-    // During the development stage, developers push code to feature branches, triggering the pipeline configuration of dev.yaml. 
-    // The pipeline will carry out tasks such as static code analysis, building, and unit testing.
-    
-    // During the integration and testing phase, 
-    // developers request to merge branches prefixed with feature and fix into the main branch. 
-    // After code review approval, 
-    // it will trigger the pipeline configuration of main.yaml to perform integration, testing and other activities.
+    // During the development stage, developers push code to the feature branches, triggering the development pipeline. 
+    // The pipeline will perform tasks such as static code analysis, building, and unit testing.
     // During the integration stage, developers submit MRs to merge the feature branches into the trunk. 
-    // If the MR is approved, it will trigger the pipeline configuration of main.yaml. 
-    // The pipeline will carry out tasks such as building, deployment, and testing.
-    
-    // During the release phase, when release manager or release engineer tags the main branch, 
-    // it triggers the pipeline configuration of release.yaml to push images with the specified tags to the image repository.
-    // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipelines (refer to the request example).  
+    // If the MR is approved, it will trigger the integration pipeline. 
+    // The pipeline will perform tasks such as building, deploying, and testing.
+    // During the release stage, a release manager or engineer applies tags based on the main branch, triggering the release pipeline. 
+    // The pipeline will push production images to the image repository, specifically designed to store production images.
+    // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipeline (refer to the request example).  
     "pipelines": [
         {
             // name is used to associate the pipeline with the event source.
@@ -183,11 +176,11 @@ The property comments in the request body are shown below:
             // optional
             // gitlab is used to generate GitLab webhooks to trigger the pipelines.
             "gitlab": {
-                // repo_name refers to the name of the GitLab project to which the webhook belongs.
+                // repo_name refers to the name of the GitLab project to which the event source belongs.
                 "repo_name": "$repo-name",
                 // revision refers to the branch that needs to be processed, supporting Lua regular expressions.
-                // Due to the limitations of the underlying tools, please define keywords for branches, 
-                // such as prefixes or suffixes, to match the branches to be processed(refer to the request example).
+                // Lua regular expressions are different from standard regular expressions.
+                // Refer to: http://lua-users.org/wiki/PatternsTutorial
                 "revision": "$repo-revision",
                 // events refer to the GitLab events that trigger the webhook, such as push_events, tag_push_events, etc.
                 // Refer to: https://docs.gitlab.com/ee/api/projects.html#add-project-hook
