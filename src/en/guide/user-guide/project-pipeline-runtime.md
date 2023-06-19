@@ -145,17 +145,20 @@ The property comments in the request body are shown below:
     // pipelines are primarily used to retrieve the pipeline configuration from the code repository, 
     // please provide at least one set of data. 
     // Support for multi-branch pipelines: If there are multiple branches in the code repository, 
-    // the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
+    // the project pipeline runtime will retrieve the pipelines of multiple branches based on the "pipelines" properties.
     // An example of multi-branch pipelines: 
-    // A team adopts trunk-based development and there are a trunk named 'main' and multiple short-lived feature branches in the code repository.
+    // A team adopts trunk-based development and there are a trunk named "main" 
+    // and multiple short-lived feature branches in the code repository.
     // During the development stage, developers push code to the feature branches, triggering the development pipeline. 
     // The pipeline will perform tasks such as static code analysis, building, and unit testing.
     // During the integration stage, developers submit MRs to merge the feature branches into the trunk. 
     // If the MR is approved, it will trigger the integration pipeline. 
     // The pipeline will perform tasks such as building, deploying, and testing.
-    // During the release stage, a release manager or engineer applies tags based on the main branch, triggering the release pipeline. 
+    // During the release stage, a release manager or engineer applies tags based on the main branch, 
+    // triggering the release pipeline. 
     // The pipeline will push production images to the image repository, specifically designed to store production images.
-    // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipeline (refer to the request example).  
+    // To implement a multi-branch pipeline scenario, 
+    // you need to configure multiple sets of pipeline (refer to the request example).  
     "pipelines": [
         {
             // name is used to associate the pipeline with the event source.
@@ -168,7 +171,8 @@ The property comments in the request body are shown below:
             "path": "$pipeline-path"
         }
     ],
-    // event_sources refer to the event sources that trigger the pipelines, currently supporting GitLab webhook and Calendar. 
+    // event_sources refer to the event sources that trigger the pipelines, 
+    // currently supporting GitLab webhook and Calendar. 
     // Please provide at least one set of event sources, with at least one type of event source defined in each set. 
     "event_sources": [
         {
@@ -189,7 +193,8 @@ The property comments in the request body are shown below:
                 ]
             },
             // optional
-            // calendar refers to the calendar type of event source, which will generate events on schedule to trigger the pipeline.
+            // calendar refers to the calendar type of event source, 
+            // which will generate events on schedule to trigger the pipeline.
             // If you use this type of event source, please provide at least one of the properties "schedule" or "interval". 
             // If both are defined, the "schedule" property has higher priority.
             "calendar": {
@@ -213,29 +218,30 @@ The property comments in the request body are shown below:
             }
         }
     ],
-    // pipeline_triggers represent the pipelines to be executed and their triggering methods. 
+    // pipeline_triggers represent the pipelines to be run and their triggering methods. 
     // Please provide at least one set of data.
     "pipeline_triggers": [
         {
-            // event_source should be filled with the 'name' property value from event_sources.
+            // event_source should be filled with the "name" property value from event_sources.
             "event_source": "$event-source-name",
-            // pipeline should be filled with the 'name' property value from pipelines.
+            // pipeline should be filled with the "name" property value from pipelines.
             // Different event sources can form multiple sets of data with the same pipeline, 
             // indicating that the pipeline can be triggered by multiple events. 
             "pipeline": "$pipeline-name",
             // optional
             // revision refers to the branch for retrieving the pipeline configuration. 
-            // If not specified, it will be determined based on the 'revision' property value of the gitlab in event_sources.
+            // If not specified, it will be determined based on the "revision" property value of the gitlab in event_sources.
             "revision": "$pipeline-revision"
         }
     ],
-    // destination refers to the target environment for executing the pipeline.
+    // destination refers to the target environment for running the pipeline.
     "destination": "$destination",
     // isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
     // shared means that multiple event_sources share resources. 
     // For example, when a certain event_source needs to be restarted, it will affect other event_sources. 
     // Compared with exclusive mode, shared mode saves more resources. 
-    // exclusive means that each event_sources has exclusive resources, and resources are isolated between different event_sources. 
+    // exclusive means that each event_sources has exclusive resources, 
+    // and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
     "isolation": "$isolation"
 }
