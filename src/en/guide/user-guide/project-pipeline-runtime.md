@@ -146,16 +146,20 @@ The property comments in the request body are shown below:
     // please provide at least one set of data. 
     // Support for multi-branch pipelines: If there are multiple branches in the code repository, 
     // the project pipeline runtime will retrieve the pipelines of multiple branches based on the 'pipelines' properties.
-    // An example of a multi-branch pipeline: 
-    // If a team uses a trunk-based branching strategy to carry out the CI/CD activities of a product,
-    // the source code repository of the product has multiple branches: main, feature-xxx, feature-yyy, and fix-zzz. 
-    // Each branch has pipeline configurations stored in the same path.
-    // During the development phase, when developers push code to the feature-xxx, feature-yyy, and fix-zz branches, 
-    // it triggers the pipeline configuration of dev.yaml to perform activities such as compilation and building.
+    
+    // An example of multi-branch pipelines: 
+    // A team adopts trunk-based development and there are a trunk named 'main' and multiple short-lived feature branches in the code repository.
+    // During the development stage, developers push code to feature branches, triggering the pipeline configuration of dev.yaml. 
+    // The pipeline will carry out tasks such as static code analysis, building, and unit testing.
+    
     // During the integration and testing phase, 
     // developers request to merge branches prefixed with feature and fix into the main branch. 
     // After code review approval, 
     // it will trigger the pipeline configuration of main.yaml to perform integration, testing and other activities.
+    // During the integration stage, developers submit MRs to merge the feature branches into the trunk. 
+    // If the MR is approved, it will trigger the pipeline configuration of main.yaml. 
+    // The pipeline will carry out tasks such as building, deployment, and testing.
+    
     // During the release phase, when release manager or release engineer tags the main branch, 
     // it triggers the pipeline configuration of release.yaml to push images with the specified tags to the image repository.
     // To implement a multi-branch pipeline scenario, you need to configure multiple sets of pipelines (refer to the request example).  
