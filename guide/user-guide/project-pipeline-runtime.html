@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>维护流水线运行时 | Nautes</title>
+    <meta name="generator" content="VuePress 1.9.9">
+    
+    <meta name="description" content="Kubernets 原生的一站式开发者平台">
+    <meta name="theme-color" content="#3eaf7c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="preload" href="/assets/css/0.styles.c2c28341.css" as="style"><link rel="preload" href="/assets/js/app.6049a73c.js" as="script"><link rel="preload" href="/assets/js/2.5cda13a8.js" as="script"><link rel="preload" href="/assets/js/58.6568414f.js" as="script"><link rel="prefetch" href="/assets/js/10.954f943b.js"><link rel="prefetch" href="/assets/js/11.9cd35a8a.js"><link rel="prefetch" href="/assets/js/12.debc7c72.js"><link rel="prefetch" href="/assets/js/13.dee35591.js"><link rel="prefetch" href="/assets/js/14.2a696c45.js"><link rel="prefetch" href="/assets/js/15.e37f3143.js"><link rel="prefetch" href="/assets/js/16.69ba4994.js"><link rel="prefetch" href="/assets/js/17.e9bfa8b1.js"><link rel="prefetch" href="/assets/js/18.9fd6e6d1.js"><link rel="prefetch" href="/assets/js/19.105d1482.js"><link rel="prefetch" href="/assets/js/20.ef6b3a64.js"><link rel="prefetch" href="/assets/js/21.56c6e25e.js"><link rel="prefetch" href="/assets/js/22.b725bb0e.js"><link rel="prefetch" href="/assets/js/23.a8d31b0b.js"><link rel="prefetch" href="/assets/js/24.2fe6d566.js"><link rel="prefetch" href="/assets/js/25.5c1f03df.js"><link rel="prefetch" href="/assets/js/26.281e8533.js"><link rel="prefetch" href="/assets/js/27.047b717b.js"><link rel="prefetch" href="/assets/js/28.9aa63e29.js"><link rel="prefetch" href="/assets/js/29.398f59fd.js"><link rel="prefetch" href="/assets/js/3.bdfef2d9.js"><link rel="prefetch" href="/assets/js/30.d298fbb9.js"><link rel="prefetch" href="/assets/js/31.b5842936.js"><link rel="prefetch" href="/assets/js/32.72b46c58.js"><link rel="prefetch" href="/assets/js/33.01d5cbc4.js"><link rel="prefetch" href="/assets/js/34.0dbcbadb.js"><link rel="prefetch" href="/assets/js/35.0d4a5e3c.js"><link rel="prefetch" href="/assets/js/36.a0574e4c.js"><link rel="prefetch" href="/assets/js/37.3fe72c83.js"><link rel="prefetch" href="/assets/js/38.cccd8d80.js"><link rel="prefetch" href="/assets/js/39.7fefd5bb.js"><link rel="prefetch" href="/assets/js/4.18760c5a.js"><link rel="prefetch" href="/assets/js/40.e98dad47.js"><link rel="prefetch" href="/assets/js/41.893b5abd.js"><link rel="prefetch" href="/assets/js/42.f8b4367e.js"><link rel="prefetch" href="/assets/js/43.892b3a43.js"><link rel="prefetch" href="/assets/js/44.e6d6fd8e.js"><link rel="prefetch" href="/assets/js/45.8f09c666.js"><link rel="prefetch" href="/assets/js/46.d93a13e7.js"><link rel="prefetch" href="/assets/js/47.adbdeadd.js"><link rel="prefetch" href="/assets/js/48.fed11ce4.js"><link rel="prefetch" href="/assets/js/49.33b480fc.js"><link rel="prefetch" href="/assets/js/5.0a76c1bf.js"><link rel="prefetch" href="/assets/js/50.12715226.js"><link rel="prefetch" href="/assets/js/51.d6a261ff.js"><link rel="prefetch" href="/assets/js/52.5c639850.js"><link rel="prefetch" href="/assets/js/53.7d3db5a3.js"><link rel="prefetch" href="/assets/js/54.1e5b0b77.js"><link rel="prefetch" href="/assets/js/55.9701b00f.js"><link rel="prefetch" href="/assets/js/56.4e2fece2.js"><link rel="prefetch" href="/assets/js/57.d9b2417a.js"><link rel="prefetch" href="/assets/js/59.7cfe2356.js"><link rel="prefetch" href="/assets/js/6.08b03b29.js"><link rel="prefetch" href="/assets/js/60.5faf93c2.js"><link rel="prefetch" href="/assets/js/61.d657ae56.js"><link rel="prefetch" href="/assets/js/7.57051b0f.js"><link rel="prefetch" href="/assets/js/8.d80c16bd.js"><link rel="prefetch" href="/assets/js/9.568b32c0.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.c2c28341.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><!----> <span class="site-name">Nautes</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/guide/user-guide/introduction.html" class="nav-link">
+  文档
+</a></div><div class="nav-item"><a href="/api/introduction.html" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="https://github.com/nautes-labs/nautes" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow down"></span></button> <button type="button" aria-label="Select language" class="mobile-dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/en/guide/user-guide/project-pipeline-runtime.html" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/guide/user-guide/project-pipeline-runtime.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  中文
+</a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/guide/user-guide/introduction.html" class="nav-link">
+  文档
+</a></div><div class="nav-item"><a href="/api/introduction.html" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="https://github.com/nautes-labs/nautes" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  GitHub
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Select language" class="dropdown-title"><span class="title">选择语言</span> <span class="arrow down"></span></button> <button type="button" aria-label="Select language" class="mobile-dropdown-title"><span class="title">选择语言</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/en/guide/user-guide/project-pipeline-runtime.html" class="nav-link">
+  English
+</a></li><li class="dropdown-item"><!----> <a href="/guide/user-guide/project-pipeline-runtime.html" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  中文
+</a></li></ul></div></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>快速入门</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/guide/user-guide/introduction.html" class="sidebar-link">概述</a></li><li><a href="/guide/user-guide/installation.html" class="sidebar-link">安装</a></li><li><a href="/guide/user-guide/run-a-pipeline.html" class="sidebar-link">执行一条流水线</a></li><li><a href="/guide/user-guide/deploy-an-application.html" class="sidebar-link">部署一个应用</a></li><li><a href="/guide/user-guide/clean-environment.html" class="sidebar-link">清理环境</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>用户指南</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/guide/user-guide/main-process.html" class="sidebar-link">主体流程</a></li><li><a href="/guide/user-guide/cluster.html" class="sidebar-link">注册运行时集群</a></li><li><a href="/guide/user-guide/product.html" class="sidebar-link">维护产品</a></li><li><a href="/guide/user-guide/project.html" class="sidebar-link">维护项目</a></li><li><a href="/guide/user-guide/code-repo.html" class="sidebar-link">维护代码库及其授权</a></li><li><a href="/guide/user-guide/environment.html" class="sidebar-link">维护环境</a></li><li><a href="/guide/user-guide/deployment-runtime.html" class="sidebar-link">维护部署运行时</a></li><li><a href="/guide/user-guide/deployment-results.html" class="sidebar-link">查看流水线和部署结果</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="维护流水线运行时"><a href="#维护流水线运行时" class="header-anchor">#</a> 维护流水线运行时</h1> <p>在开始本节之前，请确保您已阅读 <a href="/guide/user-guide/main-process.html">主体流程</a> 章节，了解执行流水线和部署应用的主体流程和相关术语。</p> <p>流水线运行时定义了用于集成项目的流水线的配置声明，如：流水线配置的存储位置、流水线的触发方式、运行流水线的目标环境等。</p> <p>支持通过 <a href="/guide/user-guide/run-a-pipeline.html#初始化产品">命令行</a> 和 API 两种方式维护流水线运行时。</p> <h2 id="前提条件"><a href="#前提条件" class="header-anchor">#</a> 前提条件</h2> <h3 id="创建-access-token"><a href="#创建-access-token" class="header-anchor">#</a> 创建 access token</h3> <p>您需要创建一个 access token，作为请求 API 的请求头。详情参考 <a href="/guide/user-guide/product.html#创建-access-token">创建 access token</a>。</p> <h3 id="导入证书"><a href="#导入证书" class="header-anchor">#</a> 导入证书</h3> <p>如果您想使用 https 协议访问 Nautes API Server，请<a href="/guide/user-guide/run-a-pipeline.html#导入证书">导入证书</a>。</p> <h3 id="创建产品"><a href="#创建产品" class="header-anchor">#</a> 创建产品</h3> <p>流水线运行时归属于项目，而项目归属于产品，您需要创建至少一个<a href="/guide/user-guide/product.html#创建产品api">产品</a>。</p> <h3 id="创建项目"><a href="#创建项目" class="header-anchor">#</a> 创建项目</h3> <p>流水线运行时归属于项目，您需要创建至少一个属于指定产品的<a href="/guide/user-guide/project.html#创建和更新项目api">项目</a>。</p> <h3 id="创建代码库"><a href="#创建代码库" class="header-anchor">#</a> 创建代码库</h3> <p>流水线运行时需要监听存储流水线配置的代码库，您需要创建至少一个属于指定项目的<a href="/guide/user-guide/code-repo.html#创建和更新代码库api">代码库</a>。</p> <h3 id="创建环境"><a href="#创建环境" class="header-anchor">#</a> 创建环境</h3> <p>流水线运行时需要使用关联运行时集群的环境进行项目集成，您需要创建至少一个属于指定产品的<a href="/guide/user-guide/environment.html#创建和更新环境api">环境</a>。</p> <h2 id="创建和更新流水线运行时-api"><a href="#创建和更新流水线运行时-api" class="header-anchor">#</a> 创建和更新流水线运行时（API）</h2> <h3 id="生成创建-更新流水线运行时的-api-请求"><a href="#生成创建-更新流水线运行时的-api-请求" class="header-anchor">#</a> 生成创建/更新流水线运行时的 API 请求</h3> <p>通过接口定义 <code>ProjectPipelineRuntime_SaveProjectPipelineRuntime</code> 生成 API 请求示例，并添加 access token 作为请求头。</p> <p>请求示例如下：</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token comment"># $api-server-address 指 Nautes API Server 的访问地址</span>
+    <span class="token comment"># $gitlab-access-token 指 GitLab access token</span>
+    <span class="token comment"># $product-name 指流水线运行时所属产品的名称</span>
+    <span class="token comment"># $project-pipeline-runtime-name 指流水线运行时的名称</span>
+    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'POST'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer $gitlab-access-token'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-d</span> <span class="token string">'{
+                &quot;project&quot;: &quot;project-demo&quot;,
+                &quot;pipeline_source&quot;: &quot;coderepo-sc-demo&quot;,
+                &quot;pipelines&quot;: [
+                    {
+                        &quot;name&quot;: &quot;pipeline-dev&quot;,
+                        &quot;label&quot;: &quot;dev&quot;,
+                        &quot;path&quot;: &quot;pipelines/dev.yaml&quot;
+                    },{
+                        &quot;name&quot;: &quot;pipeline-main&quot;,
+                        &quot;label&quot;: &quot;main&quot;,
+                        &quot;path&quot;: &quot;pipelines/main.yaml&quot;
+                    },{
+                        &quot;name&quot;: &quot;pipeline-release&quot;,
+                        &quot;label&quot;: &quot;release&quot;,
+                        &quot;path&quot;: &quot;pipelines/release.yaml&quot;
+                    }
+                ],
+                &quot;event_sources&quot;: [
+                    {
+                        &quot;name&quot;: &quot;webhook-feature-push&quot;,
+                        &quot;gitlab&quot;: {
+                            &quot;repo_name&quot;: &quot;coderepo-sc-demo&quot;,
+                            &quot;revision&quot;: &quot;^refs/heads/feature%-&quot;,
+                            &quot;events&quot;: [
+                                &quot;push_events&quot;
+                            ]
+                        }
+                    },{
+                        &quot;name&quot;: &quot;webhook-fix-push&quot;,
+                        &quot;gitlab&quot;: {
+                            &quot;repo_name&quot;: &quot;coderepo-sc-demo&quot;,
+                            &quot;revision&quot;: &quot;^refs/heads/fix%-&quot;,
+                            &quot;events&quot;: [
+                                &quot;push_events&quot;
+                            ]
+                        }
+                    },{
+                        &quot;name&quot;: &quot;webhook-main-push&quot;,
+                        &quot;gitlab&quot;: {
+                            &quot;repo_name&quot;: &quot;coderepo-sc-demo&quot;,
+                            &quot;revision&quot;: &quot;refs/heads/main&quot;,
+                            &quot;events&quot;: [
+                                &quot;push_events&quot;
+                            ]
+                        },
+                        &quot;calendar&quot;: {
+                            &quot;schedule&quot;: &quot;0 17 * * 1-5&quot; 
+                        }
+                    },{
+                        &quot;name&quot;: &quot;webhook-main-tag&quot;,
+                        &quot;gitlab&quot;: {
+                            &quot;repo_name&quot;: &quot;coderepo-sc-demo&quot;,
+                            &quot;revision&quot;: &quot;.*&quot;,
+                            &quot;events&quot;: [
+                                &quot;tag_push_events&quot;
+                            ]
+                        }
+                    }
+                ],
+                &quot;pipeline_triggers&quot;: [
+                    {
+                        &quot;event_source&quot;: &quot;webhook-feature-push&quot;,
+                        &quot;pipeline&quot;: &quot;pipeline-dev&quot;
+                    },{
+                        &quot;event_source&quot;: &quot;webhook-fix-push&quot;,
+                        &quot;pipeline&quot;: &quot;pipeline-dev&quot;
+                    },{
+                        &quot;event_source&quot;: &quot;webhook-main-push&quot;,
+                        &quot;pipeline&quot;: &quot;pipeline-main&quot;
+                    },{
+                        &quot;event_source&quot;: &quot;webhook-main-tag&quot;,
+                        &quot;pipeline&quot;: &quot;pipeline-release&quot;
+                    }
+                ],
+                &quot;destination&quot;: &quot;env-dev-demo&quot;,
+                &quot;isolation&quot;: &quot;exclusive&quot;
+            }'</span>
+</code></pre></div><p>请求体中属性的注释如下：</p> <div class="language-JSONC extra-class"><pre class="language-text"><code>{
+    // project 指流水线运行时归属于哪个项目
+    &quot;project&quot;: &quot;$project-name&quot;,
+    // pipeline_source 指存储流水线配置的代码库的名称
+    &quot;pipeline_source&quot;: &quot;$pipeline-coderepo-name&quot;,
+    // pipelines 主要用于从代码库中获取流水线配置，请至少填写一组数据
+    // 支持多分支流水线：如果代码库中有多条分支，流水线运行时将根据 pipelines 获取多个分支的流水线
+    // 多分支流水线的示例：一个团队采用主干开发的分支策略，并且源码库中存在主干和多条短周期的功能分支
+    // 在开发阶段，开发人员向功能分支推送代码，均触发开发流水线，流水线将执行静态代码检查、编译构建和单元测试等任务
+    // 在集成阶段，开发人员提交 MR，该 MR 用于将功能分支向主干合并
+    // 如果 MR 审核通过，将触发集成流水线，流水线将执行编译构建、部署和测试等任务
+    // 在发布阶段，发布人员基于 main 分支打标签，将触发发布流水线，流水线将向生产态镜像仓库推送生产镜像
+    // 为了实现多分支流水线的场景，您需要配置多组 pipeline（参见请求示例）
+    &quot;pipelines&quot;: [
+        {
+            // name 用于关联流水线和事件源
+            &quot;name&quot;: &quot;$pipeline-name&quot;,
+            // 选填项
+            // label 表示流水线运行时给流水线打标签时的标签属性
+            &quot;label&quot;: &quot;$pipeline-label&quot;,
+            // path 指流水线配置在代码库中的相对路径，用于查询流水线配置
+            &quot;path&quot;: &quot;$pipeline-path&quot;
+        }
+    ],
+    // event_sources 指触发流水线的事件源，目前支持 GitLab webhook 和 Calendar
+    // 请至少填写一组事件源，每组事件源中至少定义一种类型的事件源
+    &quot;event_sources&quot;: [
+        {
+            &quot;name&quot;: &quot;$event-source-name&quot;,
+            // 选填项
+            // gitlab 用于生成 GitLab webhook 以触发流水线
+            &quot;gitlab&quot;: {
+                // repo_name 指事件源所属的 Gitlab project 的名称
+                &quot;repo_name&quot;: &quot;$repo-name&quot;,
+                // revision 指需要被处理的分支，支持 Lua 正则表达式
+                // Lua 正则表达式不同于标准正则表达式
+                // 参见：http://lua-users.org/wiki/PatternsTutorial
+                &quot;revision&quot;: &quot;$repo-revision&quot;,
+                // events 指触发 webhook 的 Gitlab 事件，例如：push_events，tag_push_events 等
+                // 参见：https://docs.gitlab.com/ee/api/projects.html#add-project-hook
+                &quot;events&quot;: [
+                    &quot;$webhook-events&quot;
+                ]
+            },
+            // 选填项
+            // calendar 指 calendar 类型的事件源，将定时生成事件来触发流水线
+            // 如果使用该类型的事件源，请至少填写“schedule、interval”属性中的一项 
+            // 如果两者都被定义了，“schedule”属性的优先级更高
+            &quot;calendar&quot;: {
+                // schedule 指定时调度规则，支持 cron 表达式，参见：https://en.wikipedia.org/wiki/Cron
+                &quot;schedule&quot;: &quot;$cron-expression&quot;,
+                // interval 指两个事件之间的时间间隔周期，例如：1s、30m、2h 等
+                &quot;interval&quot;: &quot;$interval&quot;,
+                // 选填项
+                // exclusion_dates 指 calendar 类型事件源的例外日期和时间，这些时间内将不会触发事件
+                // 日期时间格式遵循 ISO8601 格式，参见：https://en.wikipedia.org/wiki/ISO_8601
+                &quot;exclusion_dates&quot;: [
+                    &quot;$exclusion-date&quot;
+                ],
+                // 选填项
+                // timezone 指执行调度的时区，参见：https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+                &quot;timezone&quot;: &quot;$timezone&quot;
+            }
+        }
+    ],
+    // pipeline_triggers 表示待执行的流水线及其触发方式，请至少填写一组数据
+    &quot;pipeline_triggers&quot;: [
+        {
+            // event_source 需填写为 event_sources 中 name 的属性值
+            &quot;event_source&quot;: &quot;$event-source-name&quot;,
+            // pipeline 需填写为 pipelines 中 name 的属性值
+            // 不同事件源可以和相同流水线组成多组数据，表示流水线可以被多个事件触发
+            &quot;pipeline&quot;: &quot;$pipeline-name&quot;,
+            // 选填项
+            // revision 表示获取流水线配置的分支
+            // 如果不填，将根据 event_sources 中 gitlab 的 revision 属性值决定获取流水线配置的分支
+            &quot;revision&quot;: &quot;$pipeline-revision&quot;
+        }
+    ],
+    // destination 指执行流水线的目标环境
+    &quot;destination&quot;: &quot;$destination&quot;,
+    // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
+    // shared 表示多个 event_sources 共享资源。例如：当某个 event_source 需要重启时，将影响其他的 event_sources
+    // shared 相较于 exclusive 模式，更节省资源
+    // exclusive 表示每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
+    // exclusive 相较于 shared 模式，将占用更多资源
+    &quot;isolation&quot;: &quot;$isolation&quot;
+}
+</code></pre></div><h3 id="执行创建-更新流水线运行时的-api-请求"><a href="#执行创建-更新流水线运行时的-api-请求" class="header-anchor">#</a> 执行创建/更新流水线运行时的 API 请求</h3> <p>使用 curl 命令或者其他工具执行 API 请求，以新增流水线运行时。</p> <p>请求成功后，将在指定产品的 <code>default.project</code> 代码库中生成流水线运行时的资源文件。流水线运行时的资源文件示例如下：</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code>    <span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> nautes.resource.nautes.io/v1alpha1
+    <span class="token key atrule">kind</span><span class="token punctuation">:</span> ProjectPipelineRuntime
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+        <span class="token key atrule">name</span><span class="token punctuation">:</span> pr<span class="token punctuation">-</span>demo
+        <span class="token key atrule">namespace</span><span class="token punctuation">:</span> product<span class="token punctuation">-</span>xxxx
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+        <span class="token key atrule">destination</span><span class="token punctuation">:</span> env<span class="token punctuation">-</span>dev<span class="token punctuation">-</span>demo
+        <span class="token key atrule">eventSources</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">gitlab</span><span class="token punctuation">:</span>
+            <span class="token key atrule">events</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> push_events
+            <span class="token key atrule">repoName</span><span class="token punctuation">:</span> repo<span class="token punctuation">-</span><span class="token number">3</span>
+            <span class="token key atrule">revision</span><span class="token punctuation">:</span> ^refs/heads/feature%<span class="token punctuation">-</span>
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>feature<span class="token punctuation">-</span>push
+        <span class="token punctuation">-</span> <span class="token key atrule">gitlab</span><span class="token punctuation">:</span>
+            <span class="token key atrule">events</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> push_events
+            <span class="token key atrule">repoName</span><span class="token punctuation">:</span> repo<span class="token punctuation">-</span><span class="token number">3</span>
+            <span class="token key atrule">revision</span><span class="token punctuation">:</span> ^refs/heads/fix%<span class="token punctuation">-</span>
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>fix<span class="token punctuation">-</span>push
+        <span class="token punctuation">-</span> <span class="token key atrule">calendar</span><span class="token punctuation">:</span>
+            <span class="token key atrule">schedule</span><span class="token punctuation">:</span> <span class="token string">'0 17 * * 1-5'</span>
+          <span class="token key atrule">gitlab</span><span class="token punctuation">:</span>
+            <span class="token key atrule">events</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> push_events
+            <span class="token key atrule">repoName</span><span class="token punctuation">:</span> repo<span class="token punctuation">-</span><span class="token number">3</span>
+            <span class="token key atrule">revision</span><span class="token punctuation">:</span> refs/heads/main
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>main<span class="token punctuation">-</span>push
+        <span class="token punctuation">-</span> <span class="token key atrule">gitlab</span><span class="token punctuation">:</span>
+            <span class="token key atrule">events</span><span class="token punctuation">:</span>
+            <span class="token punctuation">-</span> tag_push_events
+            <span class="token key atrule">repoName</span><span class="token punctuation">:</span> repo<span class="token punctuation">-</span><span class="token number">3</span>
+            <span class="token key atrule">revision</span><span class="token punctuation">:</span> .*
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>main<span class="token punctuation">-</span>tag
+        <span class="token key atrule">isolation</span><span class="token punctuation">:</span> exclusive
+        <span class="token key atrule">pipelineSource</span><span class="token punctuation">:</span> repo<span class="token punctuation">-</span><span class="token number">3</span>
+        <span class="token key atrule">pipelineTriggers</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">eventSource</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>feature<span class="token punctuation">-</span>push
+          <span class="token key atrule">pipeline</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>dev
+        <span class="token punctuation">-</span> <span class="token key atrule">eventSource</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>fix<span class="token punctuation">-</span>push
+          <span class="token key atrule">pipeline</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>dev
+        <span class="token punctuation">-</span> <span class="token key atrule">eventSource</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>main<span class="token punctuation">-</span>push
+          <span class="token key atrule">pipeline</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>main
+        <span class="token punctuation">-</span> <span class="token key atrule">eventSource</span><span class="token punctuation">:</span> webhook<span class="token punctuation">-</span>main<span class="token punctuation">-</span>tag
+          <span class="token key atrule">pipeline</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>release
+        <span class="token key atrule">pipelines</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">label</span><span class="token punctuation">:</span> dev
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>dev
+          <span class="token key atrule">path</span><span class="token punctuation">:</span> pipelines/dev.yaml
+        <span class="token punctuation">-</span> <span class="token key atrule">label</span><span class="token punctuation">:</span> main
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>main
+          <span class="token key atrule">path</span><span class="token punctuation">:</span> pipelines/main.yaml
+        <span class="token punctuation">-</span> <span class="token key atrule">label</span><span class="token punctuation">:</span> release
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> pipeline<span class="token punctuation">-</span>release
+          <span class="token key atrule">path</span><span class="token punctuation">:</span> pipelines/release.yaml
+        <span class="token key atrule">project</span><span class="token punctuation">:</span> project<span class="token punctuation">-</span>demo
+</code></pre></div><blockquote><p>请求 API 更新流水线运行时也将更新流水线运行时的资源文件。</p> <p>只有当您的账号是 GitLab 的 group 成员，并且具备对 <code>default.project</code> 代码库的 main 分支的写入权限，才可以创建或者更新流水线运行时。</p></blockquote> <h2 id="删除流水线运行时-api"><a href="#删除流水线运行时-api" class="header-anchor">#</a> 删除流水线运行时（API）</h2> <h3 id="生成删除流水线运行时的-api-请求"><a href="#生成删除流水线运行时的-api-请求" class="header-anchor">#</a> 生成删除流水线运行时的 API 请求</h3> <p>通过接口定义 <code>ProjectPipelineRuntime_DeleteProjectPipelineRuntime</code> 生成 API 请求示例，并添加 access token 作为请求头。</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'DELETE'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer $gitlab-access-token'</span>
+</code></pre></div><p>替换变量后的请求示例如下：</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'DELETE'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'</span>
+</code></pre></div><h3 id="执行删除流水线运行时的-api-请求"><a href="#执行删除流水线运行时的-api-请求" class="header-anchor">#</a> 执行删除流水线运行时的 API 请求</h3> <p>使用 curl 命令或者其他工具执行 API 请求，以删除流水线运行时。</p> <p>请求成功后，将删除在指定产品的 <code>default.project</code> 代码库中的流水线运行时的资源文件，并且销毁运行时集群中的流水线运行时。</p> <blockquote><p>只有当您的账号是 GitLab 的 group 成员，并且具备对 <code>default.project</code> 代码库的 main 分支的写入权限，才可以删除流水线运行时。</p></blockquote> <h2 id="查询流水线运行时列表-api"><a href="#查询流水线运行时列表-api" class="header-anchor">#</a> 查询流水线运行时列表（API）</h2> <h3 id="生成查询流水线运行时列表的-api-请求"><a href="#生成查询流水线运行时列表的-api-请求" class="header-anchor">#</a> 生成查询流水线运行时列表的 API 请求</h3> <p>通过接口定义 <code>ProjectPipelineRuntime_ListProjectPipelineRuntimes</code> 生成 API 请求示例，并添加 access token 作为请求头。</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'GET'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer $gitlab-access-token'</span>
+</code></pre></div><p>替换变量后的请求示例如下：</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'GET'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'</span>
+</code></pre></div><h3 id="执行查询流水线运行时列表的-api-请求"><a href="#执行查询流水线运行时列表的-api-请求" class="header-anchor">#</a> 执行查询流水线运行时列表的 API 请求</h3> <p>使用 curl 命令或者其他工具执行 API 请求，以查询流水线运行时列表。流水线运行时列表的返回值示例如下：</p> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token punctuation">{</span>
+    <span class="token key atrule">&quot;items&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+            <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pr-demo&quot;</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;project&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;project-demo&quot;</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;pipeline_source&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;coderepo-sc-demo&quot;</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;event_sources&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-feature-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;gitlab&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                        <span class="token key atrule">&quot;repo_name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;coderepo-sc-demo&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;revision&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;^refs/heads/feature%-&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;events&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                            <span class="token string">&quot;push_events&quot;</span>
+                        <span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-fix-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;gitlab&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                        <span class="token key atrule">&quot;repo_name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;coderepo-sc-demo&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;revision&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;^refs/heads/fix%-&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;events&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                            <span class="token string">&quot;push_events&quot;</span>
+                        <span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-main-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;gitlab&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                        <span class="token key atrule">&quot;repo_name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;coderepo-sc-demo&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;revision&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;refs/heads/main&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;events&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                            <span class="token string">&quot;push_events&quot;</span>
+                        <span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;calendar&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;0 17 * * 1-5&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-main-tag&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;gitlab&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+                        <span class="token key atrule">&quot;repo_name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;coderepo-sc-demo&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;revision&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;.*&quot;</span><span class="token punctuation">,</span>
+                        <span class="token key atrule">&quot;events&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                            <span class="token string">&quot;tag_push_events&quot;</span>
+                        <span class="token punctuation">]</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;pipelines&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-dev&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;label&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;dev&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;path&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipelines/dev.yaml&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-main&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;label&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;main&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;path&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipelines/main.yaml&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-release&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;label&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;release&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;path&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipelines/release.yaml&quot;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;pipeline_triggers&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;event_source&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-feature-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;pipeline&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-dev&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;event_source&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-fix-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;pipeline&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-dev&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;event_source&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-main-push&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;pipeline&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-main&quot;</span>
+                <span class="token punctuation">}</span><span class="token punctuation">,</span>
+                <span class="token punctuation">{</span>
+                    <span class="token key atrule">&quot;event_source&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;webhook-main-tag&quot;</span><span class="token punctuation">,</span>
+                    <span class="token key atrule">&quot;pipeline&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;pipeline-release&quot;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">]</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;destination&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;env-dev-demo&quot;</span><span class="token punctuation">,</span>
+            <span class="token key atrule">&quot;isolation&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;exclusive&quot;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre></div><blockquote><p>只有当您的账号是 GitLab 的 group 成员，并且具备对 <code>default.project</code> 代码库的读取权限，才可以查询流水线运行时列表。</p></blockquote> <h2 id="查看流水线运行时详情-api"><a href="#查看流水线运行时详情-api" class="header-anchor">#</a> 查看流水线运行时详情（API）</h2> <h3 id="生成查看流水线运行时详情的-api-请求"><a href="#生成查看流水线运行时详情的-api-请求" class="header-anchor">#</a> 生成查看流水线运行时详情的 API 请求</h3> <p>通过接口定义 <code>ProjectPipelineRuntime_GetProjectPipelineRuntime</code> 生成 API 请求示例，并添加 access token 作为请求头。</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'GET'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://$api-server-address/api/v1/products/$product-name/projectpipelineruntimes/$project-pipeline-runtime-name'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer $gitlab-access-token'</span>
+</code></pre></div><p>替换变量后的请求示例如下：</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'GET'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/pr-demo'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer xxxxxxxxxxxxxxxxxxxx'</span>
+</code></pre></div><h3 id="执行查看流水线运行时详情的-api-请求"><a href="#执行查看流水线运行时详情的-api-请求" class="header-anchor">#</a> 执行查看流水线运行时详情的 API 请求</h3> <p>使用 curl 命令或者其他工具执行 API 请求，以查看流水线运行时详情。流水线运行时详情的返回值示例与<a href="#%E6%89%A7%E8%A1%8C%E6%9F%A5%E8%AF%A2%E6%B5%81%E6%B0%B4%E7%BA%BF%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%97%E8%A1%A8%E7%9A%84-api-%E8%AF%B7%E6%B1%82">查询流水线运行时列表</a>类似。</p> <blockquote><p>只有当您的账号是 GitLab 的 group 成员，并且具备对 <code>default.project</code> 代码库的读取权限，才可以查看流水线运行时详情。</p></blockquote> <h2 id="强制创建-更新-删除流水线运行时-api"><a href="#强制创建-更新-删除流水线运行时-api" class="header-anchor">#</a> 强制创建/更新/删除流水线运行时（API）</h2> <p>适用于需要跳过 API 校验的特殊场景，详情参见<a href="/guide/user-guide/main-process.html#初始化产品">初始化产品</a>。</p> <p>以创建流水线运行时为例，将 <code>destination</code> 属性设置为不合规的 environment，启用 <code>insecure-skip-check</code> 查询参数并设置其值为 <code>true</code>，可以强制提交流水线运行时的资源文件。请求示例的片段如下：</p> <div class="language-Shell extra-class"><pre class="language-shell"><code>    <span class="token function">curl</span> <span class="token parameter variable">-X</span> <span class="token string">'POST'</span> <span class="token punctuation">\</span>
+        <span class="token string">'HTTP://xxx.xxx.xxx.xxx:xxxxx/api/v1/products/nautes-labs/projectpipelineruntimes/api-server-pr?insecure-skip-check=true'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'accept: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Content-Type: application/json'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-H</span> <span class="token string">'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx'</span> <span class="token punctuation">\</span>
+        <span class="token parameter variable">-d</span> <span class="token string">'{
+                &quot;project&quot;: &quot;api-server&quot;,
+                &quot;pipeline-source&quot;: &quot;api-server&quot;,
+                ...
+                &quot;destination&quot;: &quot;env-invalid&quot;,
+                &quot;isolation&quot;: &quot;shared&quot;
+            }'</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.6049a73c.js" defer></script><script src="/assets/js/2.5cda13a8.js" defer></script><script src="/assets/js/58.6568414f.js" defer></script>
+  </body>
+</html>
