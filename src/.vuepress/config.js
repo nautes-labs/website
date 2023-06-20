@@ -108,6 +108,7 @@ module.exports = {
                 '/guide/user-guide/project',
                 '/guide/user-guide/code-repo',
                 '/guide/user-guide/environment',
+                '/guide/user-guide/project-pipeline-runtime',
                 '/guide/user-guide/deployment-runtime',
                 '/guide/user-guide/deployment-results'
               ],
@@ -184,6 +185,7 @@ module.exports = {
                 '/en/guide/user-guide/project',
                 '/en/guide/user-guide/code-repo',
                 '/en/guide/user-guide/environment',
+                '/en/guide/user-guide/project-pipeline-runtime',
                 '/en/guide/user-guide/deployment-runtime',
                 '/en/guide/user-guide/deployment-results'
               ],
