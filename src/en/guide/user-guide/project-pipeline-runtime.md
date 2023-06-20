@@ -154,11 +154,11 @@ The property comments in the request body are shown below:
     // During the integration stage, developers submit MRs to merge the feature branches into the trunk. 
     // If the MR is approved, it will trigger the integration pipeline. 
     // The pipeline will perform tasks such as building, deploying, and testing.
-    // During the release stage, a release manager or engineer applies tags based on the main branch, 
+    // During the release stage, a release manager or engineer creates tags based on the main branch, 
     // triggering the release pipeline. 
-    // The pipeline will push production images to the image repository, specifically designed to store production images.
+    // The pipeline will push production images to the image repository.
     // To implement a multi-branch pipeline scenario, 
-    // you need to configure multiple sets of pipeline (refer to the request example).  
+    // you need to configure multiple sets of pipeline (refer to the request example).
     "pipelines": [
         {
             // name is used to associate the pipeline with the event source.
