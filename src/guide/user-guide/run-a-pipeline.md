@@ -14,9 +14,11 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 
 此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
 
+另外，您还需在 GitLab 中[添加 SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account)，以便通过 SSH 协议对代码库进行推拉操作。
+
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。
+您使用 HTTPS 协议访问 Nautes API Server 时，请先从[安装结果](installation.md#查看安装结果)下载 `ca.crt` 证书，并将 `ca.crt` 添加到执行 API 的服务器的授信证书列表。
 
 ### 准备服务器
 
@@ -59,7 +61,7 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 下物理集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
 
 ```Shell
 # 查看物理集群的 kubeconfig
@@ -72,7 +74,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "physical-worker-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -86,9 +88,9 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # tekton 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
+  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
   # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -157,7 +159,7 @@ nautes apply -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-a
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$cluster-name`、`$api-server` 和 `$kubeconfig`。
 
 ```Shell
 # 查看宿主集群的 kubeconfig
@@ -170,7 +172,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "host-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -236,7 +238,7 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip`、`$host-cluster` 和 `$api-server-port`。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip`、`$host-cluster` 和 `$api-server-port`。
 
 ```yaml
 # 虚拟集群属性模板
@@ -244,7 +246,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "vcluster-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的IP，$api-server-port 指虚拟集群的 API Server 端口
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -260,9 +262,9 @@ spec:
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # tekton 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.vcluster-$suffix.$cluster-ip.nip.io"
+  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
   # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io"
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
@@ -588,7 +590,7 @@ nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-serv
 
 在执行流水线之前，您需要先准备一个镜像仓库，用于存储流水线产生的容器镜像，下面将以 Github 的  `ghcr.io` 为例。
 
-您需要在 Github 上准备一个账号或组织，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
+您需要在 Github 上准备一个[账号或组织](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts)，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
 
 当运行时集群中与流水线运行时同名的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
 
