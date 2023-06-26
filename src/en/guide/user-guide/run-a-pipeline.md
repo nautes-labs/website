@@ -95,7 +95,8 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster, and the kubeconfig supports both plaintext and Base64 encoding.
+  # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster, 
+  # and the kubeconfig supports both plaintext and Base64 encoding.
   kubeconfig: $kubeconfig
 ```
 
@@ -207,7 +208,8 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster, and the kubeconfig supports both plaintext and Base64 encoding.
+  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster, 
+  # and the kubeconfig supports both plaintext and Base64 encoding.
   kubeconfig: $kubeconfig
 ```
 
