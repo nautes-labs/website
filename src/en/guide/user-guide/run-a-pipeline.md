@@ -14,7 +14,7 @@ After GitLab installation, you need to register an account and create a [persona
 
 The account needs to call the API for [managing the runtime clusters](#register-runtime-cluster), you need to add the account to the member list of the tenant configuration repository and ensure that the account can push code to the main branch.
 
-Additionally, you need to [add an SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account) in GitLab to push or pull code to the code repository via the SSH protocol.
+Additionally, you need to [add an SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account) in GitLab to push code to the code repository via the SSH protocol.
 
 ### Import Certificates
 
