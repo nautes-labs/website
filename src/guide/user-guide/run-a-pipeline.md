@@ -14,7 +14,7 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 
 此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
 
-另外，您还需在 GitLab 中[添加 SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account)，以便通过 SSH 协议对代码库执行推拉操作。
+另外，您还需在 GitLab 中[添加 SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account)，以便通过 SSH 协议向代码库推拉代码。
 
 ### 导入证书
 
