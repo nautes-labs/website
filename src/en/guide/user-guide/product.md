@@ -23,7 +23,7 @@ The access token will be used as a request header for requesting APIs.
 
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, you need to [import certificates](run-a-pipeline.md#import-certificates).
+Before accessing the Nautes API Server via the HTTPS protocol, please [import certificates](run-a-pipeline.md#import-certificates) first.
 
 ## Create Product (API)
 

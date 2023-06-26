@@ -22,7 +22,7 @@ title: 维护代码库及其授权
 
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请[导入证书](deploy-an-application.md#导入证书)。
+在使用 HTTPS 协议访问 Nautes API Server 之前，请先[导入证书](run-a-pipeline.md#导入证书)。
 
 ### 创建产品
 
