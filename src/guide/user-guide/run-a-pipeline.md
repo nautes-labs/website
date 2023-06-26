@@ -207,7 +207,7 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量，并且 kubeconfig 支持明文和 Base64 编码
+  # 集群的 kubeconfig 文件内容：使用宿主集群的 kubeconfig 替换该变量，并且 kubeconfig 支持明文和 Base64 编码
   kubeconfig: $kubeconfig
 ```
 
