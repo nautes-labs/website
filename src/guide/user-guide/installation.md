@@ -8,7 +8,7 @@ Nautes 支持基于公有云、私有云、主机、及 Kubernets 集群进行�
 
 ## 准备环境
 
-- 安装机：AMD64 架构的 Linux 服务器，需要预先[安装 Docker](https://docs.docker.com/engine/install/ubuntu/)、Git、Bash，并确保 /opt/nautes 目录没有被占用。
+- 安装机：AMD64 架构的 Linux 服务器，需要预先[安装 Docker](https://docs.docker.com/engine/install/)、Git、Bash，并确保 /opt/nautes 目录没有被占用。
 - 公有云密钥：一个阿里云账号的访问密钥，如果您使用的是 RAM 用户，请确保 RAM 用户有 AliyunECSFullAccess 和 AliyunVPCFullAccess 权限。详情参考 [创建 AccessKey](https://help.aliyun.com/document_detail/116401.html)。
 
 > 安装程序会调用阿里云的 API 申请资源，这个过程会产生一定的费用（请参考 [阿里云费用说明](#阿里云费用说明 )）。
