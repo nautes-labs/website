@@ -8,7 +8,7 @@ Nautes supports installation on public cloud, private cloud, hosts, and Kubernet
 
 ## Prepare the Environment
 
-- Installation machine: An AMD64 architecture Linux server, with Docker, Git, and Bash pre-installed, and ensure that the `/opt/nautes` directory is not occupied.
+- Installation machine: An AMD64 architecture Linux server, with [Docker](https://docs.docker.com/engine/install/), Git, and Bash pre-installed, and ensure that the `/opt/nautes` directory is not occupied.
 - Public cloud access key: An access key for an Alibaba Cloud account. If you are using a RAM user, make sure the RAM user has AliyunECSFullAccess and AliyunVPCFullAccess permissions. For more information, refer to [Create AccessKey](https://help.aliyun.com/document_detail/116401.html).
 
 > The installer will call Alibaba Cloud's API to apply for resources, which will incur some costs (please refer to [Alibaba Cloud Cost Description](#alibaba-cloud-cost-description)).
@@ -16,6 +16,8 @@ Nautes supports installation on public cloud, private cloud, hosts, and Kubernet
 > Due to Alibaba Cloud's billing rules restrictions, please ensure that the Alibaba Cloud account balance is more than 100 RMB, otherwise the installation program cannot call Alibaba Cloud's API to apply for resources.
 
 ## Execute the Installation
+
+> The installer needs to retrieve relevant configurations (such as images) from GitHub. Please ensure the network connection between the installation machine and GitHub is stable.
 
 Create configuration file for installer.
 
@@ -66,6 +68,8 @@ In addition, related information in other subdirectories under `/opt/nautes/out`
 - logs: Installation program logs.
 
 > The relative path of the Nautes API Server's Swagger UI documentation is: /q/swagger-ui.
+>
+> Tenant configuration repository is used for storing configuration information related to tenant management. Each tenant has a tenant configuration repository.
 
 ## Destroy the Environment
 
@@ -163,7 +167,7 @@ Look for the instance name after `in resource "alicloud_instance"` in the error 
 To resolve this issue, according to the instance name, you can add the corresponding parameter in the `vars.yaml` file as needed to change the default instance type of the cloud server. After changing the `vars.yaml` file, you should [destroy the environment](#destroy-the-environment), and then [re-execute the installer](#execute-the-installation).
 
 ```yaml
-# The following parameter values are only suggested instance types. 
+# The following parameter values are only suggested instance types.
 # You can change the instance type to other types with specifications not lower than the suggested instance types.
 # The cloud server instance type for GitLab
 gitlab_instance_type: ecs.g6.large

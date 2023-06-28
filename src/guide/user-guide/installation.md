@@ -8,7 +8,7 @@ Nautes 支持基于公有云、私有云、主机、及 Kubernets 集群进行�
 
 ## 准备环境
 
-- 安装机：AMD64 架构的 Linux 服务器，需要预先安装 Docker、Git、Bash，并确保 /opt/nautes 目录没有被占用。
+- 安装机：AMD64 架构的 Linux 服务器，需要预先[安装 Docker](https://docs.docker.com/engine/install/)、Git、Bash，并确保 /opt/nautes 目录没有被占用。
 - 公有云密钥：一个阿里云账号的访问密钥，如果您使用的是 RAM 用户，请确保 RAM 用户有 AliyunECSFullAccess 和 AliyunVPCFullAccess 权限。详情参考 [创建 AccessKey](https://help.aliyun.com/document_detail/116401.html)。
 
 > 安装程序会调用阿里云的 API 申请资源，这个过程会产生一定的费用（请参考 [阿里云费用说明](#阿里云费用说明 )）。
@@ -16,6 +16,8 @@ Nautes 支持基于公有云、私有云、主机、及 Kubernets 集群进行�
 > 受阿里云的计费规则限制，请确保上述阿里云账号内的余额大于100元人民币，否则安装程序无法调用阿里云的 API 申请资源。
 
 ## 执行安装
+
+> 安装程序需要从 GitHub 获取相关配置（例如镜像等），请确保安装机与 GitHub 之间的网络连接正常。
 
 创建安装程序的配置文件。
 
@@ -64,6 +66,10 @@ chmod +x installer.sh
 - pki：访问组件需要使用的证书和签发证书的 CA。
 - service：租户管理集群、Dex、ArgoCD、Vault、GitLab、Nautes API Server 的访问地址。
 - logs：安装程序的日志。
+
+> Nautes API Server 的 Swagger UI 相对路径：/q/swagger-ui。
+>
+> 租户配置库：用于存储租户管理相关的配置信息。每个租户有一个租户配置库。
 
 ## 销毁环境
 
