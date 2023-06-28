@@ -14,9 +14,11 @@ After GitLab installation, you need to register an account and create a [persona
 
 The account needs to call the API for [managing the runtime clusters](#register-runtime-cluster), you need to add the account to the member list of the tenant configuration repository and ensure that the account can push code to the main branch.
 
+Additionally, you need to [add an SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account) in GitLab to push code to the code repository via the SSH protocol.
+
 ### Import Certificates
 
-If you want to access Nautes API Server using the HTTPS protocol, please download the ca.crt certificate from [the installation result](installation.md#check-the-installation-results), and add ca.crt to the trusted certificate list of the server that executes the API.
+Before accessing the Nautes API Server via the HTTPS protocol, please first download the `ca.crt` certificate from [the installation result](installation.md#check-the-installation-results), and add `ca.crt` to the trusted certificate list of the server executing the API.
 
 ### Prepare a Server
 
@@ -59,7 +61,7 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker-pipeline.yaml`, including `$suffix`, `$api-server`, `$cluster-ip` and `$kubeconfig`.
+Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip` and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the physical cluster.
@@ -72,7 +74,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "physical-worker-$suffix"
+  name: "$cluster-name"
   # Cluster API SERVER URL. Replace the variable with the address of the physical cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -86,9 +88,9 @@ spec:
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
   # Tekton domain. Replace $cluster-ip with the cluster IP.
-  tektonHost: "tekton.physical-worker-$suffix.$cluster-ip.nip.io"
+  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
   # ArgoCD domain. Replace $cluster-ip with the cluster IP.
-  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io"
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # Traefik configuration
   traefik:
     httpNodePort: "30080"
@@ -157,7 +159,7 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$suffix`, `$api-server`, and `$kubeconfig`.
+Replace the variables in the host cluster property template located at the relative path `examples/demo-cluster-host.yaml`, including `$cluster-name`, `$api-server`, and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the host cluster.
@@ -170,7 +172,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "host-$suffix"
+  name: "$cluster-name"
   # Cluster API SERVER URL. Replace the variable with the address of the host cluster.
   apiServer: "$api-server"
   # Cluster kind. Currently only supports Kubernetes.
@@ -185,7 +187,7 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster
+  # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster.
   kubeconfig: |
     $kubeconfig
 ```
@@ -236,7 +238,7 @@ Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-pipeline.yaml`, including `$suffix`, `$api-server`, `$cluster-ip`, and `$api-server-port`.
+Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip`, and `$api-server-port`.
 
 ```yaml
 # Virtual cluster property template
@@ -244,7 +246,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # Cluster name
-  name: "vcluster-$suffix"
+  name: "$cluster-name"
   # Cluster API SERVER URL. Replace the parameter with the format 'https://$hostcluster-ip:$api-server-port', where $hostcluster-ip refers to the IP of the host cluster and $api-server-port refers to the API SERVER port of the virtual cluster.
   apiServer: "$api-server"
   # Cluster kind: Currently only supports Kubernetes
@@ -260,9 +262,9 @@ spec:
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
   # Tekton domain. Replace $cluster-ip with the host cluster IP.
-  tektonHost: "tekton.vcluster-$suffix.$cluster-ip.nip.io"
+  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
   # ArgoCD domain. Replace $cluster-ip with the host cluster IP.
-  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io"
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # Virtual cluster configuration: the property is only available for virtual type clusters.
   vcluster: 
     # API SERVER port 
@@ -425,7 +427,7 @@ spec:
   git:
     gitlab:
       name: coderepo-sc-demo-quickstart
-      path: coderepo-sc-demo-quickstart 
+      path: coderepo-sc-demo-quickstart
       visibility: private
       description: coderepo-sc-demo-quickstart
 ---
@@ -588,7 +590,7 @@ nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-serv
 
 Before running the pipeline, you need to prepare an image repository for storing the container images generated by the pipeline. We will take GitHub's `ghcr.io` as an example.
 
-You need to prepare an account or organization on GitHub, for example, `https://github.com/nautes-labs`, and generate a personal access token with `write:packages` permission under the account that has permissions to the organization.
+You need to prepare [an account or organization](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts) on GitHub, for example, `https://github.com/nautes-labs`, and generate a personal access token with `write:packages` permission under the account that has permissions to the organization.
 
 When a namespace with the same name as the project pipeline runtime is ready in the runtime cluster, you need to create a ConfigMap resource under the namespace. The `image-build` task in the pipeline can use the ConfigMap resource to authenticate with the image repository when pushing container images.
 
@@ -640,7 +642,7 @@ Access [GitLab](installation.md#check-the-installation-results), and configure y
 Push the Kubernetes Manifests to the deployment configuration repository.
 
 ```Shell
-# Change the URL of the remote repository 'origin' to that of the deployment configuration repository, 
+# Change the URL of the remote repository 'origin' to that of the deployment configuration repository,
 # the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
 git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-deploy-demo-quickstart.git
 git add .
@@ -827,7 +829,7 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd deployment
-          sed -i -e "s#ghcr.io/lanbingcloud/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml 
+          sed -i -e "s#ghcr.io/lanbingcloud/devops-sample.*#$(tasks.image-build.results.IMAGE_URL)#g" deployments/test/devops-sample.yaml
           git add deployments/test/devops-sample.yaml
           git commit -a -m "automatic update by pipeline bot: $(tasks.image-build.results.IMAGE_URL)"
           git push origin HEAD:$(params.REVISION) --force
