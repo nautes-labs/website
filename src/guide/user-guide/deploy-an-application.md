@@ -14,9 +14,11 @@ GitLab 安装完成后，您需要注册一个账号，并创建 [personal acces
 
 此账号需要调用[管理集群](#注册运行时集群)的 API，您需要将账号加入到租户配置库的成员列表，并保证此账号可以向 main 分支推送代码。
 
+另外，您还需在 GitLab 中[添加 SSH key](https://docs.gitlab.com/ee/user/ssh.html#add-an-ssh-key-to-your-gitlab-account)，以便通过 SSH 协议向代码库推送代码。
+
 ### 导入证书
 
-如果您想使用 https 协议访问 Nautes API Server，请从[安装结果](installation.md#查看安装结果)下载 ca.crt 证书，并将 ca.crt 添加到执行 API 的服务器的授信证书列表。
+在使用 HTTPS 协议访问 Nautes API Server 之前，请先从[安装结果](installation.md#查看安装结果)下载 `ca.crt` 证书，并将 `ca.crt` 添加到执行 API 的服务器的授信证书列表。
 
 ### 准备服务器
 
@@ -59,7 +61,7 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-physical-worker-deployment.yaml` 下物理集群属性模板的变量，包括 `$suffix`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-deployment.yaml` 下物理集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
 
 ```Shell
 # 查看物理集群的 kubeconfig
@@ -72,7 +74,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "physical-worker-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL。使用物理集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -86,7 +88,7 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.physical-worker-$suffix.$cluster-ip.nip.io",
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
   # traefik 配置
   traefik:
     httpNodePort: "30080"
@@ -154,7 +156,7 @@ nautes apply -f examples/demo-cluster-physical-worker-deployment.yaml -t $gitlab
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$suffix`、`$api-server` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-host.yaml` 下的宿主集群属性模板的变量，包括 `$cluster-name`、`$api-server` 和 `$kubeconfig`。
 
 ```Shell
 # 查看宿主集群的 kubeconfig
@@ -167,7 +169,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "host-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL，使用宿主集群的 server 地址替换该变量
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -233,7 +235,7 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-替换位于相对路径 `examples/demo-cluster-virtual-worker-deployment.yaml` 下的虚拟集群属性模板的变量，包括 `$suffix`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-deployment.yaml` 下的虚拟集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$host-cluster` 和 `$api-server-port`。
 
 ```yaml
 # 虚拟集群
@@ -241,7 +243,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: Cluster
 spec:
   # 集群名称
-  name: "vcluster-$suffix"
+  name: "$cluster-name"
   # 集群的 API SERVER URL，使用 https://$hostcluster-ip:$api-server-port 格式替换参数，其中 $hostcluster-ip 指宿主集群的 IP，$api-server-port 指虚拟集群的 API Server 端口
   apiServer: "$api-server"
   # 集群种类：目前只支持 kubernetes
@@ -257,7 +259,7 @@ spec:
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.vcluster-$suffix.$cluster-ip.nip.io",
+  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
@@ -352,7 +354,7 @@ spec:
       # 代码库的名称
       name: coderepo-sc-demo-$suffix
       # 代码库的路径
-      path: coderepo-sc-demo-$suffix 
+      path: coderepo-sc-demo-$suffix
       # 代码库的可见性，例如：private、public
       visibility: private
       description: coderepo-sc-demo-$suffix
@@ -375,7 +377,7 @@ spec:
       # 代码库的名称
       name: coderepo-deploy-demo-$suffix
       # 代码库的路径
-      path: coderepo-deploy-demo-$suffix 
+      path: coderepo-deploy-demo-$suffix
       # 代码库的可见性，例如：private、public
       visibility: private
       description: coderepo-deploy-demo-$suffix
@@ -417,7 +419,7 @@ spec:
   git:
     gitlab:
       name: coderepo-sc-demo-quickstart
-      path: coderepo-sc-demo-quickstart 
+      path: coderepo-sc-demo-quickstart
       visibility: private
       description: coderepo-sc-demo-quickstart
 ---
@@ -434,7 +436,7 @@ spec:
   git:
     gitlab:
       name: coderepo-deploy-demo-quickstart
-      path: coderepo-deploy-demo-quickstart 
+      path: coderepo-deploy-demo-quickstart
       visibility: private
       description: coderepo-deploy-demo-quickstart
 ```
