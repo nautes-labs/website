@@ -136,7 +136,7 @@ title: 维护流水线运行时
 
 请求体中属性的注释如下：
 
-```JSONC
+```json
 {
     // project 指流水线运行时归属于哪个项目
     "project": "$project-name",
