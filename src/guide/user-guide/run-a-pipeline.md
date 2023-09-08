@@ -87,18 +87,34 @@ spec:
   workerType: "pipeline"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # tekton 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
   # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart  
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines :
       - $product-name
     argo-events:
       - $product-name
@@ -108,14 +124,8 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-    oauth2-proxy:
-      - $product-name      
+    hnc-system:
+      - $product-name   
   # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
   productAllowedClusterResources:
     $product-name:
@@ -141,13 +151,30 @@ spec:
   usage: "worker"
   workerType: "pipeline"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.physical-worker-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart
     argo-events:
       - demo-quickstart
@@ -157,14 +184,8 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
-      - demo-quickstart      
+    hnc-system:
+      - demo-quickstart     
   productAllowedClusterResources:
     demo-quickstart:
       - kind: ClusterRole
@@ -193,7 +214,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -236,10 +257,14 @@ spec:
   usage: "host"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容：使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
     $kubeconfig
@@ -257,9 +282,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -282,7 +311,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -314,17 +343,41 @@ spec:
   hostCluster: "$host-cluster"
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # tekton 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+      additions:
+        ProductResourcePathPipeline: templates/pipelines
+        ProductResourceRevision: main
+        SyncResourceTypes: tekton.dev/Pipeline
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - $product-name
     argo-events:
       - $product-name
@@ -334,11 +387,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
+    hnc-system:
       - $product-name
     oauth2-proxy:
       - $product-name       
@@ -365,12 +414,36 @@ spec:
   workerType: "pipeline"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.vcluster-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+      additions:
+        ProductResourcePathPipeline: templates/pipelines
+        ProductResourceRevision: main
+        SyncResourceTypes: tekton.dev/Pipeline
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart    
     argo-rollouts:
       - demo-quickstart
@@ -380,13 +453,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -494,6 +561,31 @@ spec:
       # 代码库的可见性，例如：private、public
       visibility: private
       description: coderepo-deploy-demo-$suffix
+---      
+# 流水线仓库
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  # 代码库名称
+  name: coderepo-pipeline-demo-$suffix
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  # 代码库的所属产品
+  product: demo-$suffix
+  # 代码库的所属项目
+  project: project-demo-$suffix  
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      # 代码库的名称
+      name: coderepo-pipeline-demo-$suffix
+      # 代码库的路径
+      path: coderepo-pipeline-demo-$suffix
+      # 代码库的可见性，例如：private、public
+      visibility: private
+      description: coderepo-pipeline-demo-$suffix
 ```
 
 替换变量后的文件示例如下：
@@ -552,6 +644,24 @@ spec:
       path: coderepo-deploy-demo-quickstart
       visibility: private
       description: coderepo-deploy-demo-quickstart
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-pipeline-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  project: project-demo-quickstart
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      name: coderepo-pipeline-demo-quickstart
+      path: coderepo-pipeline-demo-quickstart
+      visibility: private
+      description: coderepo-pipeline-demo-quickstart
 ```
 
 替换位于相对路径 `examples/demo-pipeline.yaml` 下模板的变量，包括 `$suffix`、`$pipeline-runtime-cluster`。
@@ -599,7 +709,7 @@ spec:
   # 流水线运行时的所属项目
   project: project-demo-$suffix
   # 流水线配置的源码库
-  pipelineSource: coderepo-sc-demo-$suffix
+  pipelineSource: coderepo-pipeline-demo-$suffix
   # 流水线的定义
   pipelines:
     # 流水线名称
@@ -615,7 +725,7 @@ spec:
   # 可选项，流水线运行时的自定义资源
   additionalResources:
     git:
-      codeRepo: coderepo-sc-demo-$suffix
+      codeRepo: coderepo-pipeline-demo-$suffix
       revision: main
       path: test
   # 触发流水线的事件源
@@ -672,7 +782,7 @@ spec:
   name: pr-demo-quickstart
   product: demo-quickstart
   project: project-demo-quickstart
-  pipelineSource: coderepo-sc-demo-quickstart
+  pipelineSource: coderepo-pipeline-demo-quickstart
   pipelines:
   - name: pipeline-dev-demo-quickstart
     label: main
@@ -682,7 +792,7 @@ spec:
     namespace: pr-demo-quickstart
   additionalResources:
     git:
-      codeRepo: coderepo-sc-demo-quickstart
+      codeRepo: coderepo-pipeline-demo-quickstart
       revision: main
       path: test  
   eventSources:
@@ -698,7 +808,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -800,7 +910,7 @@ spec:
     value: main
   taskRunSpecs:
   - pipelineTaskName: git-clone-sourcecode
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -818,7 +928,7 @@ spec:
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: git-clone-deployment
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -836,7 +946,7 @@ spec:
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: manifest-update
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -997,12 +1107,12 @@ git push origin main -f
 
 ### 流水线
 
-当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
+当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址例如：`https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`。
 
-> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
->
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
-
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，查看 Tekton Dashboard 的访问地址。
+```shell
+./nautes get cluster -oyaml
+```
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 
 ### 镜像库

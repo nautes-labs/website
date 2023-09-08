@@ -87,12 +87,27 @@ spec:
   workerType: "deployment"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
   # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
   reservedNamespacesAllowedProducts:
@@ -103,10 +118,6 @@ spec:
     traefik:
       - $product-name
     external-secrets:
-      - $product-name
-    vault:
-      - $product-name
-    cert-manager:
       - $product-name
     hnc:
       - $product-name
@@ -135,10 +146,25 @@ spec:
   usage: "worker"
   workerType: "deployment"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -148,11 +174,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -182,7 +204,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml 指在代码库中模板文件的相对路径
@@ -225,10 +247,14 @@ spec:
   usage: "host"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"  
   # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
     $kubeconfig
@@ -246,9 +272,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"  
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -271,7 +301,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -303,12 +333,24 @@ spec:
   hostCluster: "$host-cluster"
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
+  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
   # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-101
   reservedNamespacesAllowedProducts:
@@ -318,11 +360,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
+    hnc-system:
       - $product-name
   # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
   productAllowedClusterResources:
@@ -347,9 +385,21 @@ spec:
   workerType: "deployment"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -357,11 +407,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -623,7 +669,7 @@ spec:
     - project-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径

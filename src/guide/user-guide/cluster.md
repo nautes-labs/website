@@ -49,24 +49,47 @@ title: 注册运行时集群
                 "worker_type": $worker-type,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
-                # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
-                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
-                # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
-                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
-                # traefik 配置
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
-                },
+                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },                  
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                }, 
                 # 可选，集群内的组件也可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "$product-name"
                   ],
                   "argo-events": [
-                    "$product-name"
-                  ],
-                  "argo-rollouts": [
                     "$product-name"
                   ],
                   "argocd": [
@@ -78,16 +101,7 @@ title: 注册运行时集群
                   "external-secrets": [
                     "$product-name"
                   ],
-                  "vault": [
-                    "$product-name"
-                  ],
-                  "cert-manager": [
-                    "$product-name"
-                  ],
-                  "hnc": [
-                    "$product-name"
-                  ],
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "$product-name"
                   ]
                 },
@@ -124,14 +138,43 @@ title: 注册运行时集群
                 "usage": "worker",
                 "worker_type": "pipeline",
                 "primary_domain": "8.217.50.114.nip.io",
-                "tekton_host": "tekton.physical-worker-pipeline.8.217.50.114.nip.io",
-                "argocd_host": "argocd.physical-worker-pipeline.8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                    "additions": {
+                      "ProductResourcePathPipeline": "templates/pipelines",
+                      "ProductResourceRevision": "main"
+                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
                 },
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "demo-quickstart"
                   ],
                   "argo-events": [
@@ -146,16 +189,7 @@ title: 注册运行时集群
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
-                    "demo-quickstart"
-                  ],
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -190,10 +224,31 @@ title: 注册运行时集群
                 "usage": "worker",
                 "worker_type": "deployment",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.physical-worker-deployment.8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  }
                 },
                 "reserved_namespaces_allowed_products": {
                   "argo-rollouts": [
@@ -208,13 +263,7 @@ title: 注册运行时集群
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -270,10 +319,16 @@ title: 注册运行时集群
                 "usage": $usage,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
-                # traefik 配置
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+                "components_list": {
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  }
                 },
                 # 集群的 kubeconfig 文件内容：使用宿主集群的 kubeconfig 替换该变量，并且需要对 kubeconfig 以 Base64 方式编码。
                 "kubeconfig": $kubeconfig
@@ -294,9 +349,15 @@ title: 注册运行时集群
                 "cluster_type": "physical",
                 "usage": "host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  }
                 },
                 "kubeconfig": "YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKa2FrTkRRVkl5WjBGM1NVSkJaMGxDUVVSQlMwSm5aM0ZvYTJwUFVGRlJSRUZxUVdwTlUwVjNTSGRaUkZaUlVVUkVRbWh5VFROTmRHTXlWbmtLWkcxV2VVeFhUbWhSUkVVeVQwUlplRTVFUVRCT2VsRjNTR2hqVGsxcVRYZE9ha0V6VFZSSmVVMVVSVEJYYUdOT1RYcE5kMDVxUVRCTlZFbDVUVlJGTUFwWGFrRnFUVk5GZDBoM1dVUldVVkZFUkVKb2NrMHpUWFJqTWxaNVpHMVdlVXhYVG1oUlJFVXlUMFJaZUU1RVFUQk9lbEYzVjFSQlZFSm5ZM0ZvYTJwUENsQlJTVUpDWjJkeGFHdHFUMUJSVFVKQ2QwNURRVUZSZG5Sa1JUZFNWVzFCU0hZeE9IZEVXREYyTDJwdWNXRkZVM05tY2pkdVVtNXdiVFZpWWpaME5tRUtSRFptWkhnME5uVlJZaXREWVdGalZYSlVNVlZ5Y1RWT1NUSk5USGhIU0M4eVMweEJMMlkwVDJWNFdqUnZNRWwzVVVSQlQwSm5UbFpJVVRoQ1FXWTRSUXBDUVUxRFFYRlJkMFIzV1VSV1VqQlVRVkZJTDBKQlZYZEJkMFZDTDNwQlpFSm5UbFpJVVRSRlJtZFJWVzEzTDFGSFNYYzFOMlZ0UWpobmFEaHdRVnBHQ21kclZHMXNRekIzUTJkWlNVdHZXa2w2YWpCRlFYZEpSRkozUVhkU1FVbG5VMEZDWkRkTWRFVnhZblkzUTBwcVEyVkhhMWxqTDFacVVraDNObk5UU2tVS01ISkZWM1p5VkZGb1NGbERTVUpvWlhwUE9YUlRWVnB4VjNkbFZHazFTRlpUVUVoWU5uUm1SMkUwU2twa1RsTnVOMDFtYTBSTVpuTUtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDQuMTE4LjIzOjY0NDMKICBuYW1lOiBkZWZhdWx0CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBkZWZhdWx0CiAgICB1c2VyOiBkZWZhdWx0CiAgbmFtZTogZGVmYXVsdApjdXJyZW50LWNvbnRleHQ6IGRlZmF1bHQKa2luZDogQ29uZmlnCnByZWZlcmVuY2VzOiB7fQp1c2VyczoKLSBuYW1lOiBkZWZhdWx0CiAgdXNlcjoKICAgIGNsaWVudC1jZXJ0aWZpY2F0ZS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKclJFTkRRVlJsWjBGM1NVSkJaMGxKVDBNdlRVWm9kekZWU1hkM1EyZFpTVXR2V2tsNmFqQkZRWGRKZDBsNlJXaE5RamhIUVRGVlJVRjNkMWtLWVhwT2VreFhUbk5oVjFaMVpFTXhhbGxWUVhoT2FtY3lUVlJSZDA1RVl6Qk5RalJZUkZSSmVrMUVXWGRPZWtWNVRXcEZlRTVHYjFoRVZFa3dUVVJaZHdwT2FrVjVUV3BGZUU1R2IzZE5SRVZZVFVKVlIwRXhWVVZEYUUxUFl6TnNlbVJIVm5SUGJURm9Zek5TYkdOdVRYaEdWRUZVUW1kT1ZrSkJUVlJFU0U0MUNtTXpVbXhpVkhCb1drY3hjR0pxUWxwTlFrMUhRbmx4UjFOTk5EbEJaMFZIUTBOeFIxTk5ORGxCZDBWSVFUQkpRVUpEZG1GbGFrOVljMDlOVld0c2Qxb0tVMjVuTDFkWFR5OXpURTVYUkc5ck16RjNaM0E0ZGl0VlZXWjZiMjVTUkd0R1J6UkpLM1JZTlhwd1lVRjZUWGxzWm5kbVdXYzJhVVoxUm1remFXUmtLd3BRUmxwb2QwZDFhbE5FUWtkTlFUUkhRVEZWWkVSM1JVSXZkMUZGUVhkSlJtOUVRVlJDWjA1V1NGTlZSVVJFUVV0Q1oyZHlRbWRGUmtKUlkwUkJha0ZtQ2tKblRsWklVMDFGUjBSQlYyZENVU3RwY1haUVlWUXhSVzVxWlZBMFNsaHFXa3hTWVdkMU5uUnpWRUZMUW1kbmNXaHJhazlRVVZGRVFXZE9TRUZFUWtVS1FXbENNVkZ0UTJOeVJIWkdTVXhWTVVsM0swMWxhVVJrWkVSTVFraG9RVmRoT1VKMVQzTkNSRlpMVTBGNVowbG5TRWd5T1ZGNVVEZzFhRVpRVWtkNmRRcFFaRU5qZGpkVk4wMU5MMmxwT0c1emJHUXJUeTh5U1c4eVluYzlDaTB0TFMwdFJVNUVJRU5GVWxSSlJrbERRVlJGTFMwdExTMEtMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKa2VrTkRRVkl5WjBGM1NVSkJaMGxDUVVSQlMwSm5aM0ZvYTJwUFVGRlJSRUZxUVdwTlUwVjNTSGRaUkZaUlVVUkVRbWh5VFROTmRGa3llSEFLV2xjMU1FeFhUbWhSUkVVeVQwUlplRTVFUVRCT2VsRjNTR2hqVGsxcVRYZE9ha0V6VFZSSmVVMVVSVEJYYUdOT1RYcE5kMDVxUVRCTlZFbDVUVlJGTUFwWGFrRnFUVk5GZDBoM1dVUldVVkZFUkVKb2NrMHpUWFJaTW5od1dsYzFNRXhYVG1oUlJFVXlUMFJaZUU1RVFUQk9lbEYzVjFSQlZFSm5ZM0ZvYTJwUENsQlJTVUpDWjJkeGFHdHFUMUJSVFVKQ2QwNURRVUZSZVhNM2MzSlpXRUZGY3pCUGEybHFXa3QwUjFoRVprMUhXbGh6TUdKeVNHeDRUMWR3UkdaMGQyY0tLMnhGTUdSYU5GSjRVMWhZVldoQ05FbzBaakIwWlVoWFJrNU5WbVUzYzFwak4ya3lOVEF3YldWb1VVVnZNRWwzVVVSQlQwSm5UbFpJVVRoQ1FXWTRSUXBDUVUxRFFYRlJkMFIzV1VSV1VqQlVRVkZJTDBKQlZYZEJkMFZDTDNwQlpFSm5UbFpJVVRSRlJtZFJWVkJ2Y1hKNk1tczVVa28wTTJvclExWTBNbE13Q2xkdlRIVnlZa1YzUTJkWlNVdHZXa2w2YWpCRlFYZEpSRk5CUVhkU1VVbG9RVXhqUWxsbFJHRkVNVGMwWVZwYVVVMUNRbTUzTkhBdk5tWTVTMWhWYjJZS00ydHBSRkZYTlVOTFRXZ3pRV2xDZFdGUFIyNTJZbWwyYWpSRGVISlBja2d4V0VaU1VTOVZSMnRYWW10R1dFVXdlRXhXYzFWSlptcHJRVDA5Q2kwdExTMHRSVTVFSUVORlVsUkpSa2xEUVZSRkxTMHRMUzBLCiAgICBjbGllbnQta2V5LWRhdGE6IExTMHRMUzFDUlVkSlRpQkZReUJRVWtsV1FWUkZJRXRGV1MwdExTMHRDazFJWTBOQlVVVkZTVVo2VERZMlREWk1XR2t2TTNJelVFZEZZVFJNVW14bFVYb3liR1V3VTBSNGNGZFBWMWRNUnpaSWFtaHZRVzlIUTBOeFIxTk5ORGtLUVhkRlNHOVZVVVJSWjBGRlN6bHdOazAxWlhjMGVGTlRXRUpzUzJWRU9WcFpOeXQzY3pGWlQybFVabGhEUTI1NUx6VlNVaTlQYVdSRlQxRlZZbWRxTmdveFptNVBiRzlFVFhwTFZpOUNPV2xFY1VsWE5GZE1aVW94TXpRNFZtMUlRV0YzUFQwS0xTMHRMUzFGVGtRZ1JVTWdVRkpKVmtGVVJTQkxSVmt0TFMwdExRbz0="
             }'
@@ -338,18 +399,54 @@ title: 注册运行时集群
                 "host_cluster": $host-cluster,
                 # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
-                # tekton 域名：当 worker_type 是 pipeline 时才需要填写该属性，使用物理集群的 IP 替换变量 $cluster-ip
-                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
-                # argocd 域名：使用物理集群的 IP 替换变量 $cluster-ip
-                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
                 # 虚拟集群配置：virtual 类型集群才有此属性
                 "vcluster": {
                   # API SERVER 端口号
                   "https_node_port": $api-server-port,
                 },
+                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                    "additions": {
+                      "ProductResourcePathPipeline": "templates/pipelines",
+                      "ProductResourceRevision": "main"
+                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },                  
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                }, 
                 # 可选，集群内的组件也可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "$product-name"
                   ],
                   "argo-events": [
@@ -367,17 +464,8 @@ title: 注册运行时集群
                   "external-secrets": [
                     "$product-name"
                   ],
-                  "vault": [
+                  "hnc-system": [
                     "$product-name"
-                  ],
-                  "cert-manager": [
-                    "$product-name"
-                  ],
-                  "hnc": [
-                    "$product-name"
-                  ],
-                  "oauth2-proxy": [
-                    "demo-quickstart"
                   ]
                 },
                 # 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
@@ -412,13 +500,46 @@ title: 注册运行时集群
                 "worker_type": "pipeline",
                 "host_cluster": "cluster-host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "teoken_host": "tekton.virtual-worker-pipeline.8.217.50.114.nip.io",
-                "argocd_host": "argocd.virtual-worker-pipeline.8.217.50.114.nip.io",
                 "vcluster": {
                   "https_node_port": "31456"
                 },
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                    "additions": {
+                      "ProductResourcePathPipeline": "templates/pipelines",
+                      "ProductResourceRevision": "main"
+                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                },
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "demo-quickstart"
                   ],
                   "argo-events": [
@@ -433,16 +554,7 @@ title: 注册运行时集群
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
-                    "demo-quickstart"
-                  ]，
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -477,9 +589,34 @@ title: 注册运行时集群
                 "worker_type": "deployment",
                 "host_cluster": "cluster-host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.virtual-worker-deployment.8.217.50.114.nip.io",
                 "vcluster": {
                   "https_node_port": "31456"
+                },
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },  
                 },
                 "reserved_namespaces_allowed_products": {
                   "argo-rollouts": [
@@ -491,13 +628,7 @@ title: 注册运行时集群
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },

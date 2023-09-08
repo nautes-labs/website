@@ -87,18 +87,34 @@ spec:
   workerType: "pipeline"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Tekton domain. Replace $cluster-ip with the cluster IP.
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # ArgoCD domain. Replace $cluster-ip with the cluster IP.
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
-  # Traefik configuration
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines
   # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - $product-name
     argo-events:
       - $product-name
@@ -108,13 +124,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-    oauth2-proxy:
+    hnc-system:
       - $product-name
   # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
@@ -141,13 +151,30 @@ spec:
   usage: "worker"
   workerType: "pipeline"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.physical-worker-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart
     argo-events:
       - demo-quickstart
@@ -157,13 +184,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -193,7 +214,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -236,10 +257,14 @@ spec:
   usage: "host"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Traefik configuration
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443" 
   # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster.
   kubeconfig: |
     $kubeconfig
@@ -257,9 +282,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -282,7 +311,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -314,18 +343,37 @@ spec:
   hostCluster: "$host-cluster"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Tekton domain. Replace $cluster-ip with the host cluster IP.
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # ArgoCD domain. Replace $cluster-ip with the host cluster IP.
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
-  # Virtual cluster configuration: the property is only available for virtual type clusters.
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines
   # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - $product-name
     argo-events:
       - $product-name
@@ -335,13 +383,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-    oauth2-proxy:
+    hnc-system:
       - $product-name
   # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
@@ -366,12 +408,36 @@ spec:
   workerType: "pipeline"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.vcluster-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+      additions:
+        ProductResourcePathPipeline: templates/pipelines
+        ProductResourceRevision: main
+        SyncResourceTypes: tekton.dev/Pipeline
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart
     argo-rollouts:
       - demo-quickstart
@@ -381,13 +447,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -495,6 +555,31 @@ spec:
       # Repository visibility：private or public
       visibility: private
       description: coderepo-deploy-demo-$suffix
+---
+# Pipeline repository
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  # Coderepo name
+  name: coderepo-pipeline-demo-$suffix
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  # The product to which the coderepo belongs
+  product: demo-$suffix
+  # The project to which the coderepo belongs
+  project: project-demo-$suffix  
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      # Repository name
+      name: coderepo-pipeline-demo-$suffix
+      # Repository path
+      path: coderepo-pipeline-demo-$suffix
+      # Repository visibility：private or public
+      visibility: private
+      description: coderepo-pipeline-demo-$suffix
 ```
 
 The file example after replacing the variables is shown below:
@@ -553,6 +638,24 @@ spec:
       path: coderepo-deploy-demo-quickstart 
       visibility: private
       description: coderepo-deploy-demo-quickstart
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-pipeline-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  project: project-demo-quickstart
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      name: coderepo-pipeline-demo-quickstart
+      path: coderepo-pipeline-demo-quickstart
+      visibility: private
+      description: coderepo-pipeline-demo-quickstart
 ```
 
 Replace the variables in the property template located at the relative path `examples/demo-pipeline.yaml`, including `$suffix` and `$pipeline-runtime-cluster`.
@@ -600,7 +703,7 @@ spec:
   # The project to which the project pipeline runtime belongs
   project: project-demo-$suffix
   # The source coderepo of the pipeline configuration
-  pipelineSource: coderepo-sc-demo-$suffix
+  pipelineSource: coderepo-pipeline-demo-$suffix
   # The definition of pipelines
   pipelines:
     # Pipeline name
@@ -616,7 +719,7 @@ spec:
   # Optional，custom resource of pipeline runtime
   additionalResources:
     git:
-      codeRepo: coderepo-sc-demo-$suffix
+      codeRepo: coderepo-pipeline-demo-$suffix
       revision: main
       path: test
   # The event sources triggered pipelines
@@ -673,7 +776,7 @@ spec:
   name: pr-demo-quickstart
   product: demo-quickstart
   project: project-demo-quickstart
-  pipelineSource: coderepo-sc-demo-quickstart
+  pipelineSource: coderepo-pipeline-demo-quickstart
   pipelines:
   - name: pipeline-dev-demo-quickstart
     label: main
@@ -683,7 +786,7 @@ spec:
     namespace: pr-demo-quickstart
   additionalResources:
     git:
-      codeRepo: coderepo-sc-demo-quickstart
+      codeRepo: coderepo-pipeline-demo-quickstart
       revision: main
       path: test
   eventSources:
@@ -699,7 +802,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -802,7 +905,7 @@ spec:
     value: main
   taskRunSpecs:
   - pipelineTaskName: git-clone-sourcecode
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -820,7 +923,7 @@ spec:
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: git-clone-deployment
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -838,7 +941,7 @@ spec:
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: manifest-update
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-name
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
@@ -1002,11 +1105,12 @@ git push origin main -f
 
 After you submit the pipeline configurations to the source code repository, Nautes will respond to the Webhook callback from the code repository, and trigger the pipelines in the cluster declared in the project pipeline runtime.
 
-You can view the pipeline information in the Tekton Dashboard by using a browser to access `https://$tekonHost:$traefik-httpsNodePort`.
+You can view the pipeline information in the Tekton Dashboard by using a browser to access, for example, `https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`.
 
-> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `spec.tekonHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
->
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to access the Tekton Dashboard.
+```shell
+./nautes get cluster -oyaml
+```
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 

@@ -87,12 +87,27 @@ spec:
   workerType: "deployment"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # ArgoCD domain. replace $cluster-ip with the cluster IP.
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
-  # Traefik configuration
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 可选，组件属性
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
   # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
@@ -104,11 +119,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
+    hnc-system:
       - $product-name
   # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
@@ -135,10 +146,25 @@ spec:
   usage: "worker"
   workerType: "deployment"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -148,11 +174,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -182,7 +204,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml refers to the relative path of the template file in the command-line repository.
@@ -225,10 +247,14 @@ spec:
   usage: "host"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Traefik configuration
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster.
   kubeconfig: |
     $kubeconfig
@@ -246,9 +272,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -271,7 +301,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -303,12 +333,24 @@ spec:
   hostCluster: "$host-cluster"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # ArgoCD domain, Replace $cluster-ip with the host cluster IP.
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # Virtual cluster configuration: the property is only available for virtual type clusters.
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
+  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
   # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
@@ -318,11 +360,7 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
+    hnc-system:
       - $product-name
   # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
@@ -347,9 +385,21 @@ spec:
   workerType: "deployment"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -357,11 +407,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -623,7 +669,7 @@ spec:
     - project-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
