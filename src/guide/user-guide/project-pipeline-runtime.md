@@ -129,7 +129,17 @@ title: 维护流水线运行时
                         "pipeline": "pipeline-release"
                     }
                 ],
-                "destination": "env-dev-demo",
+                "destination": {
+                  "environment": "env-dev-demo",
+                  "namespace": "pr-demo"
+                },
+                "additionalResources": {
+                  "git": {
+                    "codeRepo": "coderepo-sc-demo",
+                    "revision": "main",
+                    "path": "test"
+                  }
+                },
                 "isolation": "exclusive"
             }'
 ```
@@ -217,7 +227,18 @@ title: 维护流水线运行时
         }
     ],
     // destination 指执行流水线的目标环境
-    "destination": "$destination",
+    "destination": {
+      "environment": "$destination",
+      "namespace": "pr-demo-$project-name"
+    },
+    // additionalResources 流水线运行时的自定义资源
+    "additionalResources": {
+      "git": {
+        "codeRepo": "$pipeline-coderepo-name",
+        "revision": "main",
+        "path": "test"
+      }
+    }, 
     // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
     // shared 表示多个 event_sources 共享资源。例如：当某个 event_source 需要重启时，将影响其他的 event_sources
     // shared 相较于 exclusive 模式，更节省资源
@@ -240,7 +261,14 @@ title: 维护流水线运行时
         name: pr-demo
         namespace: product-xxxx
     spec:
-        destination: env-dev-demo
+        destination:
+          environment: env-dev-demo
+          namespace: pr-demo
+        additionalResources:
+          git:
+            codeRepo: repo-3
+            revision: main
+            path: test
         eventSources:
         - gitlab:
             events:
@@ -437,7 +465,17 @@ title: 维护流水线运行时
                     "pipeline": "pipeline-release"
                 }
             ],
-            "destination": "env-dev-demo",
+            "destination": {
+              "environment": "env-dev-demo",
+              "namespace": "pr-demo"
+            },
+            "additionalResources": {
+              "git": {
+                "codeRepo": "coderepo-sc-demo",
+                "revision": "main",
+                "path": "test"
+              }
+            },
             "isolation": "exclusive"
         }
     ]
@@ -478,7 +516,7 @@ title: 维护流水线运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建流水线运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure-skip-check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
+以创建流水线运行时为例，将 `destination.environment` 属性设置为不合规的 environment，启用 `insecure-skip-check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
 
 ```Shell
     curl -X 'POST' \
@@ -490,7 +528,10 @@ title: 维护流水线运行时
                 "project": "api-server",
                 "pipeline-source": "api-server",
                 ...
-                "destination": "env-invalid",
+                "destination": {
+                  "environment": "env-invalid",
+                  "namespace": "pr-demo"
+                },
                 "isolation": "shared"
             }'
 ```

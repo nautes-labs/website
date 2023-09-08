@@ -193,7 +193,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -282,7 +282,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -609,7 +609,15 @@ spec:
     # 流水线配置文件的路径
     path: pipelines/main.yaml
   # 承载部署运行时的环境
-  destination: env-dev-demo-$suffix
+  destination:
+    environment: env-dev-demo-$suffix
+    namespace: pr-demo-$suffix
+  # 可选项，流水线运行时的自定义资源
+  additionalResources:
+    git:
+      codeRepo: coderepo-sc-demo-$suffix
+      revision: main
+      path: test
   # 触发流水线的事件源
   eventSources:
     # 事件源名称
@@ -669,7 +677,14 @@ spec:
   - name: pipeline-dev-demo-quickstart
     label: main
     path: pipelines/main.yaml
-  destination: env-dev-demo-quickstart
+  destination:
+    environment: env-dev-demo-quickstart
+    namespace: pr-demo-quickstart
+  additionalResources:
+    git:
+      codeRepo: coderepo-sc-demo-quickstart
+      revision: main
+      path: test  
   eventSources:
   - name: webhook
     gitlab:
@@ -683,7 +698,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.9)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径

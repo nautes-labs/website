@@ -129,7 +129,17 @@ The request example is shown below:
                         "pipeline": "pipeline-release"
                     }
                 ],
-                "destination": "env-dev-demo",
+                "destination": {
+                  "environment": "env-dev-demo",
+                  "namespace": "pr-demo"
+                },
+                "additionalResources": {
+                  "git": {
+                    "codeRepo": "coderepo-sc-demo",
+                    "revision": "main",
+                    "path": "test"
+                  }
+                },
                 "isolation": "exclusive"
             }'
 ```
@@ -235,7 +245,18 @@ The property comments in the request body are shown below:
         }
     ],
     // destination refers to the target environment for running the pipeline.
-    "destination": "$destination",
+    "destination": {
+      "environment": "$destination",
+      "namespace": "pr-demo-$project-name"
+    },
+    // additionalResources custom resource of pipeline runtime.
+    "additionalResources": {
+      "git": {
+        "codeRepo": "$pipeline-coderepo-name",
+        "revision": "main",
+        "path": "test"
+      }
+    },
     // isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
     // shared means that multiple event_sources share resources. 
     // For example, when a certain event_source needs to be restarted, it will affect other event_sources. 
@@ -260,7 +281,14 @@ After the request is successful, the resource file for the project pipeline runt
         name: pr-demo
         namespace: product-xxxx
     spec:
-        destination: env-dev-demo
+        destination:
+          environment: env-dev-demo
+          namespace: pr-demo
+        additionalResources:
+          git:
+            codeRepo: repo-3
+            revision: main
+            path: test
         eventSources:
         - gitlab:
             events:
@@ -457,7 +485,17 @@ Use the curl command or other tools to execute the API request to list project P
                     "pipeline": "pipeline-release"
                 }
             ],
-            "destination": "env-dev-demo",
+            "destination": {
+              "environment": "env-dev-demo",
+              "namespace": "pr-demo"
+            },
+            "additionalResources": {
+              "git": {
+                "codeRepo": "coderepo-sc-demo",
+                "revision": "main",
+                "path": "test"
+              }
+            },
             "isolation": "exclusive"
         }
     ]
@@ -498,7 +536,7 @@ Use the curl command or other tools to execute the API request to view the proje
 
 For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
-Taking creating a project pipeline runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the project pipeline runtime resource file. The snippets of the request example are shown below:
+Taking creating a project pipeline runtime as an example, if the value of the `destination.environment` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the project pipeline runtime resource file. The snippets of the request example are shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -507,10 +545,13 @@ Taking creating a project pipeline runtime as an example, if the value of the `d
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
         -d '{
-        "project": "api-server",
-        "pipeline_source": "api-server",
-        ...
-        "destination": "env-invalid",
-        "isolation": "shared"
-        }'
+              "project": "api-server",
+              "pipeline_source": "api-server",
+              ...
+              "destination": {
+                "environment": "env-invalid",
+                "namespace": "pr-demo"
+              },
+              "isolation": "shared"
+            }'
 ```
