@@ -48,7 +48,11 @@ title: 维护部署运行时
     # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
     # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
     # 替换变量 $destination 为部署运行时下发部署的目标环境
+<<<<<<< HEAD
     # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
+=======
+    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境中的命名空间
+>>>>>>> e4115f1 (feature: add productAllowedClusterResources,reservedNamespacesAllowedProducts and change the destination of deployment runtime)
     # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
@@ -73,7 +77,7 @@ title: 维护部署运行时
                   "environment": "$destination",
                   # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
                   "namespaces": [
-                    "$namespace-101"
+                    "$namespace-101",
                     "$namespace-102"
                   ]
                 }
