@@ -193,7 +193,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -282,7 +282,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -609,8 +609,22 @@ spec:
     label: main
     # The relative path of pipeline configuration files
     path: pipelines/main.yaml
-  # The target environment of the project pipeline runtime
-  destination: env-dev-demo-$suffix
+  destination:
+    # The environment refers to the target environment for running the pipeline.
+    environment: env-dev-demo-$suffix
+    # The namespace refers to the target namespace of the environment for running the pipeline.
+    namespace: pr-demo-$suffix
+  # Optional
+  # The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
+  additionalResources:
+    git:
+      # The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
+      # It can also have the same name as the pipeline runtime.
+      codeRepo: coderepo-sc-demo-$suffix
+      # The revision refers to the revision of the code repository that stores the pipeline custom resource configurations.
+      revision: main
+      # The path refers to the path of the code repository that stores the pipeline custom resource configurations.
+      path: test
   # The event sources triggered pipelines
   eventSources:
     # The event source name
@@ -670,7 +684,14 @@ spec:
   - name: pipeline-dev-demo-quickstart
     label: main
     path: pipelines/main.yaml
-  destination: env-dev-demo-quickstart
+  destination:
+    environment: env-dev-demo-quickstart
+    namespace: pr-demo-quickstart
+  additionalResources:
+    git:
+      codeRepo: coderepo-sc-demo-quickstart
+      revision: main
+      path: test
   eventSources:
   - name: webhook
     gitlab:
@@ -684,7 +705,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.9) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.

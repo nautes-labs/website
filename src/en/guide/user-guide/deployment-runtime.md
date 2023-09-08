@@ -68,9 +68,10 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                     # The relative path of the code repository watched by the deployment runtime
                     "path": $coderepo-path
                 },
-                # The target environment of the deployment runtime
                 "destination": {
+                  # The environment refers to the target environment for running the deployment.
                   "environment": "$destination",
+                  # The namespace refers to the target namespace of the environment for running the deployment.
                   # The DeploymentRuntime supports deploying different Deployments to different namespaces. For example, Deployment A is deployed to $namespace-101 and Deployment B is deployed to $namespace-102.
                   "namespaces": [
                     "$namespace-101",
