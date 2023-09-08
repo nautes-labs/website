@@ -43,6 +43,13 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
     # Replace the variable $gitlab-access-token with the GitLab access token.
     # Replace the variable $product-name with the name of the product to which the deployment runtime belongs.
     # Replace the variable $deploymentruntime-name with the deployment runtime name.
+    # Replace the variable $project with the project to which the deployment runtime belongs.
+    # Replace the variable $coderepo-name with the name of the code repository watched by the deployment runtime.
+    # Replace the variable $coderepo-target-revision with the revision or branch of the code repository watched by the deployment runtime.
+    # Replace the variable $coderepo-path with the relative path of the code repository watched by the deployment runtime.
+    # Replace the variable $destination with the target environment of the deployment runtime.
+    # Replace the variable $namespace-101 which is optional with the target namespace of the environment of the deployment runtime.
+    # Replace the variable $namespace-102 which is optional with the target namespace of the environment of the deployment runtime.
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -62,7 +69,13 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                     "path": $coderepo-path
                 },
                 # The target environment of the deployment runtime
-                "destination": $destination
+                "destination": {
+                  "environment": "$destination",
+                  "namespaces": [
+                    "$namespace-101"
+                    "$namespace-102"
+                  ]
+                }
             }'
 ```
 
@@ -83,7 +96,12 @@ The request example after replacing the variables is shown below:
                     "target_revision": "HEAD",
                     "path": "manifests/development"
                 },
-                "destination": "env-dev"
+                "destination": {
+                  "environment": "env-dev",
+                  "namespaces": [
+                    "dr-dev"
+                  ]
+                }
             }'
 ```
 
@@ -99,7 +117,10 @@ After the request is successful, the resource file for the deployment runtime wi
     metadata:
         name: dr-dev
     spec:
-        destination: env-dev
+        destination:
+            environment: env-dev
+            namespaces:
+              - dr-dev
         manifestSource:
             codeRepo: repo-xxxx
             path: manifests/development
@@ -183,7 +204,12 @@ Use the curl command or other tools to execute the API request to list deploymen
                 "target_revision": "HEAD",
                 "path": "manifests/development"
             },
-            "destination": "env-demo"
+            "destination": {
+              "environment": "env-dev",
+              "namespaces": [
+                "dr-dev"
+              ]
+            }
         }
     ]
 }
@@ -239,6 +265,11 @@ Taking creating a deployment runtime as an example, if the value of the `destina
                     "target_revision": "HEAD",
                     "path": "manifests/development"
                 },
-                "destination": "env-demo"
+                "destination": {
+                  "environment": "env-dev",
+                  "namespaces": [
+                    "dr-dev"
+                  ]
+                }
             }'
 ```
