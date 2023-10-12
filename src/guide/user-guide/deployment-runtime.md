@@ -50,6 +50,7 @@ title: 维护部署运行时
     # 替换变量 $destination 为部署运行时下发部署的目标环境
     # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境中的命名空间
     # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
+    # 替换变量 $account 可选，执行运行时需要的账号
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -75,7 +76,9 @@ title: 维护部署运行时
                     "$namespace-101"
                     "$namespace-102"
                   ]
-                }
+                },
+                # 可选, 执行运行时需要的账号
+                "account": "$account"
             }'
 ```
 
@@ -101,7 +104,8 @@ title: 维护部署运行时
                   "namespaces": [
                     "dr-dev"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```
 
@@ -117,6 +121,7 @@ title: 维护部署运行时
     metadata:
         name: dr-dev
     spec:
+        account: dr-dev-account
         destination:
             environment: env-dev
             namespaces:
@@ -209,7 +214,8 @@ title: 维护部署运行时
               "namespaces": [
                 "dr-dev"
               ]
-            }
+            },
+            "account": "dr-dev-account"
         }
     ]
 }
@@ -270,6 +276,7 @@ title: 维护部署运行时
                   "namespaces": [
                     "dr-dev"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```

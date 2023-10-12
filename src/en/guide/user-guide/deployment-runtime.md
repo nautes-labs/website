@@ -50,6 +50,7 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
     # Replace the variable $destination with the target environment of the deployment runtime.
     # Replace the variable $namespace-101 which is optional with the target namespace of the environment of the deployment runtime.
     # Replace the variable $namespace-102 which is optional with the target namespace of the environment of the deployment runtime.
+    # Replace the variable $account which is optional with the account that run deployment runtime need an account.
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -75,7 +76,9 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                     "$namespace-101"
                     "$namespace-102"
                   ]
-                }
+                },
+                # optional, run deployment runtime need an account 
+                "account": "$account"
             }'
 ```
 
@@ -101,7 +104,8 @@ The request example after replacing the variables is shown below:
                   "namespaces": [
                     "dr-dev"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```
 
@@ -117,6 +121,7 @@ After the request is successful, the resource file for the deployment runtime wi
     metadata:
         name: dr-dev
     spec:
+        account: dr-dev-account
         destination:
             environment: env-dev
             namespaces:
@@ -209,7 +214,8 @@ Use the curl command or other tools to execute the API request to list deploymen
               "namespaces": [
                 "dr-dev"
               ]
-            }
+            },
+            "account": "dr-dev-account"
         }
     ]
 }
@@ -270,6 +276,7 @@ Taking creating a deployment runtime as an example, if the value of the `destina
                   "namespaces": [
                     "dr-dev"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```
