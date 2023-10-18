@@ -42,7 +42,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 > 模板的注释和示例，详情参考 [初始化产品](deploy-an-application.md#初始化产品)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以销毁产品及运行时。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以销毁产品及运行时。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -68,7 +68,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 > 模板的注释和示例，详情参考 [初始化产品](deploy-an-application.md#初始化产品)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以销毁产品及运行时。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以销毁产品及运行时。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
@@ -96,7 +96,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 > 物理集群属性模板的注释和示例，详情参考 [注册物理集群](deploy-an-application.md#注册物理集群)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以删除物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以删除物理集群。
 
 ```Shell
 nautes remove -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
@@ -122,7 +122,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 > 虚拟集群属性模板的注释和示例，详情参考 [注册虚拟集群](deploy-an-application.md#注册虚拟集群)。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，将删除虚拟集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，将删除虚拟集群。
 
 ```Shell
 nautes remove -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address

@@ -61,7 +61,7 @@ K3s安装完成后，需要开放入方向`6443`端口。详情参考 [安全组
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 下物理集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip` 和 `$kubeconfig`。
+替换位于相对路径 `examples/demo-cluster-physical-worker-pipeline.yaml` 下物理集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip`、`$product-name` 和 `$kubeconfig`。
 
 ```Shell
 # 查看物理集群的 kubeconfig
@@ -95,6 +95,34 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
+  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart  
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - $product-name
+    argo-events:
+      - $product-name
+    argocd:
+      - $product-name
+    traefik:
+      - $product-name
+    external-secrets:
+      - $product-name
+    vault:
+      - $product-name
+    cert-manager:
+      - $product-name
+    hnc:
+      - $product-name
+    oauth2-proxy:
+      - $product-name      
+  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  productAllowedClusterResources:
+    $product-name:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io    
   # 集群的 kubeconfig 文件内容：使用物理集群的 kubeconfig 替换该变量
   kubeconfig: |
     $kubeconfig
@@ -118,6 +146,31 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - demo-quickstart
+    argo-events:
+      - demo-quickstart
+    argocd:
+      - demo-quickstart
+    traefik:
+      - demo-quickstart
+    external-secrets:
+      - demo-quickstart
+    vault:
+      - demo-quickstart
+    cert-manager:
+      - demo-quickstart
+    hnc:
+      - demo-quickstart
+    oauth2-proxy:
+      - demo-quickstart      
+  productAllowedClusterResources:
+    demo-quickstart:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -140,7 +193,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -229,7 +282,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -238,7 +291,7 @@ spec:
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip`、`$host-cluster` 和 `$api-server-port`。
+替换位于相对路径 `examples/demo-cluster-virtual-worker-pipeline.yaml` 下的虚拟集群属性模板的变量，包括 `$cluster-name`、`$api-server`、`$cluster-ip`、`$host-cluster`、`$product-name` 和 `$api-server-port`。
 
 ```yaml
 # 虚拟集群属性模板
@@ -269,6 +322,33 @@ spec:
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
+  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - $product-name
+    argo-events:
+      - $product-name
+    argocd:
+      - $product-name
+    traefik:
+      - $product-name
+    external-secrets:
+      - $product-name
+    vault:
+      - $product-name
+    cert-manager:
+      - $product-name
+    hnc:
+      - $product-name
+    oauth2-proxy:
+      - $product-name       
+  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  productAllowedClusterResources:
+    $product-name:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
 ```
 
 替换变量后的虚拟集群属性示例如下：
@@ -289,6 +369,31 @@ spec:
   argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - demo-quickstart    
+    argo-rollouts:
+      - demo-quickstart
+    argocd:
+      - demo-quickstart
+    traefik:
+      - demo-quickstart
+    external-secrets:
+      - demo-quickstart
+    vault:
+      - demo-quickstart
+    cert-manager:
+      - demo-quickstart
+    hnc:
+      - demo-quickstart
+    oauth2-proxy:
+      - demo-quickstart
+  productAllowedClusterResources:
+    demo-quickstart:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
 ```
 
 执行以下命令，将注册该虚拟集群。
@@ -578,7 +683,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.0)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径

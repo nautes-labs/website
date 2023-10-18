@@ -43,6 +43,13 @@ title: 维护部署运行时
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $product-name 为部署运行时所属产品的名称
     # 替换变量 $deploymentruntime-name 为部署运行时的名称
+    # 替换变量 $project 为部署运行时关联的项目
+    # 替换变量 $coderepo-name 部署运行时监听的代码库名称
+    # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
+    # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
+    # 替换变量 $destination 为部署运行时下发部署的目标环境
+    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
+    # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -51,18 +58,25 @@ title: 维护部署运行时
         -d '{
                 # 部署运行时关联的项目
                 "projects_ref": [
-                    $project
+                    "$project"
                 ],
                 "manifest_source": {
                     # 部署运行时监听的代码库名称
-                    "code_repo": $coderepo-name,
+                    "code_repo": "$coderepo-name",
                     # 部署运行时监听的代码库版本
-                    "target_revision": $coderepo-target-revision,
+                    "target_revision": "$coderepo-target-revision",
                     # 部署运行时监听的代码库路径
-                    "path": $coderepo-path
+                    "path": "$coderepo-path"
                 },
                 # 部署运行时下发部署的目标环境
-                "destination": $destination
+                "destination": {
+                  "environment": "$destination",
+                  # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
+                  "namespaces": [
+                    "$namespace-101"
+                    "$namespace-102"
+                  ]
+                }
             }'
 ```
 
@@ -83,7 +97,12 @@ title: 维护部署运行时
                     "target_revision": "HEAD",
                     "path": "manifests/development"
                 },
-                "destination": "env-dev"
+                "destination": {
+                  "environment": "env-dev",
+                  "namespaces": [
+                    "dr-dev"
+                  ]
+                }
             }'
 ```
 
@@ -99,7 +118,10 @@ title: 维护部署运行时
     metadata:
         name: dr-dev
     spec:
-        destination: env-dev
+        destination:
+            environment: env-dev
+            namespaces:
+              - dr-dev
         manifestSource:
             codeRepo: repo-xxxx
             path: manifests/development
@@ -183,7 +205,12 @@ title: 维护部署运行时
                 "target_revision": "HEAD",
                 "path": "manifests/development"
             },
-            "destination": "env-demo"
+            "destination": {
+              "environment": "env-dev",
+              "namespaces": [
+                "dr-dev"
+              ]
+            }
         }
     ]
 }
@@ -239,6 +266,11 @@ title: 维护部署运行时
                     "target_revision": "HEAD",
                     "path": "manifests/development"
                 },
-                "destination": "env-demo"
+                "destination": {
+                  "environment": "env-dev",
+                  "namespaces": [
+                    "dr-dev"
+                  ]
+                }
             }'
 ```

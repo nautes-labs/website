@@ -61,7 +61,7 @@ Clone the command-line repository to your local machine.
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip` and `$kubeconfig`.
+Replace the variables in the physical cluster property template located at the relative path `examples/demo-cluster-physical-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip`, `$product-name` and `$kubeconfig`.
 
 ```Shell
 # View the kubeconfig for the physical cluster.
@@ -95,6 +95,34 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - $product-name
+    argo-events:
+      - $product-name
+    argocd:
+      - $product-name
+    traefik:
+      - $product-name
+    external-secrets:
+      - $product-name
+    vault:
+      - $product-name
+    cert-manager:
+      - $product-name
+    hnc:
+      - $product-name
+    oauth2-proxy:
+      - $product-name
+  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  productAllowedClusterResources:
+    $product-name:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
   # Content of the kubeconfig file of the cluster: Replace the variable with the kubeconfig of the physical cluster.
   kubeconfig: |
     $kubeconfig
@@ -118,6 +146,31 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - demo-quickstart
+    argo-events:
+      - demo-quickstart
+    argocd:
+      - demo-quickstart
+    traefik:
+      - demo-quickstart
+    external-secrets:
+      - demo-quickstart
+    vault:
+      - demo-quickstart
+    cert-manager:
+      - demo-quickstart
+    hnc:
+      - demo-quickstart
+    oauth2-proxy:
+      - demo-quickstart
+  productAllowedClusterResources:
+    demo-quickstart:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io    
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -140,7 +193,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -229,7 +282,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -238,7 +291,7 @@ Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag
 nautes apply -f examples/demo-cluster-host.yaml -t $gitlab-access-token -s $api-server-address
 ```
 
-Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip`, and `$api-server-port`.
+Replace the variables in the virtual cluster property template located at the relative path `examples/demo-cluster-virtual-worker-pipeline.yaml`, including `$cluster-name`, `$api-server`, `$cluster-ip`, `$product-name` and `$api-server-port`.
 
 ```yaml
 # Virtual cluster property template
@@ -269,6 +322,34 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - $product-name
+    argo-events:
+      - $product-name
+    argocd:
+      - $product-name
+    traefik:
+      - $product-name
+    external-secrets:
+      - $product-name
+    vault:
+      - $product-name
+    cert-manager:
+      - $product-name
+    hnc:
+      - $product-name
+    oauth2-proxy:
+      - $product-name
+  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  productAllowedClusterResources:
+    $product-name:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
 ```
 
 The virtual cluster property example after replacing the variables is shown below:
@@ -289,6 +370,31 @@ spec:
   argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  reservedNamespacesAllowedProducts:
+    tekton:
+      - demo-quickstart
+    argo-rollouts:
+      - demo-quickstart
+    argocd:
+      - demo-quickstart
+    traefik:
+      - demo-quickstart
+    external-secrets:
+      - demo-quickstart
+    vault:
+      - demo-quickstart
+    cert-manager:
+      - demo-quickstart
+    hnc:
+      - demo-quickstart
+    oauth2-proxy:
+      - demo-quickstart
+  productAllowedClusterResources:
+    demo-quickstart:
+      - kind: ClusterRole
+        group: authorization.k8s.io
+      - kind: ClusterRoleBinding
+        group: authorization.k8s.io
 ```
 
 Run the following command to register the virtual cluster.
@@ -578,7 +684,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.0) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.3.8) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
