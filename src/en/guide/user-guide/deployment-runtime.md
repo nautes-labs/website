@@ -71,6 +71,7 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                 # The target environment of the deployment runtime
                 "destination": {
                   "environment": "$destination",
+                  # The DeploymentRuntime supports deploying different Deployments to different namespaces. For example, Deployment A is deployed to $namespace-101 and Deployment B is deployed to $namespace-102.
                   "namespaces": [
                     "$namespace-101"
                     "$namespace-102"

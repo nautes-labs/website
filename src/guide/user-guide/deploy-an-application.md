@@ -310,7 +310,7 @@ spec:
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-101
+  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
