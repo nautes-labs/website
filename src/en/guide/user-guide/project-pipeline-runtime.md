@@ -251,8 +251,8 @@ The property comments in the request body are shown below:
       // The namespace refers to the target namespace of the environment for running the pipeline.
       "namespace": "$namespace"
     },
-    // optional
-    // additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
+    // Optional.
+    // The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
     "additionalResources": {
       "git": {
         // The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
@@ -272,7 +272,8 @@ The property comments in the request body are shown below:
     // and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
     "isolation": "$isolation",
-    // acccount is optional, run runtime need an account
+    // The account refers to run runtime need an account.
+    // By default, the runtime creates an account with the name of the runtime. You can also specify an account or not. It is a Service Account for Kubernetes.
     "account": "$account"
 }
 ```

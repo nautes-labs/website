@@ -78,7 +78,8 @@ title: 维护部署运行时
                     "$namespace-102"
                   ]
                 },
-                # 可选, 执行运行时需要的账号
+                # 执行运行时需要的账号
+                # 默认情况下，运行时以运行时的名称创建一个账户。您还可以指定帐户或不指定账户。它是Kubernetes的服务账户。
                 "account": "$account"
             }'
 ```
@@ -101,9 +102,9 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo"
                   ]
                 },
                 "account": "dr-demo-account"
@@ -211,12 +212,12 @@ title: 维护部署运行时
                 "path": "manifests/development"
             },
             "destination": {
-              "environment": "env-dev",
+              "environment": "env-dev-demo",
               "namespaces": [
-                "dr-dev"
+                "dr-demo"
               ]
             },
-            "account": "dr-dev-account"
+            "account": "dr-demo-account"
         }
     ]
 }
@@ -256,7 +257,7 @@ title: 维护部署运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
+以创建部署运行时为例，将 `destination.environment` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 
 ```Shell
     curl -X 'POST' \
@@ -273,9 +274,9 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo"
                   ]
                 },
                 "account": "dr-demo-account"

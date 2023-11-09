@@ -87,7 +87,7 @@ spec:
   workerType: "pipeline"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
   componentsList:
     multiTenant:
       name: hnc
@@ -111,7 +111,7 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines    
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  # 可选，保留命名空间是集群自定义组件的安装空间，如果产品需要使用某个保留命名空间，比如说在这个保留命名空间内安装资源，使用产品名称替换：$product-name
   # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart  
   reservedNamespacesAllowedProducts:
     tekton-pipelines :
@@ -126,7 +126,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name   
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 可选，如果产品需要使用集群级别的资源权限，使用产品名称替换：$product-name
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -257,7 +257,7 @@ spec:
   usage: "host"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
   componentsList:
     gateway:
       name: traefik
@@ -347,7 +347,7 @@ spec:
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
-  # componentsList 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中
+  # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
   componentsList:
     multiTenant:
       name: hnc
@@ -362,7 +362,6 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 可选，组件属性
       additions:
         httpNodePort: "30080"
         httpsNodePort: "30443"
@@ -375,7 +374,8 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines    
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  # 可选，保留命名空间是集群自定义组件的安装空间，如果产品需要使用某个保留命名空间，比如说在这个保留命名空间内安装资源，使用产品名称替换：$product-name
+  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
       - $product-name
@@ -391,7 +391,7 @@ spec:
       - $product-name
     oauth2-proxy:
       - $product-name       
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 可选，如果产品需要使用集群级别的资源权限，使用产品名称替换：$product-name
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -704,7 +704,8 @@ kind: ProjectPipelineRuntime
 spec:
   # 流水线运行时的名称
   name: pr-demo-$suffix
-  # 可选项，执行流水线运行时的账号
+  # 执行流水线运行时的账号
+  # 默认情况下，运行时以运行时的名称创建一个账户。您还可以指定账户或不指定账户。它是Kubernetes的服务账户。
   account: pr-demo-account-$suffix
   # 流水线运行时的所属产品
   product: demo-$suffix
@@ -1114,12 +1115,17 @@ git push origin main -f
 
 ### 流水线
 
-当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址例如：`https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`。
+当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`。
 
 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
 ```shell
 ./nautes get cluster -oyaml
 ```
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考执行上面命令返回值中的 `spec.componentsList.pipeline.additions.host`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+> 
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考执行上面命令返回值中的 `spec.componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
+
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 
 ### 镜像库

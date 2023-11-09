@@ -79,7 +79,8 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                     "$namespace-102"
                   ]
                 },
-                # optional, run deployment runtime need an account 
+                # The account refers to run runtime need an account. 
+                # By default, the runtime creates an account with the name of the runtime. You can also specify an account or not. It is a Service Account for Kubernetes.
                 "account": "$account"
             }'
 ```
@@ -102,9 +103,9 @@ The request example after replacing the variables is shown below:
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo"
                   ]
                 },
                 "account": "dr-demo-account"
@@ -212,12 +213,12 @@ Use the curl command or other tools to execute the API request to list deploymen
                 "path": "manifests/development"
             },
             "destination": {
-              "environment": "env-dev",
+              "environment": "env-dev-demo",
               "namespaces": [
-                "dr-dev"
+                "dr-demo"
               ]
             },
-            "account": "dr-dev-account"
+            "account": "dr-demo-account"
         }
     ]
 }
@@ -257,7 +258,7 @@ Use the curl command or other tools to execute the API request to view the deplo
 
 For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
-Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
+Taking creating a deployment runtime as an example, if the value of the `destination.environment` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -274,9 +275,9 @@ Taking creating a deployment runtime as an example, if the value of the `destina
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo"
                   ]
                 },
                 "account": "dr-demo-account"
