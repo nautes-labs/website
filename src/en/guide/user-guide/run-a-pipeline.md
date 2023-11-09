@@ -214,7 +214,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -311,7 +311,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -415,9 +415,9 @@ spec:
       name: hnc
       namespace: hnc-system
       additions:
-        ProductResourcePathPipeline: templates/pipelines
-        ProductResourceRevision: main
-        SyncResourceTypes: tekton.dev/Pipeline
+        productResourceKustomizeFileFolder: templates/pipelines
+        productResourceRevision: main
+        syncResourceTypes: tekton.dev/Pipeline
     secretSync:
       name: external-secrets
       namespace: external-secrets
@@ -698,6 +698,8 @@ kind: ProjectPipelineRuntime
 spec:
   # ProjectPipelineRuntime name
   name: pr-demo-$suffix
+  # Optional, run ProjectPipelineRuntime need an account
+  account: pr-demo-account-$suffix  
   # The product to which the project pipeline runtime belongs
   product: demo-$suffix
   # The project to which the project pipeline runtime belongs
@@ -716,7 +718,7 @@ spec:
     # The environment refers to the target environment for running the pipeline.
     environment: env-dev-demo-$suffix
     # The namespace refers to the target namespace of the environment for running the pipeline.
-    namespace: pr-demo-$suffix
+    namespace: pr-demo-ns-$suffix
   # Optional
   # The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
   additionalResources:
@@ -780,6 +782,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: ProjectPipelineRuntime
 spec:
   name: pr-demo-quickstart
+  account: pr-demo-account-quickstart
   product: demo-quickstart
   project: project-demo-quickstart
   pipelineSource: coderepo-pipeline-demo-quickstart
@@ -789,7 +792,7 @@ spec:
     path: pipelines/main.yaml
   destination:
     environment: env-dev-demo-quickstart
-    namespace: pr-demo-quickstart
+    namespace: pr-demo-ns-quickstart
   additionalResources:
     git:
       codeRepo: coderepo-pipeline-demo-quickstart
@@ -808,7 +811,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refers to the relative path of the template file in the command-line repository.
@@ -1113,7 +1116,7 @@ After you submit the pipeline configurations to the source code repository, Naut
 
 You can view the pipeline information in the Tekton Dashboard by using a browser to access, for example, `https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`.
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to access the Tekton Dashboard.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the Tekton Dashboard.
 ```shell
 ./nautes get cluster -oyaml
 ```

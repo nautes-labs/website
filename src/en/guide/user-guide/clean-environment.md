@@ -42,7 +42,7 @@ Replace the variables in the product template located at the relative path `exam
 
 > For comments and examples of the template, refer to [Initialize a Product](deploy-an-application.md#initialize-a-product).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)  and run the following command to clean up the product and runtime.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)  and run the following command to clean up the product and runtime.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-pipeline.yaml refer to the relative path of the template file in the command-line repository.
@@ -68,7 +68,7 @@ Replace the variables in the product template located at the relative path `exam
 
 > For comments and examples of th template, refer to [Initialize a Product](deploy-an-application.md#initialize-a-product).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)  and run the following command to clean up the product and runtime.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)  and run the following command to clean up the product and runtime.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refer to the relative path of the template file in the command-line repository.
@@ -96,7 +96,7 @@ Replace the variables in the physical cluster property template located at the r
 
 > For comments and examples of the physical cluster property template,  refer to  [Register Physical Cluster](deploy-an-application.md#register-physical-cluster).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)  and run the following command to clean up the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)  and run the following command to clean up the physical cluster.
 
 ```Shell
 nautes remove -f examples/demo-cluster-physical-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address
@@ -122,7 +122,7 @@ Replace the variables in the virtual cluster property template located at the re
 
 > For comments and examples of the virtual cluster property template, refer to [Register Virtual Cluster](deploy-an-application.md#register-runtime-cluster).
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)  and run the following command to destroy the virtual cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)  and run the following command to destroy the virtual cluster.
 
 ```Shell
 nautes remove -f examples/demo-cluster-virtual-worker-pipeline.yaml -t $gitlab-access-token -s $api-server-address

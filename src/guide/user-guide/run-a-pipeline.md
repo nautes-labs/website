@@ -214,7 +214,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -311,7 +311,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -353,9 +353,9 @@ spec:
       name: hnc
       namespace: hnc-system
       additions:
-        ProductResourcePathPipeline: templates/pipelines
-        ProductResourceRevision: main
-        SyncResourceTypes: tekton.dev/Pipeline
+        productResourceKustomizeFileFolder: templates/pipelines
+        productResourceRevision: main
+        syncResourceTypes: tekton.dev/Pipeline
     secretSync:
       name: external-secrets
       namespace: external-secrets
@@ -421,9 +421,9 @@ spec:
       name: hnc
       namespace: hnc-system
       additions:
-        ProductResourcePathPipeline: templates/pipelines
-        ProductResourceRevision: main
-        SyncResourceTypes: tekton.dev/Pipeline
+        productResourceKustomizeFileFolder: templates/pipelines
+        productResourceRevision: main
+        syncResourceTypes: tekton.dev/Pipeline
     secretSync:
       name: external-secrets
       namespace: external-secrets
@@ -704,6 +704,8 @@ kind: ProjectPipelineRuntime
 spec:
   # 流水线运行时的名称
   name: pr-demo-$suffix
+  # 可选项，执行流水线运行时的账号
+  account: pr-demo-account-$suffix
   # 流水线运行时的所属产品
   product: demo-$suffix
   # 流水线运行时的所属项目
@@ -722,7 +724,7 @@ spec:
     # 指执行流水线的目标环境
     environment: env-dev-demo-$suffix
     # 指执行流水线目标环境的命名空间
-    namespace: pr-demo-$suffix
+    namespace: pr-demo-ns-$suffix
   # 可选项，流水线运行时的自定义资源，比如需要额外部署 PVC.
   additionalResources:
     git:
@@ -784,6 +786,7 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: ProjectPipelineRuntime
 spec:
   name: pr-demo-quickstart
+  account: pr-demo-account-quickstart
   product: demo-quickstart
   project: project-demo-quickstart
   pipelineSource: coderepo-pipeline-demo-quickstart
@@ -793,7 +796,7 @@ spec:
     path: pipelines/main.yaml
   destination:
     environment: env-dev-demo-quickstart
-    namespace: pr-demo-quickstart
+    namespace: pr-demo-ns-quickstart
   additionalResources:
     git:
       codeRepo: coderepo-pipeline-demo-quickstart
@@ -812,7 +815,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -1113,7 +1116,7 @@ git push origin main -f
 
 当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址例如：`https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，查看 Tekton Dashboard 的访问地址。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
 ```shell
 ./nautes get cluster -oyaml
 ```

@@ -12,11 +12,12 @@ You can view the pipeline information using the Tekton Dashboard and the image r
 
 ### View Resources in Tekton Dashboard
 
-You can view the pipelines in the Tekton Dashboard installed in the runtime cluster by using a browser to access `https://$tekonHost:$traefik-httpsNodePort`.
+You can view the pipelines in the Tekton Dashboard installed in the runtime cluster by using a browser to access, for example, `https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`.
 
-> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `spec.tekonHost` in the property template in the [Register Physical Cluster](run-a-pipeline.md#register-physical-cluster) or [Register Virtual Cluster](run-a-pipeline.md#register-virtual-cluster) section, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
->
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](run-a-pipeline.md#register-physical-cluster) or [Register Virtual Cluster](run-a-pipeline.md#register-virtual-cluster) section, for example, `30443`.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the Tekton Dashboard.
+```shell
+./nautes get cluster -oyaml
+```
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 
@@ -51,11 +52,12 @@ spec:
 
 ### View Resources in ArgoCD
 
-Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the ArgoCD console.
+Access the ArgoCD console installed on the runtime cluster by using a browser to access, for example, `https://argocd.vcluster-aliyun-0412.8.217.50.114.nip.io:30443`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the ArgoCD console.
 
-> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
->
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `30443`.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the ArgoCD Dashboard.
+```shell
+./nautes get cluster -oyaml
+```
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can view the resource manifest, YAML, events, logs, and perform operations such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
 

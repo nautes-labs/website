@@ -190,9 +190,9 @@ The request example for the project pipeline runtime cluster after replacing var
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {
@@ -535,9 +535,9 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {
@@ -633,9 +633,9 @@ The request example for the project pipeline runtime cluster after replacing var
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {

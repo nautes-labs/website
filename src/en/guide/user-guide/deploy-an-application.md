@@ -204,7 +204,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the physical cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to register the physical cluster.
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml refers to the relative path of the template file in the command-line repository.
@@ -301,7 +301,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to register the host cluster.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to register the host cluster.
 
 ```Shell
 # examples/demo-cluster-host.yaml refers to the relative path of the template file in the command-line repository.
@@ -610,12 +610,14 @@ kind: DeploymentRuntime
 spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
+  # Optional, run DeploymentRuntime need an account
+  account: dr-demo-account-$suffix
   destination:
     # The environment refers to the target environment for running the deployment.
     environment: env-test-demo-$suffix
     # The namespace refers to the target namespace of the environment for running the deployment.
     namespaces:
-      - dr-demo-$suffix
+      - dr-demo-ns-$suffix
   manifestsource:
     # The source coderepo of the deployment runtime
     codeRepo: coderepo-deploy-demo-$suffix
@@ -657,10 +659,11 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
   name: dr-demo-quickstart
+  account: dr-demo-account-quickstart
   destination:
     environment: env-test-demo-quickstart
     namespaces:
-      - dr-demo-quickstart
+      - dr-demo-ns-quickstart
   manifestsource:
     codeRepo: coderepo-deploy-demo-quickstart
     path: deployments/test
@@ -670,7 +673,7 @@ spec:
     - project-demo-quickstart
 ```
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.0) and run the following command to initialize the product.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to initialize the product.
 
 ```Shell
 # examples/demo-product.yaml and examples/demo-deployment.yaml refers to the relative path of the template file in the command-line repository.
@@ -725,7 +728,7 @@ After the deployment is successful, you will be able to access the UI of the sam
 
 > Replace the $cluster-ip variable with the public IP of the runtime cluster.
 >
-> Replace the $traefik-httpnodeport variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
+> Replace the $traefik-httpnodeport variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
 Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only.
 
@@ -733,6 +736,6 @@ Access the ArgoCD console installed on the runtime cluster by using a browser to
 
 > Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.

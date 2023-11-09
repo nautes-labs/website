@@ -189,9 +189,9 @@ title: 注册运行时集群
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {
@@ -532,9 +532,9 @@ title: 注册运行时集群
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {
@@ -630,9 +630,9 @@ title: 注册运行时集群
                     "name": "hnc",
                     "namespace": "hnc-system"
                     "additions": {
-                      "ProductResourcePathPipeline": "templates/pipelines",
-                      "ProductResourceRevision": "main"
-                      "SyncResourceTypes": "tekton.dev/Pipeline"
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {

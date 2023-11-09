@@ -140,7 +140,8 @@ The request example is shown below:
                     "path": "test"
                   }
                 },
-                "isolation": "exclusive"
+                "isolation": "exclusive",
+                "account": "pr-demo-account"
             }'
 ```
 
@@ -270,7 +271,9 @@ The property comments in the request body are shown below:
     // exclusive means that each event_sources has exclusive resources, 
     // and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
-    "isolation": "$isolation"
+    "isolation": "$isolation",
+    // acccount is optional, run runtime need an account
+    "account": "$account"
 }
 ```
 
@@ -287,6 +290,7 @@ After the request is successful, the resource file for the project pipeline runt
         name: pr-demo
         namespace: product-xxxx
     spec:
+        account: pr-demo-account
         destination:
           environment: env-dev-demo
           namespace: pr-demo
@@ -502,7 +506,8 @@ Use the curl command or other tools to execute the API request to list project P
                 "path": "test"
               }
             },
-            "isolation": "exclusive"
+            "isolation": "exclusive",
+            "account": "pr-demo-account"
         }
     ]
 }
@@ -558,6 +563,7 @@ Taking creating a project pipeline runtime as an example, if the value of the `d
                 "environment": "env-invalid",
                 "namespace": "pr-demo"
               },
-              "isolation": "shared"
+              "isolation": "shared",
+              "account": "pr-demo-account"
             }'
 ```

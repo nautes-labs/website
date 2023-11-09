@@ -204,7 +204,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml 指在代码库中模板文件的相对路径
@@ -301,7 +301,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -610,12 +610,14 @@ kind: DeploymentRuntime
 spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
+  # 可选项，执行部署运行时的账号
+  account: dr-demo-account-$suffix
   destination:
     # 指执行部署的目标环境
     environment: env-test-demo-$suffix
     # 指执行部署的目标环境的命名空间
     namespaces:
-      - dr-demo-$suffix
+      - dr-demo-ns-$suffix
   manifestsource:
     # 部署运行时监听的代码库
     codeRepo: coderepo-deploy-demo-$suffix
@@ -657,10 +659,11 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
   name: dr-demo-quickstart
+  account: dr-demo-account-quickstart
   destination:
     environment: env-test-demo-quickstart
     namespaces:
-      - dr-demo-quickstart  
+      - dr-demo-ns-quickstart  
   manifestsource:
     codeRepo: coderepo-deploy-demo-quickstart
     path: deployments/test
@@ -670,7 +673,7 @@ spec:
     - project-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.0)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
@@ -724,7 +727,7 @@ git push origin main -f
 
 >替换变量 $cluster-ip 为运行时集群的公网 IP。
 >
->替换变量 $traefik-httpnodeport 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpNodePort`，例如：`30080`。
+>替换变量 $traefik-httpnodeport 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpNodePort`，例如：`30080`。
 
 您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
 
@@ -732,6 +735,6 @@ git push origin main -f
 
 > 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
 >
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。

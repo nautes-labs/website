@@ -140,7 +140,8 @@ title: 维护流水线运行时
                     "path": "test"
                   }
                 },
-                "isolation": "exclusive"
+                "isolation": "exclusive",
+                "account": "account-demo"
             }'
 ```
 
@@ -249,7 +250,9 @@ title: 维护流水线运行时
     // shared 相较于 exclusive 模式，更节省资源
     // exclusive 表示每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
     // exclusive 相较于 shared 模式，将占用更多资源
-    "isolation": "$isolation"
+    "isolation": "$isolation",
+    // account 可选项，执行运行时需要的账号
+    "account": "$account"
 }
 ```
 
@@ -266,6 +269,7 @@ title: 维护流水线运行时
         name: pr-demo
         namespace: product-xxxx
     spec:
+        account: pr-demo-account
         destination:
           environment: env-dev-demo
           namespace: pr-demo
@@ -481,7 +485,8 @@ title: 维护流水线运行时
                 "path": "test"
               }
             },
-            "isolation": "exclusive"
+            "isolation": "exclusive",
+            "account": "pr-demo-account"
         }
     ]
 }
@@ -537,6 +542,7 @@ title: 维护流水线运行时
                   "environment": "env-invalid",
                   "namespace": "pr-demo"
                 },
-                "isolation": "shared"
+                "isolation": "shared",
+                "account": "pr-demo-account"
             }'
 ```
