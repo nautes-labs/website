@@ -47,8 +47,8 @@ title: 维护部署运行时
     # 替换变量 $coderepo-name 部署运行时监听的代码库名称
     # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
     # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
-    # 替换变量 $destination 为部署运行时下发部署的目标环境
-    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境中的命名空间
+    # 替换变量 $environment 为部署运行时下发部署的目标环境
+    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
     # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
@@ -68,11 +68,12 @@ title: 维护部署运行时
                     # 部署运行时监听的代码库路径
                     "path": "$coderepo-path"
                 },
-                # 部署运行时下发部署的目标环境
                 "destination": {
-                  "environment": "$destination",
+                  # 部署运行时下发部署的目标环境
+                  "environment": "$environment",
+                  # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
                   "namespaces": [
-                    "$namespace-101"
+                    "$namespace-101",
                     "$namespace-102"
                   ]
                 }

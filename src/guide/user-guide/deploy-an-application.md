@@ -164,7 +164,7 @@ spec:
       namespace: argocd
     progressiveDelivery:
       name: argo-rollouts
-      namespace: argo-rollouts    
+      namespace: argo-rollouts
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -352,7 +352,7 @@ spec:
       name: argo-rollouts
       namespace: argo-rollouts    
   # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-101
+  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
@@ -610,9 +610,10 @@ kind: DeploymentRuntime
 spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
-  # 承载部署运行时的环境
   destination:
+    # 指执行部署的目标环境
     environment: env-test-demo-$suffix
+    # 指执行部署的目标环境的命名空间
     namespaces:
       - dr-demo-$suffix
   manifestsource:

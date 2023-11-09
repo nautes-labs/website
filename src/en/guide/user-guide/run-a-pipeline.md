@@ -712,15 +712,21 @@ spec:
     label: main
     # The relative path of pipeline configuration files
     path: pipelines/main.yaml
-  # The target environment of the project pipeline runtime
   destination:
+    # The environment refers to the target environment for running the pipeline.
     environment: env-dev-demo-$suffix
+    # The namespace refers to the target namespace of the environment for running the pipeline.
     namespace: pr-demo-$suffix
-  # Optional，custom resource of pipeline runtime
+  # Optional
+  # The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
   additionalResources:
     git:
-      codeRepo: coderepo-pipeline-demo-$suffix
+      # The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
+      # It can also have the same name as the pipeline runtime.
+      codeRepo: coderepo-sc-demo-$suffix
+      # The revision refers to the revision of the code repository that stores the pipeline custom resource configurations.
       revision: main
+      # The path refers to the path of the code repository that stores the pipeline custom resource configurations.
       path: test
   # The event sources triggered pipelines
   eventSources:

@@ -610,9 +610,10 @@ kind: DeploymentRuntime
 spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
-  # The target environment of the deployment runtime
   destination:
+    # The environment refers to the target environment for running the deployment.
     environment: env-test-demo-$suffix
+    # The namespace refers to the target namespace of the environment for running the deployment.
     namespaces:
       - dr-demo-$suffix
   manifestsource:

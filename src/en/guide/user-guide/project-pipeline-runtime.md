@@ -239,25 +239,31 @@ The property comments in the request body are shown below:
             // indicating that the pipeline can be triggered by multiple events. 
             "pipeline": "$pipeline-name",
             // optional
-            // revision refers to the branch for retrieving the pipeline configuration. 
+            // The revision refers to the branch for retrieving the pipeline configuration. 
             // If not specified, it will be determined based on the "revision" property value of the gitlab in event_sources.
             "revision": "$pipeline-revision"
         }
     ],
-    // destination refers to the target environment for running the pipeline.
     "destination": {
-      "environment": "$destination",
-      "namespace": "pr-demo-$project-name"
+      // The environment refers to the target environment for running the pipeline.
+      "environment": "$environment",
+      // The namespace refers to the target namespace of the environment for running the pipeline.
+      "namespace": "$namespace"
     },
-    // additionalResources custom resource of pipeline runtime.
+    // optional
+    // additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
     "additionalResources": {
       "git": {
+        // The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
+        // It can also have the same name as the pipeline runtime.
         "codeRepo": "$pipeline-coderepo-name",
-        "revision": "main",
-        "path": "test"
+        // The revision refers to the revision of the code repository that stores the pipeline custom resource configurations.
+        "revision": "$pipeline-coderepo-revision",
+        // The path refers to the path of the code repository that stores the pipeline custom resource configurations.
+        "path": "$pipeline-coderepo-path"
       }
     },
-    // isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
+    // The isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
     // shared means that multiple event_sources share resources. 
     // For example, when a certain event_source needs to be restarted, it will affect other event_sources. 
     // Compared with exclusive mode, shared mode saves more resources. 

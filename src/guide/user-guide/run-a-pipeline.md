@@ -185,7 +185,7 @@ spec:
     external-secrets:
       - demo-quickstart
     hnc-system:
-      - demo-quickstart     
+      - demo-quickstart    
   productAllowedClusterResources:
     demo-quickstart:
       - kind: ClusterRole
@@ -718,15 +718,19 @@ spec:
     label: main
     # 流水线配置文件的路径
     path: pipelines/main.yaml
-  # 承载部署运行时的环境
   destination:
+    # 指执行流水线的目标环境
     environment: env-dev-demo-$suffix
+    # 指执行流水线目标环境的命名空间
     namespace: pr-demo-$suffix
-  # 可选项，流水线运行时的自定义资源
+  # 可选项，流水线运行时的自定义资源，比如需要额外部署 PVC.
   additionalResources:
     git:
-      codeRepo: coderepo-pipeline-demo-$suffix
+      # 指自定义资源的代码仓库的名称，也可以和流水线仓库的名称相同
+      codeRepo: coderepo-sc-demo-$suffix
+      # 指自定义资源仓库的分支
       revision: main
+      # 指自定义资源仓库的路径
       path: test
   # 触发流水线的事件源
   eventSources:

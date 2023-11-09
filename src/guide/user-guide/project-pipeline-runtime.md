@@ -226,17 +226,22 @@ title: 维护流水线运行时
             "revision": "$pipeline-revision"
         }
     ],
-    // destination 指执行流水线的目标环境
     "destination": {
-      "environment": "$destination",
-      "namespace": "pr-demo-$project-name"
+      // environment 指执行流水线的目标环境
+      "environment": "$environment",
+      // namespace 指执行流水线目标环境的命名空间
+      "namespace": "$namespace"
     },
-    // additionalResources 流水线运行时的自定义资源
+    // 选填项
+    // additionalResources 指流水线运行时的自定义资源，比如需要额外部署 PVC
     "additionalResources": {
       "git": {
+        // codeRepo 指自定义资源的代码仓库的名称，也可以和流水线仓库的名称相同
         "codeRepo": "$pipeline-coderepo-name",
-        "revision": "main",
-        "path": "test"
+        // revision 指自定义资源仓库的分支
+        "revision": "$pipeline-coderepo-revision",
+        // path 指自定义资源仓库的路径
+        "path": "$pipeline-coderepo-path"
       }
     }, 
     // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
