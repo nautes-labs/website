@@ -49,7 +49,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "worker_type": $worker-type,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io",
-                # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+                # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
                 "components_list": {
                   "multi_tenant": {
                     "name": "hnc",
@@ -84,7 +84,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # Reserved namespaces which reserved_namespaces_allowed_products are optional, If you need to use it for components replace $product-name with the product name.
+                # Reserved namespaces which reserved_namespaces_allowed_products are optional, if you need to use it for components replace $product-name with the product name.
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -105,7 +105,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "$product-name"
                   ]
                 },
-                # Cluster resources which product_allowed_cluster_resources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+                # Cluster resources which product_allowed_cluster_resources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -118,7 +118,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     }
                   ]
                 },
-                # Reserved namespaces which reserved_namespaces_allowed_products are optional, If you need to use it for components replace $product-name with the product name.
+                # Reserved namespaces which reserved_namespaces_allowed_products are optional, if you need to use it for components replace $product-name with the product name.
                 "reserved_namespaces_allowed_products": {
                   "tekton": [
                     "$product-name"
@@ -151,7 +151,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "$product-name"
                   ]
                 },
-                # Cluster resources which product_allowed_cluster_resources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+                # Cluster resources which product_allowed_cluster_resources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -442,7 +442,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "usage": $usage,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io"
-                # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+                # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
                 "components_list": {
                   "gateway": {
                     "name": "traefik",
@@ -529,7 +529,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   # API SERVER port 
                   "https_node_port": $api-server-port,
                 },
-                # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+                # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
                 "components_list": {
                   "multi_tenant": {
                     "name": "hnc",
@@ -569,7 +569,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # Reserved namespaces which reserved_namespaces_allowed_products are optional, If you need to use it for components replace $product-name with the product name.
+                # Reserved namespaces which reserved_namespaces_allowed_products are optional, if you need to use it for components replace $product-name with the product name.
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -593,7 +593,7 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "$product-name"
                   ]
                 },
-                # Cluster resources which product_allowed_cluster_resources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+                # Cluster resources which product_allowed_cluster_resources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {

@@ -87,7 +87,7 @@ spec:
   workerType: "deployment"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type. 
   componentsList:
     multiTenant:
       name: hnc
@@ -98,7 +98,6 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 可选，组件属性
       additions:
         httpNodePort: "30080"
         httpsNodePort: "30443"
@@ -108,7 +107,7 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts    
-  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, if you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
     argo-rollouts:
@@ -121,7 +120,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  # Cluster resources which productAllowedClusterResources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -247,7 +246,7 @@ spec:
   usage: "host"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type. 
   componentsList:
     gateway:
       name: traefik
@@ -337,7 +336,7 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type. 
   componentsList:
     multiTenant:
       name: hnc
@@ -351,7 +350,7 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts
-  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, if you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
     argo-rollouts:
@@ -362,7 +361,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  # Cluster resources which productAllowedClusterResources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -610,7 +609,7 @@ kind: DeploymentRuntime
 spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
-  # Optional, run DeploymentRuntime need an account
+  # The account refers to run deployment runtime need an account.
   account: dr-demo-account-$suffix
   destination:
     # The environment refers to the target environment for running the deployment.
@@ -724,18 +723,22 @@ git push origin main -f
 
 ## View Deployment Results
 
-After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport`.
+After the deployment is successful, you will be able to access the UI of the sample application by using a browser to access `http://devops-sample.$cluster-ip.nip.io:$traefik-httpsNodePort`.
 
 > Replace the $cluster-ip variable with the public IP of the runtime cluster.
 >
-> Replace the $traefik-httpnodeport variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30080`.
 
 Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only.
 
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the ArgoCD Dashboard.
+```shell
+./nautes get cluster -oyaml
+```
 Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console.
 
-> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
->
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.componentsList.deployment.additions.host` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+> 
 > Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.

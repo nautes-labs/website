@@ -87,7 +87,7 @@ spec:
   workerType: "pipeline"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
   componentsList:
     multiTenant:
       name: hnc
@@ -98,7 +98,6 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 可选，组件属性
       additions:
         httpNodePort: "30080"
         httpsNodePort: "30443"
@@ -111,7 +110,7 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines
-  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, if you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
@@ -126,7 +125,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  # Cluster resources which productAllowedClusterResources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -257,7 +256,7 @@ spec:
   usage: "host"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type.
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
   componentsList:
     gateway:
       name: traefik
@@ -346,7 +345,7 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
-  # Optional, Cluster custom components. You can select one or more components  to install in the cluster by component type. 
+  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type. 
   componentsList:
     multiTenant:
       name: hnc
@@ -357,7 +356,6 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 可选，组件属性
       additions:
         httpNodePort: "30080"
         httpsNodePort: "30443"
@@ -370,7 +368,7 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines
-  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, If you need to use it for components replace $product-name with the product name.
+  # Reserved namespaces which reservedNamespacesAllowedProducts are optional, if you need to use it for components replace $product-name with the product name.
   # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
@@ -385,7 +383,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Cluster resources which productAllowedClusterResources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+  # Cluster resources which productAllowedClusterResources are optional, if you need to use permission of cluster resource replace $product-name with the product name.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -698,7 +696,7 @@ kind: ProjectPipelineRuntime
 spec:
   # ProjectPipelineRuntime name
   name: pr-demo-$suffix
-  # Optional, run ProjectPipelineRuntime need an account
+  # The account refers to run project pipeline runtime need an account.
   account: pr-demo-account-$suffix  
   # The product to which the project pipeline runtime belongs
   product: demo-$suffix
@@ -1114,12 +1112,16 @@ git push origin main -f
 
 After you submit the pipeline configurations to the source code repository, Nautes will respond to the Webhook callback from the code repository, and trigger the pipelines in the cluster declared in the project pipeline runtime.
 
-You can view the pipeline information in the Tekton Dashboard by using a browser to access, for example, `https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`.
+You can view the pipeline information in the Tekton Dashboard by using a browser to access `https://$tekonHost:$traefik-httpsNodePort`.
 
 Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the Tekton Dashboard.
 ```shell
 ./nautes get cluster -oyaml
 ```
+
+> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `spec.componentsList.pipeline.additions.host` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
+> 
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpsNodePort` in the property template in the [Register Physical Cluster](#register-physical-cluster) or [Register Virtual Cluster](#register-virtual-cluster) section, for example, `30443`.
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 

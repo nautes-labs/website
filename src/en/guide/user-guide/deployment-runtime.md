@@ -107,7 +107,7 @@ The request example after replacing the variables is shown below:
                     "dr-dev"
                   ]
                 },
-                "account": "dr-demo-account"
+                "account": "dr-dev-account"
             }'
 ```
 
@@ -257,7 +257,7 @@ Use the curl command or other tools to execute the API request to view the deplo
 
 For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
-Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
+Taking creating a deployment runtime as an example, if the value of the `destination.environment` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -279,6 +279,6 @@ Taking creating a deployment runtime as an example, if the value of the `destina
                     "dr-dev"
                   ]
                 },
-                "account": "dr-demo-account"
+                "account": "dr-dev-account"
             }'
 ```

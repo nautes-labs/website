@@ -251,7 +251,7 @@ title: 维护流水线运行时
     // exclusive 表示每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
     // exclusive 相较于 shared 模式，将占用更多资源
     "isolation": "$isolation",
-    // account 可选项，执行运行时需要的账号
+    // account 表示执行运行时需要的账号
     "account": "$account"
 }
 ```

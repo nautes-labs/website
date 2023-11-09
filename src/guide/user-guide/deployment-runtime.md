@@ -106,7 +106,7 @@ title: 维护部署运行时
                     "dr-dev"
                   ]
                 },
-                "account": "dr-demo-account"
+                "account": "dr-dev-account"
             }'
 ```
 
@@ -256,7 +256,7 @@ title: 维护部署运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
+以创建部署运行时为例，将 `destination.environment` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 
 ```Shell
     curl -X 'POST' \
@@ -278,6 +278,6 @@ title: 维护部署运行时
                     "dr-dev"
                   ]
                 },
-                "account": "dr-demo-account"
+                "account": "dr-dev-account"
             }'
 ```

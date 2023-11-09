@@ -272,7 +272,7 @@ The property comments in the request body are shown below:
     // and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
     "isolation": "$isolation",
-    // acccount is optional, run runtime need an account
+    // The account refers to run runtime need an account.
     "account": "$account"
 }
 ```

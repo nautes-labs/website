@@ -362,7 +362,6 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 可选，组件属性
       additions:
         httpNodePort: "30080"
         httpsNodePort: "30443"
@@ -704,7 +703,7 @@ kind: ProjectPipelineRuntime
 spec:
   # 流水线运行时的名称
   name: pr-demo-$suffix
-  # 可选项，执行流水线运行时的账号
+  # 执行流水线运行时的账号
   account: pr-demo-account-$suffix
   # 流水线运行时的所属产品
   product: demo-$suffix
@@ -1114,12 +1113,17 @@ git push origin main -f
 
 ### 流水线
 
-当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址例如：`https://tekton.vcluster-aliyun.8.217.50.114.nip.io:30443`。
+当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`。
 
 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
 ```shell
 ./nautes get cluster -oyaml
 ```
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.pipeline.additions.host`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+> 
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
+
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 
 ### 镜像库

@@ -610,7 +610,7 @@ kind: DeploymentRuntime
 spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
-  # 可选项，执行部署运行时的账号
+  # 指执行部署运行时的账号
   account: dr-demo-account-$suffix
   destination:
     # 指执行部署的目标环境
@@ -723,18 +723,23 @@ git push origin main -f
 
 ## 查看部署结果
 
-部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport` ，可以访问示例应用的 Web 界面。
+部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpsNodePort` ，可以访问示例应用的 Web 界面。
 
 >替换变量 $cluster-ip 为运行时集群的公网 IP。
 >
->替换变量 $traefik-httpnodeport 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpNodePort`，例如：`30080`。
+>替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpNodePort`，例如：`30080`。
 
 您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
 
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 ArgoCD Dashboard 的访问地址。
+```shell
+./nautes get cluster -oyaml
+```
+
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
-> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
->
+> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.deployment.additions.host`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+> 
 > 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。
