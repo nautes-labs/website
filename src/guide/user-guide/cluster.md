@@ -58,7 +58,9 @@ title: 注册运行时集群
                   "http_node_port": "30080",
                   "https_node_port": "30443"
                 },
-                # 可选，集群内的组件也可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+                # 选填项
+                # 集群保留命名空间的配置：使用产品名称替换变量 $product-name，表示该产品可以向保留命名空间部署资源
+                # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton": [
                     "$product-name"
@@ -91,7 +93,8 @@ title: 注册运行时集群
                     "$product-name"
                   ]
                 },
-                # 可选，集群内的组件也可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+                # 选填项
+                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -347,7 +350,9 @@ title: 注册运行时集群
                   # API SERVER 端口号
                   "https_node_port": $api-server-port,
                 },
-                # 可选，集群内的组件也可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+                # 选填项
+                # 集群保留命名空间的配置：使用产品名称替换变量 $product-name，表示该产品可以向保留命名空间部署资源
+                # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton": [
                     "$product-name"
@@ -380,7 +385,8 @@ title: 注册运行时集群
                     "demo-quickstart"
                   ]
                 },
-                # 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+                # 选填项
+                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {

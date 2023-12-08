@@ -95,8 +95,9 @@ spec:
   traefik:
     httpNodePort: "30080"
     httpsNodePort: "30443"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart  
+  # 选填项
+  # 集群保留命名空间的配置：使用产品名称替换变量 $product-name，表示该产品可以向保留命名空间部署资源
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     tekton:
       - $product-name
@@ -116,7 +117,8 @@ spec:
       - $product-name
     oauth2-proxy:
       - $product-name      
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 选填项
+  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -322,7 +324,9 @@ spec:
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  # 选填项
+  # 集群保留命名空间的配置：使用产品名称替换变量 $product-name，表示该产品可以向保留命名空间部署资源
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     tekton:
       - $product-name
@@ -342,7 +346,8 @@ spec:
       - $product-name
     oauth2-proxy:
       - $product-name       
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 选填项
+  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole

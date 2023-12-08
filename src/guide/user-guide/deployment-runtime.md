@@ -47,9 +47,8 @@ title: 维护部署运行时
     # 替换变量 $coderepo-name 部署运行时监听的代码库名称
     # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
     # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
-    # 替换变量 $destination 为部署运行时下发部署的目标环境
-    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
-    # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
+    # 替换变量 $environment 为部署运行时下发部署的目标环境
+    # 替换变量 $namespace1、$namespace2 为部署运行时下发部署的目标环境的可用命名空间
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -70,15 +69,20 @@ title: 维护部署运行时
                 },
                 # 部署运行时下发部署的目标环境
                 "destination": {
-                  "environment": "$destination",
-                  # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
-                  "namespaces": [
-                    "$namespace-101"
-                    "$namespace-102"
-                  ]
+                    # 环境名称
+                    "environment": "$environment",
+                    # 选填项
+                    # 部署配置库中的 Kubernetes 资源清单的可用命名空间，支持自定义多个命名空间
+                    # 可用命名空间默认支持格式为 product-groupID 的产品命名空间（例如 product-396）
+                    "namespaces": [
+                        "$namespace1"
+                        "$namespace2"
+                    ]
                 }
             }'
 ```
+
+> 如果不填写 destination.namespaces，将创建与部署运行时同名的命名空间，作为部署 Kubernetes 资源清单的默认命名空间。
 
 替换变量后的请求示例如下：
 
