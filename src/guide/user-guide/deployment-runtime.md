@@ -43,14 +43,6 @@ title: 维护部署运行时
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $product-name 为部署运行时所属产品的名称
     # 替换变量 $deploymentruntime-name 为部署运行时的名称
-    # 替换变量 $project 为部署运行时关联的项目
-    # 替换变量 $coderepo-name 部署运行时监听的代码库名称
-    # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
-    # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
-    # 替换变量 $environment 为部署运行时下发部署的目标环境
-    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
-    # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
-    # 替换变量 $account 可选，执行运行时需要的账号
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -69,17 +61,21 @@ title: 维护部署运行时
                     # 部署运行时监听的代码库路径
                     "path": "$coderepo-path"
                 },
+                # 承载部署运行时的目标环境
                 "destination": {
-                  # 部署运行时下发部署的目标环境
+                  # 环境名称
                   "environment": "$environment",
-                  # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
+                  # 选填项
+                  # 自定义的 namespace，表示将在目标环境的自定义 namespace 中部署应用，支持多个自定义 namespace
+                  # 如果不填，将创建与部署运行时同名的默认 namespace 
                   "namespaces": [
-                    "$namespace-101",
-                    "$namespace-102"
+                    "$namespace1",
+                    "$namespace2"
                   ]
                 },
-                # 执行运行时需要的账号
-                # 默认情况下，运行时以运行时的名称创建一个账户。您还可以指定帐户或不指定账户。它是Kubernetes的服务账户。
+                # 选填项
+                # 自定义的 account，表示将在目标环境的 namespace 中创建 service account，该账号拥有确保部署运行时正常运行的相关权限，例如获取代码库、获取制品库密钥等
+                # 如果不填，将创建与部署运行时同名的默认 account
                 "account": "$account"
             }'
 ```
@@ -104,7 +100,8 @@ title: 维护部署运行时
                 "destination": {
                   "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-demo"
+                    "dr-demo-1"，
+                    "dr-demo-2"
                   ]
                 },
                 "account": "dr-demo-account"
@@ -123,11 +120,12 @@ title: 维护部署运行时
     metadata:
         name: dr-dev
     spec:
-        account: dr-dev-account
+        account: dr-demo-account
         destination:
-            environment: env-dev
+            environment: env-dev-demo
             namespaces:
-              - dr-dev
+              - dr-demo-1
+              - dr-demo-2
         manifestSource:
             codeRepo: repo-xxxx
             path: manifests/development
@@ -214,7 +212,8 @@ title: 维护部署运行时
             "destination": {
               "environment": "env-dev-demo",
               "namespaces": [
-                "dr-demo"
+                "dr-demo-1",
+                "dr-demo-2"
               ]
             },
             "account": "dr-demo-account"
@@ -274,9 +273,10 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev-demo",
+                  "environment": "env-dev-invalid",
                   "namespaces": [
-                    "dr-demo"
+                    "dr-demo-1",
+                    "dr-demo-2"
                   ]
                 },
                 "account": "dr-demo-account"

@@ -30,7 +30,6 @@ title: 注册运行时集群
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $cluster-name 为集群名称
-    # 替换变量 $product-name 为产品名称，如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -49,10 +48,18 @@ title: 注册运行时集群
                 "worker_type": $worker-type,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
-                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
+                # 选填项
+                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
+                # 以物理的部署运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、progressive_delivery 组件
+                # 以物理的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、event_listener、pipeline 组件
+                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
+                # 自定义集群组件：如果自定义了合规的集群组件，将覆盖集群组件的默认值
                 "components_list": {
+                  # 组件类别
                   "multi_tenant": {
+                    # 组件名称
                     "name": "hnc",
+                    # 组件的命名空间
                     "namespace": "hnc-system"
                   },
                   "secret_sync": {
@@ -62,7 +69,9 @@ title: 注册运行时集群
                   "gateway": {
                     "name": "traefik",
                     "namespace": "traefik",
+                    # 选填项，组件的自定义参数，支持 key value 格式
                     "additions": {
+                      # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
                       "httpNodePort": "30080",
                       "httpsNodePort": "30443"
                     }
@@ -84,8 +93,9 @@ title: 注册运行时集群
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # 可选，保留命名空间是集群自定义组件的安装空间，如果产品需要使用某个保留命名空间，比如说在这个保留命名空间内安装资源，使用产品名称替换：$product-name
-                # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
+                # 选填项
+                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+                # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -106,7 +116,8 @@ title: 注册运行时集群
                     "$product-name"
                   ]
                 },
-                # 可选，如果产品需要使用集群级别的资源权限，使用产品名称替换：$product-name
+                # 选填项
+                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -320,7 +331,11 @@ title: 注册运行时集群
                 "usage": $usage,
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
-                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
+                # 选填项
+                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
+                # 以宿主集群为例，需要安装 gateway 组件
+                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
+                # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
                 "components_list": {
                   "gateway": {
                     "name": "traefik",
@@ -377,8 +392,7 @@ title: 注册运行时集群
 ```Shell
     # 替换变量 $api-server-address 为 Nautes API Server 的访问地址
     # 替换变量 $gitlab-access-token 为 GitLab access token
-    # 替换变量 $cluster-name 为集群名称
-    # 替换变量 $product-name 为产品名称，如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart    
+    # 替换变量 $cluster-name 为集群名称  
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -405,14 +419,29 @@ title: 注册运行时集群
                   # API SERVER 端口号
                   "https_node_port": $api-server-port,
                 },
-                # 可选，集群自定义组件，通过组件的类型选择一个或多个组件安装到集群中，其中 additions 表示该组件的自定义参数。
+                # 选填项
+                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
+                # 以虚拟的部署运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、progressive_delivery 组件
+                # 以虚拟的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、event_listener、pipeline 组件
+                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
+                # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
                 "components_list": {
+                  # 组件类别
                   "multi_tenant": {
+                    # 组件名称
                     "name": "hnc",
+                    # 组件的命名空间
                     "namespace": "hnc-system"
+                    # 选填项，组件的自定义参数，支持 key value 格式
+                    # 以 hnc 为例，通过定义参数，可以根据产品 default.project 代码库的指定分支、指定 kustomize 文件路径，同步指定的资源类型到运行时集群
+                    # 例如某个产品的开发、测试和发布流水线在所有的运行时集群中的结构相同
                     "additions": {
+                      # 在 default.project 代码库中的 kustomize 文件路径
                       "productResourceKustomizeFileFolder": "templates/pipelines",
+                      # 在 default.project 代码库中获取 kustomize 文件的分支，默认值为 main
                       "productResourceRevision": "main"
+                      # 需要同步的资源类型
+                      # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔
                       "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
@@ -445,8 +474,9 @@ title: 注册运行时集群
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # 可选，保留命名空间是集群自定义组件的安装空间，如果产品需要使用某个保留命名空间，比如说在这个保留命名空间内安装资源，使用产品名称替换：$product-name
-                # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
+                # 选填项
+                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+                # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -470,7 +500,8 @@ title: 注册运行时集群
                     "$product-name"
                   ]
                 },
-                # 可选，如果产品需要使用集群级别的资源权限，使用产品名称替换：$product-name
+                # 选填项
+                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -518,14 +549,6 @@ title: 注册运行时集群
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",
@@ -602,14 +625,6 @@ title: 注册运行时集群
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",
