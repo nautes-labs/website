@@ -87,10 +87,19 @@ spec:
   workerType: "pipeline"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+  # Optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a physical pipeline runtime cluster, 
+  # install the following components: multi_tenant, secret_sync, gateway, deployment, event_listener and pipeline.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
+    # Component type
     multiTenant:
+      # Component name
       name: hnc
+      # Component namespace
       namespace: hnc-system
     secretSync:
       name: external-secrets
@@ -98,7 +107,10 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
+      # Optional
+      # The component's customization parameters support a key-value format.
       additions:
+        # The parameters of Traefik represent customized ports for HTTP and HTTPS.
         httpNodePort: "30080"
         httpsNodePort: "30443"
     deployment:
@@ -110,8 +122,12 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines
-  # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  # Optional
+  # Cluster reserved namespace configuration:
+  # Reserved namespaces refer to installation spaces for components within the cluster.
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the reserved namespaces where the product can deploy resources.
+  # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
       - $product-name
@@ -125,7 +141,10 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+  # Optional
+  # Cluster-scoped resource configuration:
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the cluster-scoped resources which the product can deploy to the cluster.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -256,7 +275,12 @@ spec:
   usage: "host"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type.
+  # Optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a host cluster, install the gateway component.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
     gateway:
       name: traefik
@@ -345,11 +369,32 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
-  # Optional, cluster custom components. You can select one or more components to install in the cluster by component type. 
+  # Optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a virtual pipeline runtime cluster,
+  # install the following components: multi_tenant, secret_sync, deployment, event_listener and pipeline.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
+    # Component type
     multiTenant:
+      # Component name
       name: hnc
+      # Component namespace
       namespace: hnc-system
+      # Optional
+      # The component's customization parameters support a key-value format.
+      # Taking hnc as an example, defining parameters enables the synchronization of specified resource types to the runtime cluster, based on the product's default project code repository.
+      # For example, the structure of a product's development, test, and release pipelines is the same in all runtime clusters.
+      additions:
+        # The kustomization file path in the default.project code repository.
+        productResourceKustomizeFileFolder: templates/pipelines
+        # The branch in the default.project code repository to fetch the kustomization file from, with 'main' being the default.
+        productResourceRevision: main
+        # Resource types to synchronize
+        # Format: "group/resourceType1,group/resourceType02", with multiple resource types separated by commas.
+        syncResourceTypes: tekton.dev/Pipeline
     secretSync:
       name: external-secrets
       namespace: external-secrets
@@ -368,8 +413,12 @@ spec:
     pipeline:
       name: tekton
       namespace: tekton-pipelines
-  # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  # Optional
+  # Cluster reserved namespace configuration:
+  # Reserved namespaces refer to installation spaces for components within the cluster.
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the reserved namespaces where the product can deploy resources.
+  # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
       - $product-name
@@ -383,7 +432,10 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+  # Optional
+  # Cluster-scoped resource configuration:
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the cluster-scoped resources which the product can deploy to the cluster.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -419,12 +471,6 @@ spec:
     secretSync:
       name: external-secrets
       namespace: external-secrets
-    gateway:
-      name: traefik
-      namespace: traefik
-      additions:
-        httpNodePort: "30080"
-        httpsNodePort: "30443"
     deployment:
       name: argocd
       namespace: argocd
@@ -478,7 +524,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 Replace the variables in the property template located at the relative path `examples/demo-product.yaml`, including `$suffix`.
 
-> Here are two code repositories created: "source code repository" is used to store project source code and pipeline configuration files, while "deployment configuration repository" is used to store project deployment manifests.
+> Here are three code repositories created: "source code repository" is used to store project source code, "deployment configuration repository" is used to store deployment manifests, and "pipeline configuration repository" is used to store pipeline configuration files.
 
 ```yaml
 # Product
@@ -554,7 +600,7 @@ spec:
       visibility: private
       description: coderepo-deploy-demo-$suffix
 ---
-# Pipeline repository
+# Pipeline configuration repository
 apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: CodeRepo
 spec:
@@ -696,8 +742,11 @@ kind: ProjectPipelineRuntime
 spec:
   # ProjectPipelineRuntime name
   name: pr-demo-$suffix
-  # The account refers to run project pipeline runtime need an account.
-  # By default, the runtime creates an account with the name of the runtime. You can also specify an account or not. It is a Service Account for Kubernetes.
+  # Optional
+  # The customization account refers to Nautes creating a service account in the target environment's namespace.
+  # This account has the necessary permissions to ensure pipeline runtime resources work normally,
+  # such as cloning code repositories and getting artifact repository secrets.
+  # If not specified, the default service account with the same name as the deployment runtime will be created.
   account: pr-demo-account-$suffix  
   # The product to which the project pipeline runtime belongs
   product: demo-$suffix
@@ -713,21 +762,29 @@ spec:
     label: main
     # The relative path of pipeline configuration files
     path: pipelines/main.yaml
+  # Target environment hosting the pipeline runtime
   destination:
-    # The environment refers to the target environment for running the pipeline.
+    # Environment name
     environment: env-dev-demo-$suffix
-    # The namespace refers to the target namespace of the environment for running the pipeline.
+    # Optional
+    # The customization namespace is used to deploy applications in the target environment's namespace,
+    # supporting multiple customization namespaces.
+    # If not specified, the default namespace with the same name as the deployment runtime will be created.
     namespace: pr-demo-ns-$suffix
   # Optional
-  # The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
+  # Resources needed for running pipelines, such as ConfigMap, PVC, etc.
+  # Pipeline resources customization: Including the code repository of the pipeline resources, its branch, and path.
   additionalResources:
     git:
-      # The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
-      # It can also have the same name as the pipeline runtime.
+      # The name of the code repository storing pipeline resources
+      # If the codeRepo is the same as 'pipelineSource', this indicates that the pipeline resources and the pipeline are stored in the same code repository.
+      # If the codeRepo is different from 'pipelineSource',
+      # this indicates that the pipeline resources are stored in a separate code repository, which is suitable for scenarios like multiple pipelines sharing resources.
+      # In this case, the pipeline resource repository needs to be authorized to the pipeline to ensure the successful creation of pipeline resources.
       codeRepo: coderepo-sc-demo-$suffix
-      # The revision refers to the revision of the code repository that stores the pipeline custom resource configurations.
+      # The revision of the code repository storing pipeline resources
       revision: main
-      # The path refers to the path of the code repository that stores the pipeline custom resource configurations.
+      # The path of the code repository storing pipeline resources
       path: test
   # The event sources triggered pipelines
   eventSources:
@@ -824,7 +881,8 @@ Before running the pipeline, you need to prepare an image repository for storing
 
 You need to prepare [an account or organization](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts) on GitHub, for example, `https://github.com/nautes-labs`, and generate a personal access token with `write:packages` permission under the account that has permissions to the organization.
 
-When a namespace with the same name as the project pipeline runtime is ready in the runtime cluster, you need to create a ConfigMap resource under the namespace. The `image-build` task in the pipeline can use the ConfigMap resource to authenticate with the image repository when pushing container images.
+When the namespace is ready in the runtime cluster, you need to create a ConfigMap resource under the namespace. The `image-build` task in the pipeline can use the ConfigMap resource to authenticate with the image repository when pushing container images.
+> By default, the namespace name is the same as the pipeline runtime name, while the customized name is defined in the `spec.destination.namespace` of the pipeline runtime resources.
 
 The template for the ConfigMap resource is located at the relative path `examples/config.json`. You need to replace the `$auth` variable in it with the string generated by the following command:
 
@@ -843,7 +901,29 @@ kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runt
 
 ## Run a Pipeline
 
-Submit the source code and pipeline configuration files of the sample project to the source code repository, and submit the Kubernetes manifests of the sample project to the deployment configuration repository, such as deployment, service, and other resources.
+Submit the source code of the sample project to the source code repository, the Kubernetes manifests (such as deployment, service, etc.) to the deployment configuration repository, and the pipeline configuration files to the pipeline configuration repository.
+
+### Submit Source Code
+
+Clone the sample repository to your local machine.
+
+```shell
+# 【待修订】
+git clone https://github.com/nautes-examples/user-pipeline.git
+```
+
+Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the `main` branch of the [source code repository](#initialize-a-product). For more information, refer to  [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+
+Push the source code to the source code repository.
+
+```Shell
+# Change the URL of the remote repository 'origin' to that of the source code repository,
+# the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
+git add .
+git commit -m 'submit the source code.'
+git push origin main -f
+```
 
 ### Submit Kubernetes Manifest
 
@@ -892,9 +972,9 @@ git clone https://github.com/nautes-examples/user-pipeline.git
 
 Replace variables in the pipeline configuration file `pipelines/main.yaml` in the code repository, including:
 
-**$pipeline-runtime-name** should be replaced with the project pipeline runtime name, such as `pr-demo-quickstart`.
+**$pipeline-runtime-account** should be replaced with the project pipeline runtime account, such as `pr-demo-account-quickstart`.
 
-**$sc-repo-id** should be replaced with the source code repository ID, which you can find on the `Project` home page in the Gitlab console.
+**$pipeline-repo-id** should be replaced with the pipeline configuration repository ID, which you can find on the `Project` home page in the Gitlab console.
 
 **$sc-repo-url** should be replaced with the SSH URL of the source code repository, which you can find on the `Project` home page in the Gitlab console, such as `git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`.
 
@@ -913,57 +993,57 @@ spec:
     value: main
   taskRunSpecs:
   - pipelineTaskName: git-clone-sourcecode
-    taskServiceAccountName: $pipeline-runtime-name
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readonly"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readonly"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readonly" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readonly" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: git-clone-deployment
-    taskServiceAccountName: $pipeline-runtime-name
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: manifest-update
-    taskServiceAccountName: $pipeline-runtime-name
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   pipelineSpec:
@@ -1094,14 +1174,14 @@ spec:
       name: registry-auth
 ```
 
-Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the `main` branch of the [source code repository](#initialize-a-product). For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
+Access [GitLab](installation.md#check-the-installation-results), and configure your GitLab account to have the force-push permission to the `main` branch of the [pipeline configuration repository](#initialize-a-product). For more information, refer to [Allow Force Push to a Protected Branch](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch).
 
-Push the pipeline configuration files to the source code repository.
+Push the pipeline configuration files to the pipeline configuration repository.
 
 ```Shell
-# Change the URL of the remote repository 'origin' to that of the source code repository,
+# Change the URL of the remote repository 'origin' to that of the pipeline configuration repository,
 # the repository URL below is only an example, replace $gitlab-url with the IP or domain of GitLab.
-git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-pipeline-demo-quickstart.git
 git add .
 git commit -m 'submit the pipeline configurations.'
 git push origin main -f
@@ -1111,18 +1191,27 @@ git push origin main -f
 
 ### Pipeline
 
-After you submit the pipeline configurations to the source code repository, Nautes will respond to the Webhook callback from the code repository, and trigger the pipelines in the cluster declared in the project pipeline runtime.
+After you submit code to the source code repository, Nautes will respond to the Webhook callback from the code repository, and trigger the pipelines in the cluster declared in the project pipeline runtime.
 
 You can view the pipeline information in the Tekton Dashboard by using a browser to access `https://$tekonHost:$traefik-httpsNodePort`.
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the Tekton Dashboard.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the command to view the address of the Tekton Dashboard.
+
 ```shell
-./nautes get cluster -oyaml
+# cluster-name refers to the name of the cluster.
+# For a virtual pipeline runtime,
+# set `cluster-name` respectively to the names of the pipeline runtime cluster and the host cluster,
+# to query the tekonHost address and traefik port separately.
+# For a physical pipeline runtime,
+# set `cluster-name` to the name of the pipeline runtime cluster, to query the tekonHost address and traefik port.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
 ```
 
-> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `spec.componentsList.pipeline.additions.host` in the running above command respond section, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
-> 
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpsNodePort` in the running above command respond section, for example, `30443`.
+> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. Refer to `componentsList.pipeline.additions.host` in the command return value, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
+>
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. Refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 

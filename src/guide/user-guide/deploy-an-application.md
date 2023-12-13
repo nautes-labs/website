@@ -772,7 +772,7 @@ nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-add
 ```
 
 > 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考命令行返回值中的 `componentsList.deployment.additions.host`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
-> 
+>
 > 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。

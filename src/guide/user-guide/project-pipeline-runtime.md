@@ -266,7 +266,7 @@ title: 维护流水线运行时
         // codeRepo 指存储流水线资源的代码库的名称
         // 如果 codeRepo 与 pipeline_source 相同：表示流水线资源与流水线存储在相同的代码库
         // 如果 codeRepo 与 pipeline_source 不同：表示流水线资源存储在独立于流水线的代码库，适用于多条流水线共享资源等场景，
-        // 这时需要将 codeRepo 授权给 pipeline_source，以确保正常创建流水线资源
+        // 这时需要将流水线资源库授权给流水线，以确保正常创建流水线资源
         "codeRepo": "$pipeline-res-coderepo-name",
         // revision 指存储流水线资源的代码库的分支
         "revision": "$pipeline-res-coderepo-revision",
@@ -293,7 +293,7 @@ title: 维护流水线运行时
                 // 选填项
                 // hook 别名
                 // 在一个流水线运行时中，同一侧（指流水线执行前或执行后）不能设置多个相同的 hook
-                // 如果需要使用相同的hook，只能在不同侧定义步骤，并设置 alias 以确保别名不重复
+                // 如果需要使用相同的hook，只能在不同侧（指流水线执行前和执行后）定义步骤，并设置 alias 以确保别名不重复
                 "alias": "$hook-alias-name"
             }
         ],

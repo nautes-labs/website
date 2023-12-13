@@ -374,12 +374,12 @@ spec:
       # 组件的命名空间
       namespace: hnc-system
       # 选填项，组件的自定义参数，支持 key value 格式
-      # 以 hnc 为例，通过定义参数，可以根据产品 default.project 代码库的指定分支、指定 kustomize 文件路径，同步指定的资源类型到运行时集群
+      # 以 hnc 为例，通过定义参数，基于产品 default.project 代码库可以同步指定类型的资源到运行时集群
       # 例如某个产品的开发、测试和发布流水线在所有的运行时集群中的结构相同
       additions:
-        # 在 default.project 代码库中的 kustomize 文件路径
+        # 在 default.project 代码库中的 kustomization 文件路径
         productResourceKustomizeFileFolder: templates/pipelines
-        # 在 default.project 代码库中获取 kustomize 文件的分支，默认值为 main
+        # 在 default.project 代码库中获取 kustomization 文件的分支，默认值为 main
         productResourceRevision: main
         # 需要同步的资源类型
         # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔
@@ -756,7 +756,7 @@ spec:
       # 存储流水线资源的代码库的名称
       # 如果 codeRepo 与 pipeline_source 相同：表示流水线资源与流水线存储在相同的代码库
       # 如果 codeRepo 与 pipeline_source 不同：表示流水线资源存储在独立于流水线的代码库，适用于多条流水线共享资源等场景，
-      # 这时需要将 codeRepo 授权给 pipeline_source，以确保正常创建流水线资源
+      # 这时需要将流水线资源库授权给流水线，以确保正常创建流水线资源
       codeRepo: coderepo-sc-demo-$suffix
       # 存储流水线资源的代码库的分支
       revision: main

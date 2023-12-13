@@ -87,10 +87,19 @@ spec:
   workerType: "deployment"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+  # optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a physical deployment runtime cluster, 
+  # install the following components: multi_tenant, secret_sync, gateway, deployment, and progressive_delivery.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
+    # Component type
     multiTenant:
+      # Component name
       name: hnc
+      # Component namespace
       namespace: hnc-system
     secretSync:
       name: external-secrets
@@ -98,7 +107,10 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
+      # optional
+      # The component's customization parameters support a key-value format.
       additions:
+        # The parameters of Traefik represent customized ports for HTTP and HTTPS.
         httpNodePort: "30080"
         httpsNodePort: "30443"
     deployment:
@@ -107,8 +119,12 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts    
-  # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  # optional
+  # Cluster reserved namespace configuration:
+  # Reserved namespaces refer to installation spaces for components within the cluster.
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the reserved namespaces where the product can deploy resources.
+  # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
@@ -120,7 +136,10 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+  # optional
+  # Cluster-scoped resource configuration:
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the cluster-scoped resources which the product can deploy to the cluster.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -246,7 +265,12 @@ spec:
   usage: "host"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+  # optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a host cluster, install the gateway component.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
     gateway:
       name: traefik
@@ -336,10 +360,19 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
-  # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+  # optional
+  # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+  # For example, in a virtual deployment runtime cluster,
+  # install the following components: multi_tenant, secret_sync, deployment, and progressive_delivery.
+  # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+  # Cluster component customization: When users customize the validation components of a cluster,
+  # these customizations will override the default settings.
   componentsList:
+    # Component type
     multiTenant:
+      # Component name
       name: hnc
+      # Component namespace
       namespace: hnc-system
     secretSync:
       name: external-secrets
@@ -350,8 +383,12 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts
-  # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-  # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
+  # optional
+  # Cluster reserved namespace configuration:
+  # Reserved namespaces refer to installation spaces for components within the cluster.
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the reserved namespaces where the product can deploy resources.
+  # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
@@ -361,7 +398,10 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+  # optional
+  # Cluster-scoped resource configuration:
+  # By replacing the variable $product-name with the actual product name,
+  # it specifies the cluster-scoped resources which the product can deploy to the cluster.
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -609,13 +649,20 @@ kind: DeploymentRuntime
 spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
-  # The account refers to run deployment runtime need an account.
-  # By default, the runtime creates an account with the name of the runtime. You can also specify an account or not. It is a Service Account for Kubernetes.
+  # optional
+  # The customization account refers to Nautes creating a service account in the target environment's namespace.
+  # This account has the necessary permissions to ensure deployment runtime resources work normally,
+  # such as cloning code repositories and getting artifact repository secrets.
+  # If not specified, the default service account with the same name as the deployment runtime will be created.
   account: dr-demo-account-$suffix
+  # Target environment hosting the deployment runtime
   destination:
-    # The environment refers to the target environment for running the deployment.
+    # Environment name
     environment: env-test-demo-$suffix
-    # The namespace refers to the target namespace of the environment for running the deployment.
+    # optional
+    # The customization namespace is used to deploy applications in the target environment's namespace,
+    # supporting multiple customization namespaces.
+    # If not specified, the default namespace with the same name as the deployment runtime will be created.
     namespaces:
       - dr-demo-ns-$suffix
   manifestsource:
@@ -728,19 +775,27 @@ After the deployment is successful, you will be able to access the UI of the sam
 
 > Replace the $cluster-ip variable with the public IP of the runtime cluster.
 >
-> Replace the $traefik-httpNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpNodePort` in the running below command respond section, for example, `30080`.
+> Replace the $traefik-httpNodePort variable with the traefik port of the runtime cluster, refer to the `componentsList.gateway.additions.httpNodePort` in the command return value, for example, `30080`.
 
 Through the ArgoCD console, you will be able to view the deployment results of the application and manage resources related to authorized products only.
 
 Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After logging in successfully, the page will automatically redirect to the ArgoCD console.
 
-Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the following command to access the ArgoCD Dashboard.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the command to view the address of the ArgoCD Dashboard.
 ```shell
-./nautes get cluster -oyaml
+# cluster-name refers to the name of the cluster.
+# For a virtual deployment runtime,
+# set `cluster-name` respectively to the names of the deployment runtime cluster and the host cluster,
+# to query the argocdHost address and traefik port separately.
+# For a physical deployment runtime,
+# set `cluster-name` to the name of the deployment runtime cluster, to query the argocdHost address and traefik port.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
 ```
 
-> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.componentsList.deployment.additions.host` in the running above command respond section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
-> 
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.componentsList.gateway.additions.httpsNodePort` in the running above command respond section, for example, `30443`.
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster, refer to `componentsList.deployment.additions.host` in the command return value, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+>
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
