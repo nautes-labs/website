@@ -30,7 +30,6 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
     # Replace the variable $cluster-name with the cluster name
-    # Replace the variable $product-name with the product name, If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -49,10 +48,21 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "worker_type": $worker-type,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io",
-                # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a physical deployment runtime cluster, 
+                # install the following components: multi_tenant, secret_sync, gateway, deployment, and progressive_delivery.
+                # In a physical pipeline runtime cluster, 
+                # install the following components: multi_tenant, secret_sync, gateway, deployment, event_listener and pipeline.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
                 "components_list": {
+                  # Component type
                   "multi_tenant": {
+                    # Component name
                     "name": "hnc",
+                    # Component namespace
                     "namespace": "hnc-system"
                   },
                   "secret_sync": {
@@ -62,7 +72,10 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   "gateway": {
                     "name": "traefik",
                     "namespace": "traefik",
+                    # Optional
+                    # The component's customization parameters support a key-value format.
                     "additions": {
+                      # The parameters of Traefik represent customized ports for HTTP and HTTPS.
                       "httpNodePort": "30080",
                       "httpsNodePort": "30443"
                     }
@@ -84,8 +97,12 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-                # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart.
+                # Optional
+                # Cluster reserved namespace configuration:
+                # Reserved namespaces refer to installation spaces for components within the cluster.
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the reserved namespaces where the product can deploy resources.
+                # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -106,7 +123,10 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "$product-name"
                   ]
                 },
-                # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+                # Optional
+                # Cluster-scoped resource configuration:
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the cluster-scoped resources which the product can deploy to the cluster.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -321,7 +341,12 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "usage": $usage,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io"
-                # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a host cluster, install the gateway component.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
                 "components_list": {
                   "gateway": {
                     "name": "traefik",
@@ -380,7 +405,6 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
     # Replace the variable $cluster-name with the cluster name
-    # Replace the variable $product-name with the product name, If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -408,28 +432,40 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   # API SERVER port 
                   "https_node_port": $api-server-port,
                 },
-                # Optional, cluster custom component. Select one or more components to install to the cluster by component type, where additions represents the custom parameters for the component.
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a virtual deployment runtime cluster,
+                # install the following components: multi_tenant, secret_sync, deployment, and progressive_delivery.
+                # In a virtual pipeline runtime cluster,
+                # install the following components: multi_tenant, secret_sync, deployment, event_listener and pipeline.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
                 "components_list": {
+                  # Component type
                   "multi_tenant": {
+                    # Component name
                     "name": "hnc",
+                    # Component namespace
                     "namespace": "hnc-system"
+                    # Optional
+                    # The component's customization parameters support a key-value format.
+                    # Taking hnc as an example, defining parameters enables the synchronization of specified resource types to the runtime cluster, 
+                    # based on the product's default.project code repository.
+                    # For example, the structure of a product's development, test, and release pipelines is the same in all runtime clusters.
                     "additions": {
+                      # The kustomization file path in the default.project code repository.
                       "productResourceKustomizeFileFolder": "templates/pipelines",
+                      # The branch in the default.project code repository to fetch the kustomization file from, with 'main' being the default.
                       "productResourceRevision": "main"
+                      # Resource types to synchronize
+                      # Format: "group/resourceType1,group/resourceType02", with multiple resource types separated by commas.
                       "syncResourceTypes": "tekton.dev/Pipeline"
                     }
                   },
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",
@@ -448,8 +484,12 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "namespace": "tekton-pipelines"
                   }
                 }, 
-                # Optional, the reserved namespace is the installation space for cluster custom components. If the product requires using a reserved namespace, such as installing resources within this reserved namespace, replace it with the product name: $product-name.
-                # If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart.
+                # Optional
+                # Cluster reserved namespace configuration:
+                # Reserved namespaces refer to installation spaces for components within the cluster.
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the reserved namespaces where the product can deploy resources.
+                # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
                     "$product-name"
@@ -473,7 +513,10 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                     "$product-name"
                   ]
                 },
-                # Optional, if the product requires cluster-level resource permissions, replace it with the product name: $product-name.
+                # Optional
+                # Cluster-scoped resource configuration:
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the cluster-scoped resources which the product can deploy to the cluster.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -521,14 +564,6 @@ The request example for the project pipeline runtime cluster after replacing var
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",
@@ -605,14 +640,6 @@ The request example for the deployment runtime cluster after replacing variables
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",

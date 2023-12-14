@@ -433,12 +433,12 @@ title: 注册运行时集群
                     # 组件的命名空间
                     "namespace": "hnc-system"
                     # 选填项，组件的自定义参数，支持 key value 格式
-                    # 以 hnc 为例，通过定义参数，可以根据产品 default.project 代码库的指定分支、指定 kustomize 文件路径，同步指定的资源类型到运行时集群
+                    # 以 hnc 为例，通过定义参数，基于产品 default.project 代码库可以同步指定类型的资源到运行时集群
                     # 例如某个产品的开发、测试和发布流水线在所有的运行时集群中的结构相同
                     "additions": {
-                      # 在 default.project 代码库中的 kustomize 文件路径
+                      # 在 default.project 代码库中的 kustomization 文件路径
                       "productResourceKustomizeFileFolder": "templates/pipelines",
-                      # 在 default.project 代码库中获取 kustomize 文件的分支，默认值为 main
+                      # 在 default.project 代码库中获取 kustomization 文件的分支，默认值为 main
                       "productResourceRevision": "main"
                       # 需要同步的资源类型
                       # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔
@@ -448,14 +448,6 @@ title: 注册运行时集群
                   "secret_sync": {
                     "name": "external-secrets",
                     "namespace": "external-secrets"
-                  },
-                  "gateway": {
-                    "name": "traefik",
-                    "namespace": "traefik",
-                    "additions": {
-                      "httpNodePort": "30080",
-                      "httpsNodePort": "30443"
-                    }
                   },
                   "deployment": {
                     "name": "argocd",

@@ -87,7 +87,7 @@ spec:
   workerType: "deployment"
   # Primary domain, replace $cluster-ip with the cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # optional
+  # Optional
   # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
   # For example, in a physical deployment runtime cluster, 
   # install the following components: multi_tenant, secret_sync, gateway, deployment, and progressive_delivery.
@@ -107,7 +107,7 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # optional
+      # Optional
       # The component's customization parameters support a key-value format.
       additions:
         # The parameters of Traefik represent customized ports for HTTP and HTTPS.
@@ -119,7 +119,7 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts    
-  # optional
+  # Optional
   # Cluster reserved namespace configuration:
   # Reserved namespaces refer to installation spaces for components within the cluster.
   # By replacing the variable $product-name with the actual product name,
@@ -136,7 +136,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # optional
+  # Optional
   # Cluster-scoped resource configuration:
   # By replacing the variable $product-name with the actual product name,
   # it specifies the cluster-scoped resources which the product can deploy to the cluster.
@@ -265,7 +265,7 @@ spec:
   usage: "host"
   # Primary domain, Replace $cluster-ip with the host cluster IP.
   primaryDomain: "$cluster-ip.nip.io"
-  # optional
+  # Optional
   # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
   # For example, in a host cluster, install the gateway component.
   # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
@@ -360,7 +360,7 @@ spec:
   vcluster: 
     # API SERVER port 
     httpsNodePort: "$api-server-port"
-  # optional
+  # Optional
   # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
   # For example, in a virtual deployment runtime cluster,
   # install the following components: multi_tenant, secret_sync, deployment, and progressive_delivery.
@@ -383,7 +383,7 @@ spec:
     progressiveDelivery:
       name: argo-rollouts
       namespace: argo-rollouts
-  # optional
+  # Optional
   # Cluster reserved namespace configuration:
   # Reserved namespaces refer to installation spaces for components within the cluster.
   # By replacing the variable $product-name with the actual product name,
@@ -398,7 +398,7 @@ spec:
       - $product-name
     hnc-system:
       - $product-name
-  # optional
+  # Optional
   # Cluster-scoped resource configuration:
   # By replacing the variable $product-name with the actual product name,
   # it specifies the cluster-scoped resources which the product can deploy to the cluster.
@@ -649,7 +649,7 @@ kind: DeploymentRuntime
 spec:
   # DeploymentRuntime name
   name: dr-demo-$suffix
-  # optional
+  # Optional
   # The customization account refers to Nautes creating a service account in the target environment's namespace.
   # This account has the necessary permissions to ensure deployment runtime resources work normally,
   # such as cloning code repositories and getting artifact repository secrets.
@@ -659,7 +659,7 @@ spec:
   destination:
     # Environment name
     environment: env-test-demo-$suffix
-    # optional
+    # Optional
     # The customization namespace is used to deploy applications in the target environment's namespace,
     # supporting multiple customization namespaces.
     # If not specified, the default namespace with the same name as the deployment runtime will be created.
