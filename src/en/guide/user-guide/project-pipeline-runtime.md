@@ -140,6 +140,28 @@ The request example is shown below:
                     "path": "test"
                   }
                 },
+                "hooks": {
+                    "pre_hooks": [
+                        {
+                            "name": "ls",
+                            "vars": {
+                                "imageName": "bash",
+                                "printPath": "/var"
+                            },
+                            "alias": "pre-ls"
+                        }
+                    ],
+                    "post_hooks": [
+                        {
+                            "name": "ls",
+                            "vars": {
+                                "imageName": "bash",
+                                "printPath": "/usr"
+                            },
+                            "alias": "post-ls"
+                        }
+                    ]
+                },
                 "isolation": "exclusive",
                 "account": "pr-demo-account"
             }'
@@ -174,7 +196,7 @@ The property comments in the request body are shown below:
         {
             // name is used to associate the pipeline with the event source.
             "name": "$pipeline-name",
-            // optional
+            // Optional
             // label refers to the label property when the pipeline is tagged by the project pipeline runtime.
             "label": "$pipeline-label",
             // path refers to the relative path of the pipeline configuration in the code repository, 
@@ -188,7 +210,7 @@ The property comments in the request body are shown below:
     "event_sources": [
         {
             "name": "$event-source-name",
-            // optional
+            // Optional
             // gitlab is used to generate GitLab webhooks to trigger the pipelines.
             "gitlab": {
                 // repo_name refers to the name of the GitLab project to which the event source belongs.
@@ -203,7 +225,7 @@ The property comments in the request body are shown below:
                     "$webhook-events"
                 ]
             },
-            // optional
+            // Optional
             // calendar refers to the calendar type of event source, 
             // which will generate events on schedule to trigger the pipeline.
             // If you use this type of event source, please provide at least one of the properties "schedule" or "interval". 
@@ -214,7 +236,7 @@ The property comments in the request body are shown below:
                 "schedule": "$cron-expression",
                 // interval refers to the time interval period between two events, such as: 1s, 30m, 2h, etc. 
                 "interval": "$interval",
-                // optional
+                // Optional
                 // exclusion_dates refers to the exception dates and times of the calendar type event source, 
                 // and no events will be triggered during these times.
                 // The date and time format follows the ISO8601 format. 
@@ -222,7 +244,7 @@ The property comments in the request body are shown below:
                 "exclusion_dates": [
                     "$exclusion-date"
                 ],
-                // optional
+                // Optional
                 // timezone refers to the timezone for executing the schedule. 
                 // Refer to: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
                 "timezone": "$timezone"
@@ -239,30 +261,77 @@ The property comments in the request body are shown below:
             // Different event sources can form multiple sets of data with the same pipeline, 
             // indicating that the pipeline can be triggered by multiple events. 
             "pipeline": "$pipeline-name",
-            // optional
+            // Optional
             // The revision refers to the branch for retrieving the pipeline configuration. 
             // If not specified, it will be determined based on the "revision" property value of the gitlab in event_sources.
             "revision": "$pipeline-revision"
         }
     ],
+    // destination refers to the target environment hosting the pipeline runtime.
     "destination": {
-      // The environment refers to the target environment for running the pipeline.
+      // environment refers to the environment name
       "environment": "$environment",
-      // The namespace refers to the target namespace of the environment for running the pipeline.
+      // Optional
+      // namespace refers to the customization namespace, which is used to run pipelines in the target environment's namespace,
+      // supporting multiple customization namespaces.
+      // If not specified, the default namespace with the same name as the pipeline runtime will be created.
       "namespace": "$namespace"
     },
-    // Optional.
-    // The additionalResources refers to the custom resource of pipeline runtime, such as the need to deploy additional PVC.
+    // Optional
+    // additionalResources refers to the resources needed for running pipelines, such as ConfigMap, PVC, etc.
+    // Pipeline resources customization supports specifying the code repository of the pipeline resources, its branch, and path.
     "additionalResources": {
       "git": {
-        // The codeRepo refers to the name of the code repository that stores the pipeline custom resource configurations.
-        // It can also have the same name as the pipeline runtime.
+        // codeRepo refers to the name of the code repository storing pipeline resources.
+        // If the codeRepo is the same as the pipelineSource, 
+        // this indicates that the pipeline resources and the pipeline are stored in the same code repository.
+        // If the codeRepo is different from the pipelineSource,
+        // this indicates that the pipeline resources are stored in a separate code repository, 
+        // which is suitable for scenarios like multiple pipelines sharing resources.
+        // In this case, the pipeline resource repository needs to be authorized to the pipeline to ensure the successful creation of pipeline resources.
         "codeRepo": "$pipeline-coderepo-name",
-        // The revision refers to the revision of the code repository that stores the pipeline custom resource configurations.
+        // revision refers to the revision of the code repository storing pipeline resources.
         "revision": "$pipeline-coderepo-revision",
-        // The path refers to the path of the code repository that stores the pipeline custom resource configurations.
+        // path refers to the path of the code repository storing pipeline resources.
         "path": "$pipeline-coderepo-path"
       }
+    },
+    // Optional
+    // hooks refers to the customization steps before or after pipeline execution.
+    // If plugins have been installed in the runtime-operator, customization steps can be added before or after pipeline execution.
+    // By default, no customization steps are supported.
+    "hooks": {
+        // pre_hooks refers to the steps before pipeline execution.
+        // If containing multiple steps in the pre_hooks setting, they will be executed in the arranged order.
+        "pre_hooks": [
+            {
+                // name refers to hook name.
+                "name": "$hook-name",
+                // vars refers to hook parameters.
+                "vars": {
+                    "$hook-params-1": "$hook-value-1",
+                    "$hook-params-2": "$hook-value-2"
+                },
+                // Optional
+                // alias refers to hook alias.
+                // In a pipeline runtime, the same hook cannot be set multiple times on the same side (either before or after pipeline execution).
+                // If the same hook is needed, it can only be added on different sides (before and after pipeline execution) 
+                // and set the alias to ensure the hook name is not duplicated.
+                "alias": "$hook-alias-name"
+            }
+        ],
+        // post_hooks refers to the steps after pipeline execution.
+        // If containing multiple steps in the post_hooks setting, they will be executed in the arranged order.
+        "post_hooks": [
+            {
+                "name": "$hook-name",
+                "vars": {
+                    "$hook-params-1": "$hook-value-1",
+                    "$hook-params-2": "$hook-value-2"
+                },
+                "alias": "$hook-alias-name"
+            }
+        ]
     },
     // The isolation refers to the isolation of related resources of the project pipeline runtime, including: shared or exclusive.
     // shared means that multiple event_sources share resources. 
@@ -272,11 +341,19 @@ The property comments in the request body are shown below:
     // and resources are isolated between different event_sources. 
     // Compared with shared mode, exclusive mode will consume more resources.
     "isolation": "$isolation",
-    // The account refers to run runtime need an account.
-    // By default, the runtime creates an account with the name of the runtime. You can also specify an account or not. It is a Service Account for Kubernetes.
+    // Optional
+    // account refers to the customization account, 
+    // which is used to create a service account in the target environment's namespace by Nautes.
+    // This account has the necessary permissions to ensure the pipeline runtime works normally,
+    // such as cloning code repositories and getting artifact repository secrets.
+    // If not specified, the default service account with the same name as the pipeline runtime will be created.
     "account": "$account"
 }
 ```
+
+> For information on granting code repository authentication to the pipeline, refer to [Initialize a Product](run-a-pipeline.md#initialize-a-product).
+>
+> For information on pipeline plugins, refer to [How to write pipeline plugins](how_to_write_a_pipeline_plugin.md).
 
 ### Execute Create and Update Pipeline-Runtime Request
 
@@ -349,6 +426,19 @@ After the request is successful, the resource file for the project pipeline runt
           name: pipeline-release
           path: pipelines/release.yaml
         project: project-demo
+        hooks:
+            preHooks:
+            - name: ls
+              alias: pre-ls
+              vars: 
+                imageName: bash
+                printPath: /var
+            postHooks:
+            - name: ls 
+              alias: post-ls          
+              vars: 
+                imageName: bash
+                printPath: /var
 ```
 
 > When requesting the API to update a project pipeline runtime, the resource file for the project pipeline runtime will also be updated.
@@ -415,6 +505,7 @@ Use the curl command or other tools to execute the API request to list project P
 {
     "items": [
         {
+            "account": "pr-demo-account",
             "name": "pr-demo",
             "project": "project-demo",
             "pipeline_source": "coderepo-sc-demo",
@@ -497,18 +588,39 @@ Use the curl command or other tools to execute the API request to list project P
                 }
             ],
             "destination": {
-              "environment": "env-dev-demo",
-              "namespace": "pr-demo"
+                "environment": "env-dev-demo",
+                "namespace": "pr-demo-namespace"
             },
             "additionalResources": {
-              "git": {
-                "codeRepo": "coderepo-sc-demo",
-                "revision": "main",
-                "path": "test"
-              }
+                "git": {
+                    "codeRepo": "coderepo-pipeline-demo",
+                    "revision": "main",
+                    "path": "test"
+                }
             },
-            "isolation": "exclusive",
-            "account": "pr-demo-account"
+            "hooks": {
+                "pre_hooks": [
+                    {
+                        "name": "ls",
+                        "vars": {
+                            "imageName": "bash",
+                            "printPath": "/var"
+                        },
+                        "alias": "pre-ls"
+                    }
+                ],
+                "post_hooks": [
+                    {
+                        "name": "ls",
+                        "vars": {
+                            "imageName": "bash",
+                            "printPath": "/usr"
+                        },
+                        "alias": "post-ls"
+                    }
+                ]
+            }
+            "isolation": "exclusive"
         }
     ]
 }
@@ -557,14 +669,14 @@ Taking creating a project pipeline runtime as an example, if the value of the `d
         -H 'Content-Type: application/json' \
         -H 'Authorization: Bearer xxxxxxxxxxxxxxxxxxxxxxxxxx' \
         -d '{
-              "project": "api-server",
-              "pipeline_source": "api-server",
-              ...
-              "destination": {
-                "environment": "env-invalid",
-                "namespace": "pr-demo"
-              },
-              "isolation": "shared",
-              "account": "pr-demo-account"
+                "project": "api-server",
+                "pipeline-source": "api-server",
+                ...
+                "destination": {
+                  "environment": "env-dev-invalid",
+                  "namespace": "pr-demo-namespace"
+                },
+                "isolation": "shared",
+                "account": "pr-demo-account"
             }'
 ```

@@ -25,7 +25,7 @@ nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-add
 ```
 
 > 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考命令行返回值中的 `componentsList.pipeline.additions.host`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
-> 
+>
 > 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 Gitlab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
@@ -75,7 +75,7 @@ nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-add
 ```
 
 > 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考命令行返回值中的 `componentsList.deployment.additions.host`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
-> 
+>
 > 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看某个资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。您也可以通过访问“设置/项目”页面来查看被授权产品相关的 ArgoCD Projects。

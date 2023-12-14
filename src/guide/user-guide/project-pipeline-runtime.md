@@ -293,7 +293,7 @@ title: 维护流水线运行时
                 // 选填项
                 // hook 别名
                 // 在一个流水线运行时中，同一侧（指流水线执行前或执行后）不能设置多个相同的 hook
-                // 如果需要使用相同的hook，只能在不同侧（指流水线执行前和执行后）定义步骤，并设置 alias 以确保别名不重复
+                // 如果需要使用相同的hook，只能在不同侧（指流水线执行前和执行后）添加步骤，并设置 alias 以确保名称不重复
                 "alias": "$hook-alias-name"
             }
         ],
@@ -325,7 +325,7 @@ title: 维护流水线运行时
 
 > 关于将代码库授权给流水线，详情参见[初始化产品](run-a-pipeline.md#初始化产品)。
 >
-> 关于如何添加流水线插件，详情参见[编写流水线插件](how_to_write_a_pipeline_plugin.md)。
+> 关于流水线插件，详情参见[编写流水线插件](how_to_write_a_pipeline_plugin.md)。
 
 ### 执行创建/更新流水线运行时的 API 请求
 
@@ -565,7 +565,7 @@ title: 维护流水线运行时
             },
             "additionalResources": {
                 "git": {
-                    "codeRepo": "coderepo-sc-demo",
+                    "codeRepo": "coderepo-pipeline-demo",
                     "revision": "main",
                     "path": "test"
                 }

@@ -385,7 +385,7 @@ spec:
       namespace: hnc-system
       # Optional
       # The component's customization parameters support a key-value format.
-      # Taking hnc as an example, defining parameters enables the synchronization of specified resource types to the runtime cluster, based on the product's default project code repository.
+      # Taking hnc as an example, defining parameters enables the synchronization of specified resource types to the runtime cluster, based on the product's default.project code repository.
       # For example, the structure of a product's development, test, and release pipelines is the same in all runtime clusters.
       additions:
         # The kustomization file path in the default.project code repository.
@@ -744,9 +744,9 @@ spec:
   name: pr-demo-$suffix
   # Optional
   # The customization account refers to Nautes creating a service account in the target environment's namespace.
-  # This account has the necessary permissions to ensure pipeline runtime resources work normally,
+  # This account has the necessary permissions to ensure the pipeline runtime works normally,
   # such as cloning code repositories and getting artifact repository secrets.
-  # If not specified, the default service account with the same name as the deployment runtime will be created.
+  # If not specified, the default service account with the same name as the pipeline runtime will be created.
   account: pr-demo-account-$suffix  
   # The product to which the project pipeline runtime belongs
   product: demo-$suffix
@@ -767,9 +767,9 @@ spec:
     # Environment name
     environment: env-dev-demo-$suffix
     # Optional
-    # The customization namespace is used to deploy applications in the target environment's namespace,
+    # The customization namespace is used to run pipelines in the target environment's namespace,
     # supporting multiple customization namespaces.
-    # If not specified, the default namespace with the same name as the deployment runtime will be created.
+    # If not specified, the default namespace with the same name as the pipeline runtime will be created.
     namespace: pr-demo-ns-$suffix
   # Optional
   # Resources needed for running pipelines, such as ConfigMap, PVC, etc.
@@ -777,8 +777,8 @@ spec:
   additionalResources:
     git:
       # The name of the code repository storing pipeline resources
-      # If the codeRepo is the same as 'pipelineSource', this indicates that the pipeline resources and the pipeline are stored in the same code repository.
-      # If the codeRepo is different from 'pipelineSource',
+      # If the codeRepo is the same as the pipelineSource, this indicates that the pipeline resources and the pipeline are stored in the same code repository.
+      # If the codeRepo is different from the pipelineSource,
       # this indicates that the pipeline resources are stored in a separate code repository, which is suitable for scenarios like multiple pipelines sharing resources.
       # In this case, the pipeline resource repository needs to be authorized to the pipeline to ensure the successful creation of pipeline resources.
       codeRepo: coderepo-sc-demo-$suffix
@@ -1209,9 +1209,9 @@ Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag
 nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
 ```
 
-> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. Refer to `componentsList.pipeline.additions.host` in the command return value, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
+> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `componentsList.pipeline.additions.host` in the command return value, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. Refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 

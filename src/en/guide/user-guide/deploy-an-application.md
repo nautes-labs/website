@@ -794,8 +794,8 @@ Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag
 nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
 ```
 
-> Replace the $argocdHost variable with the argocdHost address of the runtime cluster, refer to `componentsList.deployment.additions.host` in the command return value, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `componentsList.deployment.additions.host` in the command return value, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can see the resource manifest, YAML, events, logs, and perform actions such as synchronize, restart, and delete. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
