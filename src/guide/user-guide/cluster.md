@@ -7,6 +7,26 @@ title: 注册运行时集群
 在开始本节之前，请确保您已阅读 [主体流程](main-process.md) 章节，了解执行流水线和部署应用的主体流程和相关术语。
 
 运行时集群用于承载应用的运行时。集群形态支持物理集群和虚拟集群。
+结合多个分类维度，将集群细分为：`物理的部署运行时集群`、`物理的流水线运行时集群`、`宿主集群`、`虚拟的部署运行时集群`、`虚拟的流水线运行时集群`。对于不同类别的集群，需要安装对应组件类别的一系列组件，才能让集群具备相关能力。
+每种组件类别至少包括一个组件，同时有且只有一个默认组件。例如，pipeline 组件类别包括了 Tekton Pipeline 和 Argo Workflows 组件（Argo Workflows 组件仅为示例），而 Tekton Pipeline 是默认组件。
+注册集群时，Nautes 将根据集群类别查找组件类别，进一步安装所需组件。如果没有特别指定参数，将安装指定组件类别的默认组件。
+此外，Nautes 还支持扩展其他组件以适应特定的业务需求。例如，对于 pipeline 类别扩展 Jenkins 组件，注册集群时指定 Jenkins 为所选组件，将注册安装了 Jenkins 的运行时集群（Jenkins 组件仅为示例）。
+
+> 集群与组件类别的对应关系：
+> 物理的部署运行时集群：指用于部署应用的物理集群。需安装 multi_tenant、secret_sync、gateway、deployment、progressive_delivery 等组件类别的一系列组件。
+> 物理的流水线运行时集群：指用于运行流水线的物理集群。需安装 multi_tenant、secret_sync、gateway、deployment、event_listener、pipeline 等组件类别的一系列组件。
+> 宿主集群：是负载虚拟集群的物理集群。需安装 gateway 组件类别的组件。
+> 虚拟的部署运行时集群：指托管给宿主集群、用于部署应用的虚拟集群。需安装 multi_tenant、secret_sync、deployment、progressive_delivery 等组件类别的一系列组件。
+> 虚拟的流水线运行时集群：指托管给宿主集群、用于运行流水线的虚拟集群。需安装 multi_tenant、secret_sync、deployment、event_listener、pipeline 等组件类别的一系列组件。
+>
+> 组件类别详情：
+> multi_tenant：多租户，默认组件为 [HNC](https://github.com/kubernetes-sigs/hierarchical-namespaces)。
+> secret_sync：密钥同步，默认组件为 [External Secrets](https://github.com/external-secrets/external-secrets)。
+> gateway：网关，默认组件为 [Traefik](https://github.com/traefik/traefik)。
+> deployment：部署，默认组件为 [Argo CD](https://github.com/argoproj/argo-cd)。
+> progressive_delivery：渐进式发布，默认组件为 [Argo Rollouts](https://github.com/argoproj/argo-rollouts)。
+> event_listener：事件监听，默认组件为 [Argo Events](https://github.com/argoproj/argo-events)。
+> pipeline：流水线，默认组件为 [Tekton Pipeline](https://github.com/tektoncd/pipeline)。
 
 支持通过 [命令行](run-a-pipeline.md#注册运行时集群) 和 API 两种方式注册运行时集群。
 
@@ -49,11 +69,7 @@ title: 注册运行时集群
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
                 # 选填项
-                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-                # 以物理的部署运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、progressive_delivery 组件
-                # 以物理的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、event_listener、pipeline 组件
-                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-                # 自定义集群组件：如果自定义了合规的集群组件，将覆盖集群组件的默认值
+                # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
                 "components_list": {
                   # 组件类别
                   "multi_tenant": {
@@ -69,7 +85,8 @@ title: 注册运行时集群
                   "gateway": {
                     "name": "traefik",
                     "namespace": "traefik",
-                    # 选填项，组件的自定义参数，支持 key value 格式
+                    # 选填项
+                    # 组件的自定义参数，支持 key value 格式
                     "additions": {
                       # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
                       "httpNodePort": "30080",
@@ -94,7 +111,9 @@ title: 注册运行时集群
                   }
                 }, 
                 # 选填项
-                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+                # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+                # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+                # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
                 # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
@@ -117,7 +136,11 @@ title: 注册运行时集群
                   ]
                 },
                 # 选填项
-                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
+                # 产品部署集群级别资源（cluster-scoped）的配置：
+                # 当资源范围超出某个命名空间时，需要使用集群级别资源
+                # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+                # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+                # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -332,10 +355,7 @@ title: 注册运行时集群
                 # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
                 "primary_domain": "$cluster-ip.nip.io",
                 # 选填项
-                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-                # 以宿主集群为例，需要安装 gateway 组件
-                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-                # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+                # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
                 "components_list": {
                   "gateway": {
                     "name": "traefik",
@@ -420,11 +440,7 @@ title: 注册运行时集群
                   "https_node_port": $api-server-port,
                 },
                 # 选填项
-                # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-                # 以虚拟的部署运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、progressive_delivery 组件
-                # 以虚拟的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、event_listener、pipeline 组件
-                # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-                # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+                # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
                 "components_list": {
                   # 组件类别
                   "multi_tenant": {
@@ -432,17 +448,21 @@ title: 注册运行时集群
                     "name": "hnc",
                     # 组件的命名空间
                     "namespace": "hnc-system"
-                    # 选填项，组件的自定义参数，支持 key value 格式
-                    # 以 hnc 为例，通过定义参数，基于产品 default.project 代码库可以同步指定类型的资源到运行时集群
-                    # 例如某个产品的开发、测试和发布流水线在所有的运行时集群中的结构相同
+                    # 选填项
+                    # 组件的自定义参数，支持 key value 格式
+                    # 以 hnc 为例，通过定义参数，将从产品的 default.project 代码库（即产品配置库）同步指定类型的资源到运行时集群
+                    # 例如，当运行时集群安装了 Tekton Pipeline 组件，并从产品的 default.project 代码库同步了 pipeline 资源到该集群，表示该产品可以在该集群中运行基于 pipeline 资源的一系列 task
                     "additions": {
                       # 在 default.project 代码库中的 kustomization 文件路径
-                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      # 使用 kustomization 文件路径替换变量 $kustomization-path
+                      "productResourceKustomizeFileFolder": "$kustomization-path",
                       # 在 default.project 代码库中获取 kustomization 文件的分支，默认值为 main
-                      "productResourceRevision": "main"
+                      # 使用 kustomization 文件的所属分支替换变量 $kustomization-revison
+                      "productResourceRevision": "$kustomization-revison"
                       # 需要同步的资源类型
                       # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔
-                      "syncResourceTypes": "tekton.dev/Pipeline"
+                      # 使用遵循格式要求的资源类型替换变量 $resource-types
+                      "syncResourceTypes": "$resource-types"
                     }
                   },
                   "secret_sync": {
@@ -467,7 +487,7 @@ title: 注册运行时集群
                   }
                 }, 
                 # 选填项
-                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向指定命名空间部署资源
                 # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
@@ -493,7 +513,7 @@ title: 注册运行时集群
                   ]
                 },
                 # 选填项
-                # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署集群级别的资源
+                # 集群级别资源的产品配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署指定的集群级别资源
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {

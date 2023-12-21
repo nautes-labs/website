@@ -251,22 +251,23 @@ title: 维护流水线运行时
     ],
     // destination 表示承载流水线运行时的目标环境
     "destination": {
-      // environment 指环境名称
-      "environment": "$environment",
-      // 选填项
-      // namespace 指自定义的 namespace，表示将在目标环境的自定义 namespace 中执行流水线
-      // 如果不填，将创建与流水线运行时同名的默认 namespace
-      "namespace": "$namespace"
+        // environment 指环境名称
+        "environment": "$environment",
+        // 选填项
+        // namespace 指自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+        // 如果向流水线配置库提交了流水线配置文件，将在该命名空间中创建并运行流水线
+        // 如果不填，将创建与流水线运行时同名的默认命名空间
+        "namespace": "$namespace"
     },
     // 选填项
-    // additionalResources 指运行流水线所需要的资源，例如 ConfigMap、PVC 等
-    // 支持自定义流水线资源的代码库、代码库分支和代码库路径
+    // additionalResources 指自定义存储流水线资源的代码库，包括代码库的名称、分支和路径
+    // 用于存储流水线的相关资源，例如 ConfigMap 、PVC 等
     "additionalResources": {
       "git": {
         // codeRepo 指存储流水线资源的代码库的名称
-        // 如果 codeRepo 与 pipeline_source 相同：表示流水线资源与流水线存储在相同的代码库
-        // 如果 codeRepo 与 pipeline_source 不同：表示流水线资源存储在独立于流水线的代码库，适用于多条流水线共享资源等场景，
-        // 这时需要将流水线资源库授权给流水线，以确保正常创建流水线资源
+        // 如果 codeRepo 与 pipelineSource 相同：表示流水线资源与流水线存储在相同的代码库
+        // 如果 codeRepo 与 pipelineSource 不同：表示流水线资源与流水线存储在不同的代码库，适用于多条流水线共享资源等场景，
+        // 这时需要将存储流水线资源的代码库授权给流水线，以确保成功创建流水线资源
         "codeRepo": "$pipeline-res-coderepo-name",
         // revision 指存储流水线资源的代码库的分支
         "revision": "$pipeline-res-coderepo-revision",
@@ -275,12 +276,12 @@ title: 维护流水线运行时
       }
     }, 
     // 选填项
-    // hooks 指流水线执行前或执行后的自定义步骤
-    // 如果在 runtime-operator 中已添加插件，可以在流水线执行前或执行后添加自定义步骤
-    // 默认不支持任何自定义步骤
+    // Hook 是一种机制，用于在流水线的特定阶段自动执行预定义的操作
+    // 要在流水线中使用 hook，必须安装实现 hook 的相应插件。例如，某插件可以在 GitLab 界面中跟踪流水线的执行过程和结果
+    // 关于流水线插件，详情参见 how_to_write_a_pipeline_plugin.md
+    // 流水线启动前后的 hook 按以下方式配置
     "hooks": {
-        // pre_hooks 指流水线执行前的步骤
-        // 如果包含多个步骤，将按照编排顺序执行
+        // pre_hooks 指流水线启动前要执行的一系列操作
         "pre_hooks": [
             {
                 // hook 名称
@@ -292,13 +293,12 @@ title: 维护流水线运行时
                 },
                 // 选填项
                 // hook 别名
-                // 在一个流水线运行时中，同一侧（指流水线执行前或执行后）不能设置多个相同的 hook
-                // 如果需要使用相同的hook，只能在不同侧（指流水线执行前和执行后）添加步骤，并设置 alias 以确保名称不重复
+                // 在一个流水线运行时中，相同阶段（启动前或启动后）不能设置多个相同类别的 hook
+                // 如果需要使用相同类别的 hook，则需在不同阶段（启动前和启动后）分别设置，并通过设置 alias 确保名称唯一
                 "alias": "$hook-alias-name"
             }
         ],
-        // post_hooks 指流水线执行后的步骤
-        // 如果包含多个步骤，将按照编排顺序执行
+        // post_hooks 指流水线启动后要执行的一系列操作
         "post_hooks": [
             {
                 "name": "$hook-name",
@@ -317,15 +317,13 @@ title: 维护流水线运行时
     // exclusive 相较于 shared 模式，将占用更多资源
     "isolation": "$isolation",
     // 选填项
-    // account 指自定义的 account，表示将在目标环境的 namespace 中创建 service account，该账号拥有确保流水线运行时正常运行的相关权限，例如获取代码库、获取制品库密钥等
-    // 如果不填，将创建与流水线运行时同名的默认 account
+    // account 指自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保流水线运行时正常运行的相关权限，例如拉取代码、获取制品
+    // 如果不填，将创建与流水线运行时同名的默认账号
     "account": "$account"
 }
 ```
 
 > 关于将代码库授权给流水线，详情参见[初始化产品](run-a-pipeline.md#初始化产品)。
->
-> 关于流水线插件，详情参见[编写流水线插件](how_to_write_a_pipeline_plugin.md)。
 
 ### 执行创建/更新流水线运行时的 API 请求
 

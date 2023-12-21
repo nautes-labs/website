@@ -88,10 +88,8 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件。
-  # 以物理的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、event_listener、pipeline 组件。
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件。
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值。
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     # 组件类别
     multiTenant:
@@ -105,7 +103,8 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 选填项，组件的自定义参数，支持 key value 格式
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
       additions:
         # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
         httpNodePort: "30080"
@@ -120,7 +119,9 @@ spec:
       name: tekton
       namespace: tekton-pipelines    
   # 选填项
-  # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
   # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     tekton-pipelines :
@@ -136,7 +137,11 @@ spec:
     hnc-system:
       - $product-name   
   # 选填项
-  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -268,10 +273,8 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-  # 以宿主集群为例，需要安装 gateway 组件
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     gateway:
       name: traefik
@@ -362,10 +365,8 @@ spec:
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-  # 以虚拟的流水线运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、event_listener、pipeline 组件
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     # 组件类别
     multiTenant:
@@ -373,17 +374,21 @@ spec:
       name: hnc
       # 组件的命名空间
       namespace: hnc-system
-      # 选填项，组件的自定义参数，支持 key value 格式
-      # 以 hnc 为例，通过定义参数，基于产品 default.project 代码库可以同步指定类型的资源到运行时集群
-      # 例如某个产品的开发、测试和发布流水线在所有的运行时集群中的结构相同
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
+      # 以 hnc 为例，通过定义参数，将从产品的 default.project 代码库（即产品配置库）同步指定类型的资源到运行时集群
+      # 例如，当运行时集群安装了 Tekton Pipeline 组件，并从产品的 default.project 代码库同步了 pipeline 资源到该集群，表示该产品可以在该集群中运行基于 pipeline 资源的一系列 task
       additions:
         # 在 default.project 代码库中的 kustomization 文件路径
-        productResourceKustomizeFileFolder: templates/pipelines
+        # 使用 kustomization 文件路径替换变量 $kustomization-path
+        productResourceKustomizeFileFolder: "$kustomization-path"
         # 在 default.project 代码库中获取 kustomization 文件的分支，默认值为 main
-        productResourceRevision: main
+        # 使用 kustomization 文件的所属分支替换变量 $kustomization-revison
+        productResourceRevision: "$kustomization-revision"
         # 需要同步的资源类型
-        # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔
-        syncResourceTypes: tekton.dev/Pipeline
+        # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔，例如 tekton.dev/Pipeline
+        # 使用遵循格式要求的资源类型替换变量 $resource-types
+        syncResourceTypes: "$resource-types"
     secretSync:
       name: external-secrets
       namespace: external-secrets
@@ -397,7 +402,9 @@ spec:
       name: tekton
       namespace: tekton-pipelines    
   # 选填项
-  # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
   # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     tekton-pipelines:
@@ -415,7 +422,11 @@ spec:
     oauth2-proxy:
       - $product-name       
   # 选填项
-  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -694,7 +705,7 @@ spec:
   name: env-dev-demo-$suffix
   # 环境的所属产品
   product: demo-$suffix
-  # 环境关联的运行时集群
+  # 环境关联的流水线运行时集群
   cluster: $pipeline-runtime-cluster
   # 环境类型
   envType: dev
@@ -723,8 +734,8 @@ spec:
   # 流水线运行时的名称
   name: pr-demo-$suffix
   # 选填项
-  # 自定义的 account，表示将在目标环境的 namespace 中创建 service account，该账号拥有确保流水线运行时正常运行的相关权限，例如获取代码库、获取制品库密钥等
-  # 如果不填，将创建与流水线运行时同名的默认 account
+  # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保流水线运行时正常运行的相关权限，例如拉取代码、获取制品
+  # 如果不填，将创建与流水线运行时同名的默认账号
   account: pr-demo-account-$suffix
   # 流水线运行时的所属产品
   product: demo-$suffix
@@ -745,18 +756,19 @@ spec:
     # 环境名称
     environment: env-dev-demo-$suffix
     # 选填项
-    # 自定义的 namespace，表示将在目标环境的自定义 namespace 中执行流水线
-    # 如果不填，将创建与流水线运行时同名的默认 namespace  
+    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+    # 如果向流水线配置库提交了流水线配置文件，将在该命名空间中创建并运行流水线
+    # 如果不填，将创建与流水线运行时同名的默认命名空间
     namespace: pr-demo-ns-$suffix
   # 选填项
-  # 运行流水线所需要的资源，例如 ConfigMap、PVC 等
-  # 支持自定义流水线资源的代码库、代码库分支和代码库路径
+  # 自定义存储流水线资源的代码库，包括代码库的名称、分支和路径
+  # 用于存储流水线的相关资源，例如 ConfigMap 、PVC 等
   additionalResources:
     git:
       # 存储流水线资源的代码库的名称
-      # 如果 codeRepo 与 pipeline_source 相同：表示流水线资源与流水线存储在相同的代码库
-      # 如果 codeRepo 与 pipeline_source 不同：表示流水线资源存储在独立于流水线的代码库，适用于多条流水线共享资源等场景，
-      # 这时需要将流水线资源库授权给流水线，以确保正常创建流水线资源
+      # 如果 codeRepo 与 pipelineSource 相同：表示流水线资源与流水线存储在相同的代码库
+      # 如果 codeRepo 与 pipelineSource 不同：表示流水线资源与流水线存储在不同的代码库，适用于多条流水线共享资源等场景，
+      # 这时需要将存储流水线资源的代码库授权给流水线，以确保成功创建流水线资源
       codeRepo: coderepo-sc-demo-$suffix
       # 存储流水线资源的代码库的分支
       revision: main
@@ -858,7 +870,7 @@ nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-serv
 您需要在 Github 上准备一个[账号或组织](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts)，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
 
 当运行时集群中的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
-> 命名空间默认与流水线运行时的名称相同，自定义名称参见流水线运行时资源的`spec.destination.namespace`值。
+> 命名空间的默认名称与流水线运行时的名称相同，自定义名称参见流水线运行时资源中的`spec.destination.namespace`。
 
 ConfigMap 资源的模板位于相对路径 `examples/config.json` 下，您需要用以下命令生成的字符串替换其中的 `$auth` 变量：
 
@@ -888,7 +900,7 @@ kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runt
 git clone https://github.com/nautes-examples/user-pipeline.git
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
 推送源码示例代码至源码库。
 
@@ -1170,8 +1182,8 @@ git push origin main -f
 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
 ```shell
 # cluster-name 指集群名称
-# 如果是虚拟的流水线运行时，请分别设置 cluster-name 为流水线运行时集群的名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
-# 如果是物理的流水线运行时，请设置 cluster-name 为流水线运行时集群的名称，以查询 tekonHost 地址和 traefik 端口
+# 如果是虚拟的流水线运行时集群，请分别设置 cluster-name 为流水线运行时集群的名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
+# 如果是物理的流水线运行时集群，请设置 cluster-name 为流水线运行时集群的名称，以查询 tekonHost 地址和 traefik 端口
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address

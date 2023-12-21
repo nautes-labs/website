@@ -88,10 +88,8 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件。
-  # 以物理的部署运行时集群为例，需要安装 multi_tenant、secret_sync、gateway、deployment、progressive_delivery 组件。
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件。
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值。
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     # 组件类别
     multiTenant:
@@ -105,7 +103,8 @@ spec:
     gateway:
       name: traefik
       namespace: traefik
-      # 选填项，组件的自定义参数，支持 key value 格式
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
       additions:
         # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
         httpNodePort: "30080"
@@ -117,7 +116,9 @@ spec:
       name: argo-rollouts
       namespace: argo-rollouts
   # 选填项
-  # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
   # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     argo-rollouts:
@@ -131,7 +132,11 @@ spec:
     hnc-system:
       - $product-name
   # 选填项
-  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -258,10 +263,8 @@ spec:
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-  # 以宿主集群为例，需要安装 gateway 组件
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     gateway:
       name: traefik
@@ -352,10 +355,8 @@ spec:
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
   # 选填项
-  # 根据不同的集群类型、集群用途和运行时类型决定在集群中需要安装哪些组件
-  # 以虚拟的部署运行时集群为例，需要安装 multi_tenant、secret_sync、deployment、progressive_delivery 组件
-  # 默认将根据集群类型、集群用途和运行时类型自动安装配套组件
-  # 自定义集群组件：如果用户自定义了合规的集群组件，将覆盖集群组件的默认值
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
   componentsList:
     # 组件类别
     multiTenant:
@@ -373,7 +374,9 @@ spec:
       name: argo-rollouts
       namespace: argo-rollouts    
   # 选填项
-  # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向哪些保留命名空间部署资源
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
   # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     argo-rollouts:
@@ -385,7 +388,11 @@ spec:
     hnc-system:
       - $product-name
   # 选填项
-  # 集群级别资源的配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署哪些集群级别的资源
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -634,16 +641,18 @@ spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
   # 选填项
-  # 自定义的 account，表示将在目标环境的 namespace 中创建 service account，该账号拥有确保部署运行时正常运行的相关权限，例如获取代码库、获取制品库密钥等
-  # 如果不填，将创建与部署运行时同名的默认 account
+  # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保部署运行时正常运行的相关权限，例如拉取代码、获取制品
+  # 如果不填，将创建与部署运行时同名的默认账号
   account: dr-demo-account-$suffix
   # 承载部署运行时的目标环境
   destination:
     # 环境名称
     environment: env-test-demo-$suffix
     # 选填项
-    # 自定义的 namespace，表示将在目标环境的自定义 namespace 中部署应用，支持多个自定义 namespace
-    # 如果不填，将创建与部署运行时同名的默认 namespace 
+    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+    # 如果向部署配置库提交了 Kubernetes 资源清单，将在该命名空间中部署资源
+    # 支持自定义多个命名空间，这些命名空间均可被用于部署资源，默认取第一个命名空间进行部署
+    # 如果不填，将创建与部署运行时同名的默认命名空间
     namespaces:
       - dr-demo-ns-$suffix
   manifestsource:
@@ -739,7 +748,7 @@ spec:
 
 访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#初始化产品) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
-推送 Kubernetes 资源清单至产品的代码库。
+推送 Kubernetes 资源清单至部署配置库。
 
 ```Shell
 # 更改 origin 远程仓库为部署配置库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
@@ -761,11 +770,12 @@ git push origin main -f
 
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 ArgoCD Dashboard 的访问地址。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行命令，以查看 ArgoCD 控制台的访问地址。
+
 ```shell
 # cluster-name 指集群名称
-# 如果是虚拟的部署运行时，请分别设置 cluster-name 为部署运行时集群的名称、宿主集群的名称，以分别查询 argocdHost 地址和 traefik 端口
-# 如果是物理的部署运行时，请设置 cluster-name 为部署运行时集群的名称，以查询 argocdHost 地址和 traefik 端口
+# 如果集群是虚拟的部署运行时集群，请分别设置 cluster-name 为部署运行时集群的名称、宿主集群的名称，以分别查询 argocdHost 地址和 traefik 端口
+# 如果集群是物理的部署运行时集群，请设置 cluster-name 为部署运行时集群的名称，以查询 argocdHost 地址和 traefik 端口
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address

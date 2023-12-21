@@ -63,19 +63,21 @@ title: 维护部署运行时
                 },
                 # 承载部署运行时的目标环境
                 "destination": {
-                  # 环境名称
-                  "environment": "$environment",
-                  # 选填项
-                  # 自定义的 namespace，表示将在目标环境的自定义 namespace 中部署应用，支持多个自定义 namespace
-                  # 如果不填，将创建与部署运行时同名的默认 namespace 
-                  "namespaces": [
-                    "$namespace1",
-                    "$namespace2"
-                  ]
+                    # 环境名称
+                    "environment": "$environment",
+                    # 选填项
+                    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+                    # 如果向部署配置库提交了 Kubernetes 资源清单，将在该命名空间中部署资源
+                    # 支持自定义多个命名空间，这些命名空间均可被用于部署资源，默认取第一个命名空间进行部署
+                    # 如果不填，将创建与部署运行时同名的默认命名空间
+                    "namespaces": [
+                        "$namespace1",
+                        "$namespace2"
+                    ]
                 },
                 # 选填项
-                # 自定义的 account，表示将在目标环境的 namespace 中创建 service account，该账号拥有确保部署运行时正常运行的相关权限，例如获取代码库、获取制品库密钥等
-                # 如果不填，将创建与部署运行时同名的默认 account
+                # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保部署运行时正常运行的相关权限，例如拉取代码、获取制品
+                # 如果不填，将创建与部署运行时同名的默认账号
                 "account": "$account"
             }'
 ```
@@ -273,11 +275,11 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev-invalid",
-                  "namespaces": [
-                    "dr-demo-1",
-                    "dr-demo-2"
-                  ]
+                    "environment": "env-dev-invalid",
+                    "namespaces": [
+                        "dr-demo-1",
+                        "dr-demo-2"
+                    ]
                 },
                 "account": "dr-demo-account"
             }'
