@@ -1182,8 +1182,8 @@ git push origin main -f
 下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
 ```shell
 # cluster-name 指集群名称
-# 如果是虚拟的流水线运行时集群，请分别设置 cluster-name 为流水线运行时集群的名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
-# 如果是物理的流水线运行时集群，请设置 cluster-name 为流水线运行时集群的名称，以查询 tekonHost 地址和 traefik 端口
+# 如果集群是虚拟的流水线运行时集群，请分别设置 cluster-name 为流水线运行时集群的名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
+# 如果集群是物理的流水线运行时集群，请设置 cluster-name 为流水线运行时集群的名称，以查询 tekonHost 地址和 traefik 端口
 # gitlab-access-token 指 GitLab access token
 # api-server-address 指 Nautes API Server 的访问地址
 nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address

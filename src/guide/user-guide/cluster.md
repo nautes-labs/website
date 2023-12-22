@@ -487,7 +487,9 @@ title: 注册运行时集群
                   }
                 }, 
                 # 选填项
-                # 集群保留命名空间的配置：保留命名空间指集群内组件的安装空间，使用产品名称替换变量 $product-name，表示该产品可以向指定命名空间部署资源
+                # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+                # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+                # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
                 # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
                 "reserved_namespaces_allowed_products": {
                   "tekton-pipelines": [
@@ -513,7 +515,11 @@ title: 注册运行时集群
                   ]
                 },
                 # 选填项
-                # 集群级别资源的产品配置：使用产品名称替换变量 $product-name，表示该产品可以向集群部署指定的集群级别资源
+                # 产品部署集群级别资源（cluster-scoped）的配置：
+                # 当资源范围超出某个命名空间时，需要使用集群级别资源
+                # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+                # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+                # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
