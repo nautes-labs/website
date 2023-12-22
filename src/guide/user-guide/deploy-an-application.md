@@ -87,14 +87,39 @@ spec:
   workerType: "deployment"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    # 组件类别
+    multiTenant:
+      # 组件名称
+      name: hnc
+      # 组件的命名空间
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
+      additions:
+        # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
+  # 选填项
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
@@ -104,13 +129,14 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
+    hnc-system:
       - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 选填项
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -135,10 +161,25 @@ spec:
   usage: "worker"
   workerType: "deployment"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -148,11 +189,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -182,7 +219,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-deployment.yaml 指在代码库中模板文件的相对路径
@@ -225,10 +262,16 @@ spec:
   usage: "host"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"  
   # 集群的 kubeconfig 文件内容，使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
     $kubeconfig
@@ -246,9 +289,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"  
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -271,7 +318,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -303,14 +350,34 @@ spec:
   hostCluster: "$host-cluster"
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io",
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    # 组件类别
+    multiTenant:
+      # 组件名称
+      name: hnc
+      # 组件的命名空间
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
+  # 选填项
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - $product-name
@@ -318,13 +385,14 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
+    hnc-system:
       - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 选填项
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -347,9 +415,21 @@ spec:
   workerType: "deployment"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    progressiveDelivery:
+      name: argo-rollouts
+      namespace: argo-rollouts    
   reservedNamespacesAllowedProducts:
     argo-rollouts:
       - demo-quickstart
@@ -357,11 +437,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -392,7 +468,7 @@ nautes apply -f examples/demo-cluster-virtual-worker-deployment.yaml -t $gitlab-
 git clone https://github.com/nautes-labs/cli.git
 ```
 
-替换位于相对路径 `examples/demo-product.yaml` 下产品属性模板的变量，包括 `$suffix`，`$runtime-cluster`。
+替换位于相对路径 `examples/demo-product.yaml` 下产品属性模板的变量，包括 `$suffix`。
 
 ```yaml
 # 产品
@@ -539,7 +615,7 @@ spec:
   name: env-test-demo-$suffix
   # 环境的所属产品
   product: demo-$suffix
-  # 环境关联的运行时集群
+  # 环境关联的部署运行时集群
   cluster: $deployment-runtime-cluster
   # 环境类型
   envType: test
@@ -564,11 +640,21 @@ kind: DeploymentRuntime
 spec:
   # 部署运行时的名称
   name: dr-demo-$suffix
-  # 承载部署运行时的环境
+  # 选填项
+  # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保部署运行时正常运行的相关权限，例如拉取代码、获取制品
+  # 如果不填，将创建与部署运行时同名的默认账号
+  account: dr-demo-account-$suffix
+  # 承载部署运行时的目标环境
   destination:
+    # 环境名称
     environment: env-test-demo-$suffix
+    # 选填项
+    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+    # 如果向部署配置库提交了 Kubernetes 资源清单，将在该命名空间中部署资源
+    # 支持自定义多个命名空间，这些命名空间均可被用于部署资源，默认取第一个命名空间进行部署
+    # 如果不填，将创建与部署运行时同名的默认命名空间
     namespaces:
-      - dr-demo-$suffix
+      - dr-demo-ns-$suffix
   manifestsource:
     # 部署运行时监听的代码库
     codeRepo: coderepo-deploy-demo-$suffix
@@ -610,10 +696,11 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: DeploymentRuntime
 spec:
   name: dr-demo-quickstart
+  account: dr-demo-account-quickstart
   destination:
     environment: env-test-demo-quickstart
     namespaces:
-      - dr-demo-quickstart  
+      - dr-demo-ns-quickstart  
   manifestsource:
     codeRepo: coderepo-deploy-demo-quickstart
     path: deployments/test
@@ -623,7 +710,7 @@ spec:
     - project-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-deployment.yaml 指在代码库中模板文件的相对路径
@@ -635,7 +722,7 @@ nautes apply -f examples/demo-deployment.yaml -t $gitlab-access-token -s $api-se
 
 ## 部署
 
-将 Kubernetes 资源清单提交至产品的代码库，例如：deployment、service 等资源。
+将 Kubernetes 资源清单提交至部署配置库，例如：deployment、service 等资源。
 
 克隆部署示例的代码库到本地。
 
@@ -661,7 +748,7 @@ spec:
 
 访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[部署配置库](#初始化产品) main 分支的强制推送权限，该代码库用于存储 Kubernetes 资源清单。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
-推送 Kubernetes 资源清单至产品的代码库。
+推送 Kubernetes 资源清单至部署配置库。
 
 ```Shell
 # 更改 origin 远程仓库为部署配置库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
@@ -673,18 +760,29 @@ git push origin main -f
 
 ## 查看部署结果
 
-部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpnodeport` ，可以访问示例应用的 Web 界面。
+部署成功后，使用浏览器访问地址 `http://devops-sample.$cluster-ip.nip.io:$traefik-httpNodePort` ，可以访问示例应用的 Web 界面。
 
 >替换变量 $cluster-ip 为运行时集群的公网 IP。
 >
->替换变量 $traefik-httpnodeport 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpNodePort`，例如：`30080`。
+>替换变量 $traefik-httpNodePort 为运行时集群的 traefik 端口，详情参考下文命令返回值中的 `componentsList.gateway.additions.httpNodePort`，例如：`30080`。
 
 您也可以通过 ArgoCD 控制台查看应用的部署结果，并且只能查看和管理被授权产品的相关资源。
 
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台 ，点击 LOG IN VIA DEX 进行统一认证，如果在当前浏览器会话中未登录过 GitLab，那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
-> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行命令，以查看 ArgoCD 控制台的访问地址。
+
+```shell
+# cluster-name 指集群名称
+# 如果集群是虚拟的部署运行时集群，请分别设置 cluster-name 为部署运行时集群的名称、宿主集群的名称，以分别查询 argocdHost 地址和 traefik 端口
+# 如果集群是物理的部署运行时集群，请设置 cluster-name 为部署运行时集群的名称，以查询 argocdHost 地址和 traefik 端口
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考命令行返回值中的 `componentsList.deployment.additions.host`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
 >
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。点击 ArgoCD 控制台左侧菜单栏的“设置”，还可以查看被授权产品相关的 ArgoCD projects。

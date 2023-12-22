@@ -43,13 +43,6 @@ title: 维护部署运行时
     # 替换变量 $gitlab-access-token 为 GitLab access token
     # 替换变量 $product-name 为部署运行时所属产品的名称
     # 替换变量 $deploymentruntime-name 为部署运行时的名称
-    # 替换变量 $project 为部署运行时关联的项目
-    # 替换变量 $coderepo-name 部署运行时监听的代码库名称
-    # 替换变量 $coderepo-target-revision 部署运行时监听的代码库版本
-    # 替换变量 $coderepo-path 为部署运行时监听的代码库路径
-    # 替换变量 $destination 为部署运行时下发部署的目标环境
-    # 替换变量 $namespace-101 可选，为部署运行时下发部署的目标环境的命名空间
-    # 替换变量 $namespace-102 可选，为部署运行时下发部署的目标环境的命名空间
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -68,15 +61,24 @@ title: 维护部署运行时
                     # 部署运行时监听的代码库路径
                     "path": "$coderepo-path"
                 },
-                # 部署运行时下发部署的目标环境
+                # 承载部署运行时的目标环境
                 "destination": {
-                  "environment": "$destination",
-                  # 部署运行时支持部署不同的 Deployment 到不同的命名空间，比如 A Deployment 部署到 $namespace-101, B Deployment 部署到 $namespace-102。
-                  "namespaces": [
-                    "$namespace-101"
-                    "$namespace-102"
-                  ]
-                }
+                    # 环境名称
+                    "environment": "$environment",
+                    # 选填项
+                    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+                    # 如果向部署配置库提交了 Kubernetes 资源清单，将在该命名空间中部署资源
+                    # 支持自定义多个命名空间，这些命名空间均可被用于部署资源，默认取第一个命名空间进行部署
+                    # 如果不填，将创建与部署运行时同名的默认命名空间
+                    "namespaces": [
+                        "$namespace1",
+                        "$namespace2"
+                    ]
+                },
+                # 选填项
+                # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保部署运行时正常运行的相关权限，例如拉取代码、获取制品
+                # 如果不填，将创建与部署运行时同名的默认账号
+                "account": "$account"
             }'
 ```
 
@@ -98,11 +100,13 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo-1"，
+                    "dr-demo-2"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```
 
@@ -118,10 +122,12 @@ title: 维护部署运行时
     metadata:
         name: dr-dev
     spec:
+        account: dr-demo-account
         destination:
-            environment: env-dev
+            environment: env-dev-demo
             namespaces:
-              - dr-dev
+              - dr-demo-1
+              - dr-demo-2
         manifestSource:
             codeRepo: repo-xxxx
             path: manifests/development
@@ -206,11 +212,13 @@ title: 维护部署运行时
                 "path": "manifests/development"
             },
             "destination": {
-              "environment": "env-dev",
+              "environment": "env-dev-demo",
               "namespaces": [
-                "dr-dev"
+                "dr-demo-1",
+                "dr-demo-2"
               ]
-            }
+            },
+            "account": "dr-demo-account"
         }
     ]
 }
@@ -250,7 +258,7 @@ title: 维护部署运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建部署运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
+以创建部署运行时为例，将 `destination.environment` 属性设置为不合规的 environment，启用 `insecure_skip_check` 查询参数并设置其值为 `true`，可以强制提交部署运行时的资源文件。请求示例如下：
 
 ```Shell
     curl -X 'POST' \
@@ -267,10 +275,12 @@ title: 维护部署运行时
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
-                  "namespaces": [
-                    "dr-dev"
-                  ]
-                }
+                    "environment": "env-dev-invalid",
+                    "namespaces": [
+                        "dr-demo-1",
+                        "dr-demo-2"
+                    ]
+                },
+                "account": "dr-demo-account"
             }'
 ```

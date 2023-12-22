@@ -14,9 +14,19 @@ title: 查看流水线和部署结果
 
 使用浏览器访问地址 `https://$tekonHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 Tekton Dashboard 来查看流水线。
 
-> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](run-a-pipeline.md#注册物理集群)或者[注册虚拟集群](run-a-pipeline.md#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
+```shell
+# cluster-name 指集群名称
+# 如果是虚拟的流水线运行时，请分别设置 cluster-name 为流水线运行时的集群名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
+# 如果是物理的流水线运行时，请设置 cluster-name 为流水线运行时的集群名称，以查询 tekonHost 地址和 traefik 端口
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考命令行返回值中的 `componentsList.pipeline.additions.host`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
 >
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](run-a-pipeline.md#注册物理集群)或者[注册虚拟集群](run-a-pipeline.md#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 Gitlab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 
@@ -53,9 +63,20 @@ spec:
 
 使用浏览器访问地址 `https://$argocdHost:$traefik-httpsNodePort`，可以访问安装在运行时集群中的 ArgoCD 控制台。点击 `LOG IN VIA DEX` 进行统一认证，如果在当前浏览器会话中未登录过认证服务器（如 Gitlab），那么需要填写您的 GitLab 账号密码进行登录。登录成功后页面会自动跳转到 ArgoCD 控制台。
 
-> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考[注册物理集群](deploy-an-application.md#注册物理集群)或者[注册虚拟集群](deploy-an-application.md#注册虚拟集群)章节中属性模板的 `spec.argocdHost`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 ArgoCD Dashboard 的访问地址。
+
+```shell
+# cluster-name 指集群名称
+# 如果是虚拟的部署运行时，请分别设置 cluster-name 为部署运行时的集群名称、宿主集群的名称，以分别查询 argocdHost 地址和 traefik 端口
+# 如果是物理的部署运行时，请设置 cluster-name 为部署运行时的集群名称，以查询 argocdHost 地址和 traefik 端口
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> 替换变量 $argocdHost 为运行时集群的 argocdHost 地址，详情参考命令行返回值中的 `componentsList.deployment.additions.host`，例如：`argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`。
 >
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](deploy-an-application.md#注册物理集群)或者[注册虚拟集群](deploy-an-application.md#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 在 ArgoCD 控制台中将呈现被授权产品相关的 ArgoCD applications，您可以查看和管理相关资源。点击某个 ArgoCD application 卡片，将呈现该 application 的资源清单，您可以查看某个资源的 YAML、事件、日志等，并对资源执行同步、重启、删除等操作。您也可以通过访问“设置/项目”页面来查看被授权产品相关的 ArgoCD Projects。
 

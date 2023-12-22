@@ -30,7 +30,6 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
     # Replace the variable $cluster-name with the cluster name
-    # Replace the variable $product-name with the product name, If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -49,24 +48,66 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "worker_type": $worker-type,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io",
-                # Tekton domain：When the worker_type is set to 'pipeline', the property should be filled in. Replace $cluster-ip with the host cluster IP.
-                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io",
-                # ArgoCD domain. Replace $cluster-ip with the cluster IP.
-                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
-                # Traefik configuration
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
-                },
-                # Reserved namespaces which reserved_namespaces_allowed_products are optional, If you need to use it for components replace $product-name with the product name.
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a physical deployment runtime cluster, 
+                # install the following components: multi_tenant, secret_sync, gateway, deployment, and progressive_delivery.
+                # In a physical pipeline runtime cluster, 
+                # install the following components: multi_tenant, secret_sync, gateway, deployment, event_listener and pipeline.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
+                "components_list": {
+                  # Component type
+                  "multi_tenant": {
+                    # Component name
+                    "name": "hnc",
+                    # Component namespace
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    # Optional
+                    # The component's customization parameters support a key-value format.
+                    "additions": {
+                      # The parameters of Traefik represent customized ports for HTTP and HTTPS.
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },                  
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                }, 
+                # Optional
+                # Cluster reserved namespace configuration:
+                # Reserved namespaces refer to installation spaces for components within the cluster.
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the reserved namespaces where the product can deploy resources.
+                # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "$product-name"
                   ],
                   "argo-events": [
-                    "$product-name"
-                  ],
-                  "argo-rollouts": [
                     "$product-name"
                   ],
                   "argocd": [
@@ -78,20 +119,14 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   "external-secrets": [
                     "$product-name"
                   ],
-                  "vault": [
-                    "$product-name"
-                  ],
-                  "cert-manager": [
-                    "$product-name"
-                  ],
-                  "hnc": [
-                    "$product-name"
-                  ],
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "$product-name"
                   ]
                 },
-                # Cluster resources which product_allowed_cluster_resources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+                # Optional
+                # Cluster-scoped resource configuration:
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the cluster-scoped resources which the product can deploy to the cluster.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -125,14 +160,43 @@ The request example for the project pipeline runtime cluster after replacing var
                 "usage": "worker",
                 "worker_type": "pipeline",
                 "primary_domain": "8.217.50.114.nip.io",
-                "tekton_host": "tekton.physical-worker-pipeline.8.217.50.114.nip.io",
-                "argocd_host": "argocd.physical-worker-pipeline.8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                    "additions": {
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
                 },
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "demo-quickstart"
                   ],
                   "argo-events": [
@@ -147,16 +211,7 @@ The request example for the project pipeline runtime cluster after replacing var
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
-                    "demo-quickstart"
-                  ],
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -191,10 +246,31 @@ The request example for the deployment runtime cluster after replacing variables
                 "usage": "worker",
                 "worker_type": "deployment",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.physical-worker-deployment.8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  }
                 },
                 "reserved_namespaces_allowed_products": {
                   "argo-rollouts": [
@@ -209,13 +285,7 @@ The request example for the deployment runtime cluster after replacing variables
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -271,10 +341,21 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "usage": $usage,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io"
-                # Traefik configuration
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a host cluster, install the gateway component.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
+                "components_list": {
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  }
                 },
                 # Content of the kubeconfig file of the cluster. Replace the variable with the kubeconfig of the host cluster,
                 # and ensure that the kubeconfig has been encoded with Base64.
@@ -296,9 +377,15 @@ The request example after replacing the variables is shown below:
                 "cluster_type": "physical",
                 "usage": "host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "traefik": {
-                  "http_node_port": "30080",
-                  "https_node_port": "30443"
+                "components_list": {
+                  "gateway": {
+                    "name": "traefik",
+                    "namespace": "traefik",
+                    "additions": {
+                      "httpNodePort": "30080",
+                      "httpsNodePort": "30443"
+                    }
+                  }
                 },
                 "kubeconfig": "YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKa2FrTkRRVkl5WjBGM1NVSkJaMGxDUVVSQlMwSm5aM0ZvYTJwUFVGRlJSRUZxUVdwTlUwVjNTSGRaUkZaUlVVUkVRbWh5VFROTmRHTXlWbmtLWkcxV2VVeFhUbWhSUkVVeVQwUlplRTVFUVRCT2VsRjNTR2hqVGsxcVRYZE9ha0V6VFZSSmVVMVVSVEJYYUdOT1RYcE5kMDVxUVRCTlZFbDVUVlJGTUFwWGFrRnFUVk5GZDBoM1dVUldVVkZFUkVKb2NrMHpUWFJqTWxaNVpHMVdlVXhYVG1oUlJFVXlUMFJaZUU1RVFUQk9lbEYzVjFSQlZFSm5ZM0ZvYTJwUENsQlJTVUpDWjJkeGFHdHFUMUJSVFVKQ2QwNURRVUZSZG5Sa1JUZFNWVzFCU0hZeE9IZEVXREYyTDJwdWNXRkZVM05tY2pkdVVtNXdiVFZpWWpaME5tRUtSRFptWkhnME5uVlJZaXREWVdGalZYSlVNVlZ5Y1RWT1NUSk5USGhIU0M4eVMweEJMMlkwVDJWNFdqUnZNRWwzVVVSQlQwSm5UbFpJVVRoQ1FXWTRSUXBDUVUxRFFYRlJkMFIzV1VSV1VqQlVRVkZJTDBKQlZYZEJkMFZDTDNwQlpFSm5UbFpJVVRSRlJtZFJWVzEzTDFGSFNYYzFOMlZ0UWpobmFEaHdRVnBHQ21kclZHMXNRekIzUTJkWlNVdHZXa2w2YWpCRlFYZEpSRkozUVhkU1FVbG5VMEZDWkRkTWRFVnhZblkzUTBwcVEyVkhhMWxqTDFacVVraDNObk5UU2tVS01ISkZWM1p5VkZGb1NGbERTVUpvWlhwUE9YUlRWVnB4VjNkbFZHazFTRlpUVUVoWU5uUm1SMkUwU2twa1RsTnVOMDFtYTBSTVpuTUtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDQuMTE4LjIzOjY0NDMKICBuYW1lOiBkZWZhdWx0CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBkZWZhdWx0CiAgICB1c2VyOiBkZWZhdWx0CiAgbmFtZTogZGVmYXVsdApjdXJyZW50LWNvbnRleHQ6IGRlZmF1bHQKa2luZDogQ29uZmlnCnByZWZlcmVuY2VzOiB7fQp1c2VyczoKLSBuYW1lOiBkZWZhdWx0CiAgdXNlcjoKICAgIGNsaWVudC1jZXJ0aWZpY2F0ZS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKclJFTkRRVlJsWjBGM1NVSkJaMGxKVDBNdlRVWm9kekZWU1hkM1EyZFpTVXR2V2tsNmFqQkZRWGRKZDBsNlJXaE5RamhIUVRGVlJVRjNkMWtLWVhwT2VreFhUbk5oVjFaMVpFTXhhbGxWUVhoT2FtY3lUVlJSZDA1RVl6Qk5RalJZUkZSSmVrMUVXWGRPZWtWNVRXcEZlRTVHYjFoRVZFa3dUVVJaZHdwT2FrVjVUV3BGZUU1R2IzZE5SRVZZVFVKVlIwRXhWVVZEYUUxUFl6TnNlbVJIVm5SUGJURm9Zek5TYkdOdVRYaEdWRUZVUW1kT1ZrSkJUVlJFU0U0MUNtTXpVbXhpVkhCb1drY3hjR0pxUWxwTlFrMUhRbmx4UjFOTk5EbEJaMFZIUTBOeFIxTk5ORGxCZDBWSVFUQkpRVUpEZG1GbGFrOVljMDlOVld0c2Qxb0tVMjVuTDFkWFR5OXpURTVYUkc5ck16RjNaM0E0ZGl0VlZXWjZiMjVTUkd0R1J6UkpLM1JZTlhwd1lVRjZUWGxzWm5kbVdXYzJhVVoxUm1remFXUmtLd3BRUmxwb2QwZDFhbE5FUWtkTlFUUkhRVEZWWkVSM1JVSXZkMUZGUVhkSlJtOUVRVlJDWjA1V1NGTlZSVVJFUVV0Q1oyZHlRbWRGUmtKUlkwUkJha0ZtQ2tKblRsWklVMDFGUjBSQlYyZENVU3RwY1haUVlWUXhSVzVxWlZBMFNsaHFXa3hTWVdkMU5uUnpWRUZMUW1kbmNXaHJhazlRVVZGRVFXZE9TRUZFUWtVS1FXbENNVkZ0UTJOeVJIWkdTVXhWTVVsM0swMWxhVVJrWkVSTVFraG9RVmRoT1VKMVQzTkNSRlpMVTBGNVowbG5TRWd5T1ZGNVVEZzFhRVpRVWtkNmRRcFFaRU5qZGpkVk4wMU5MMmxwT0c1emJHUXJUeTh5U1c4eVluYzlDaTB0TFMwdFJVNUVJRU5GVWxSSlJrbERRVlJGTFMwdExTMEtMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VKa2VrTkRRVkl5WjBGM1NVSkJaMGxDUVVSQlMwSm5aM0ZvYTJwUFVGRlJSRUZxUVdwTlUwVjNTSGRaUkZaUlVVUkVRbWh5VFROTmRGa3llSEFLV2xjMU1FeFhUbWhSUkVVeVQwUlplRTVFUVRCT2VsRjNTR2hqVGsxcVRYZE9ha0V6VFZSSmVVMVVSVEJYYUdOT1RYcE5kMDVxUVRCTlZFbDVUVlJGTUFwWGFrRnFUVk5GZDBoM1dVUldVVkZFUkVKb2NrMHpUWFJaTW5od1dsYzFNRXhYVG1oUlJFVXlUMFJaZUU1RVFUQk9lbEYzVjFSQlZFSm5ZM0ZvYTJwUENsQlJTVUpDWjJkeGFHdHFUMUJSVFVKQ2QwNURRVUZSZVhNM2MzSlpXRUZGY3pCUGEybHFXa3QwUjFoRVprMUhXbGh6TUdKeVNHeDRUMWR3UkdaMGQyY0tLMnhGTUdSYU5GSjRVMWhZVldoQ05FbzBaakIwWlVoWFJrNU5WbVUzYzFwak4ya3lOVEF3YldWb1VVVnZNRWwzVVVSQlQwSm5UbFpJVVRoQ1FXWTRSUXBDUVUxRFFYRlJkMFIzV1VSV1VqQlVRVkZJTDBKQlZYZEJkMFZDTDNwQlpFSm5UbFpJVVRSRlJtZFJWVkJ2Y1hKNk1tczVVa28wTTJvclExWTBNbE13Q2xkdlRIVnlZa1YzUTJkWlNVdHZXa2w2YWpCRlFYZEpSRk5CUVhkU1VVbG9RVXhqUWxsbFJHRkVNVGMwWVZwYVVVMUNRbTUzTkhBdk5tWTVTMWhWYjJZS00ydHBSRkZYTlVOTFRXZ3pRV2xDZFdGUFIyNTJZbWwyYWpSRGVISlBja2d4V0VaU1VTOVZSMnRYWW10R1dFVXdlRXhXYzFWSlptcHJRVDA5Q2kwdExTMHRSVTVFSUVORlVsUkpSa2xEUVZSRkxTMHRMUzBLCiAgICBjbGllbnQta2V5LWRhdGE6IExTMHRMUzFDUlVkSlRpQkZReUJRVWtsV1FWUkZJRXRGV1MwdExTMHRDazFJWTBOQlVVVkZTVVo2VERZMlREWk1XR2t2TTNJelVFZEZZVFJNVW14bFVYb3liR1V3VTBSNGNGZFBWMWRNUnpaSWFtaHZRVzlIUTBOeFIxTk5ORGtLUVhkRlNHOVZVVVJSWjBGRlN6bHdOazAxWlhjMGVGTlRXRUpzUzJWRU9WcFpOeXQzY3pGWlQybFVabGhEUTI1NUx6VlNVaTlQYVdSRlQxRlZZbWRxTmdveFptNVBiRzlFVFhwTFZpOUNPV2xFY1VsWE5GZE1aVW94TXpRNFZtMUlRV0YzUFQwS0xTMHRMUzFGVGtRZ1JVTWdVRkpKVmtGVVJTQkxSVmt0TFMwdExRbz0="
             }'
@@ -318,7 +405,6 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
     # Replace the variable $api-server-address with the access address of the Nautes API Server
     # Replace the variable $gitlab-access-token with the GitLab access token
     # Replace the variable $cluster-name with the cluster name
-    # Replace the variable $product-name with the product name, If there is no product name, you can set one first, and then use the product name set here when creating the product, for example：demo-quickstart
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/clusters/$cluster-name' \
         -H 'accept: application/json' \
@@ -341,18 +427,71 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                 "host_cluster": $host-cluster,
                 # Primary domain: Replace $cluster-ip with the host cluster IP.
                 "primary_domain": "$cluster-ip.nip.io"
-                # Tekton domain：When the worker_type is set to 'pipeline', the property should be filled in. Replace $cluster-ip with the host cluster IP.
-                "tekton_host": "tekton.$cluster-name.$cluster-ip.nip.io"
-                # ArgoCD domain. Replace $cluster_ip with the host cluster IP.
-                "argocd_host": "argocd.$cluster-name.$cluster-ip.nip.io",
                 # Virtual cluster configuration: the property is only available for virtual type clusters.
                 "vcluster": {
                   # API SERVER port 
                   "https_node_port": $api-server-port,
                 },
-                # Reserved namespaces which reserved_namespaces_allowed_products are optional, If you need to use it for components replace $product-name with the product name.
+                # Optional
+                # Depending on the cluster's type, usage, and runtime type, decide which components need to be installed.
+                # For example, in a virtual deployment runtime cluster,
+                # install the following components: multi_tenant, secret_sync, deployment, and progressive_delivery.
+                # In a virtual pipeline runtime cluster,
+                # install the following components: multi_tenant, secret_sync, deployment, event_listener and pipeline.
+                # By default, related components will be automatically installed based on the cluster's type, usage, and runtime type.
+                # Cluster component customization: When users customize the validation components of a cluster,
+                # these customizations will override the default settings.
+                "components_list": {
+                  # Component type
+                  "multi_tenant": {
+                    # Component name
+                    "name": "hnc",
+                    # Component namespace
+                    "namespace": "hnc-system"
+                    # Optional
+                    # The component's customization parameters support a key-value format.
+                    # Taking hnc as an example, defining parameters enables the synchronization of specified resource types to the runtime cluster, 
+                    # based on the product's default.project code repository.
+                    # For example, the structure of a product's development, test, and release pipelines is the same in all runtime clusters.
+                    "additions": {
+                      # The kustomization file path in the default.project code repository.
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      # The branch in the default.project code repository to fetch the kustomization file from, with 'main' being the default.
+                      "productResourceRevision": "main"
+                      # Resource types to synchronize
+                      # Format: "group/resourceType1,group/resourceType02", with multiple resource types separated by commas.
+                      "syncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },                  
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                }, 
+                # Optional
+                # Cluster reserved namespace configuration:
+                # Reserved namespaces refer to installation spaces for components within the cluster.
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the reserved namespaces where the product can deploy resources.
+                # For example, during self-installation, Nautes requires the deployment of resources to the argocd namespace.
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "$product-name"
                   ],
                   "argo-events": [
@@ -370,20 +509,14 @@ Compose an API request example by API definition `Cluster_SaveCluster` and add t
                   "external-secrets": [
                     "$product-name"
                   ],
-                  "vault": [
+                  "hnc-system": [
                     "$product-name"
-                  ],
-                  "cert-manager": [
-                    "$product-name"
-                  ],
-                  "hnc": [
-                    "$product-name"
-                  ],
-                  "oauth2-proxy": [
-                    "demo-quickstart"
                   ]
                 },
-                # Cluster resources which product_allowed_cluster_resources are optional, If you need to use permission of cluster resource replace $product-name with the product name.
+                # Optional
+                # Cluster-scoped resource configuration:
+                # By replacing the variable $product-name with the actual product name,
+                # it specifies the cluster-scoped resources which the product can deploy to the cluster.
                 "product_allowed_cluster_resources": {
                   "$product-name": [
                     {
@@ -415,13 +548,38 @@ The request example for the project pipeline runtime cluster after replacing var
                 "worker_type": "pipeline",
                 "host_cluster": "cluster-host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "teoken_host": "tekton.virtual-worker-pipeline.8.217.50.114.nip.io",
-                "argocd_host": "argocd.virtual-worker-pipeline.8.217.50.114.nip.io",
                 "vcluster": {
                   "https_node_port": "31456"
                 },
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                    "additions": {
+                      "productResourceKustomizeFileFolder": "templates/pipelines",
+                      "productResourceRevision": "main"
+                      "syncResourceTypes": "tekton.dev/Pipeline"
+                    }
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "event_listener": {
+                    "name": "argo-events",
+                    "namespace": "argo-events"
+                  },
+                  "pipeline": {
+                    "name": "tekton",
+                    "namespace": "tekton-pipelines"
+                  }
+                },
                 "reserved_namespaces_allowed_products": {
-                  "tekton": [
+                  "tekton-pipelines": [
                     "demo-quickstart"
                   ],
                   "argo-events": [
@@ -436,16 +594,7 @@ The request example for the project pipeline runtime cluster after replacing var
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
-                    "demo-quickstart"
-                  ]，
-                  "oauth2-proxy": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },
@@ -480,9 +629,26 @@ The request example for the deployment runtime cluster after replacing variables
                 "worker_type": "deployment",
                 "host_cluster": "cluster-host",
                 "primary_domain": "8.217.50.114.nip.io",
-                "argocd_host": "argocd.virtual-worker-deployment.8.217.50.114.nip.io",
                 "vcluster": {
                   "https_node_port": "31456"
+                },
+                "components_list": {
+                  "multi_tenant": {
+                    "name": "hnc",
+                    "namespace": "hnc-system"
+                  },
+                  "secret_sync": {
+                    "name": "external-secrets",
+                    "namespace": "external-secrets"
+                  },
+                  "deployment": {
+                    "name": "argocd",
+                    "namespace": "argocd"
+                  },
+                  "progressive_delivery": {
+                    "name": "argo-rollouts",
+                    "namespace": "argo-rollouts"
+                  },  
                 },
                 "reserved_namespaces_allowed_products": {
                   "argo-rollouts": [
@@ -494,13 +660,7 @@ The request example for the deployment runtime cluster after replacing variables
                   "external-secrets": [
                     "demo-quickstart"
                   ],
-                  "vault": [
-                    "demo-quickstart"
-                  ],
-                  "cert-manager": [
-                    "demo-quickstart"
-                  ],
-                  "hnc": [
+                  "hnc-system": [
                     "demo-quickstart"
                   ]
                 },

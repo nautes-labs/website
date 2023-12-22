@@ -43,13 +43,6 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
     # Replace the variable $gitlab-access-token with the GitLab access token.
     # Replace the variable $product-name with the name of the product to which the deployment runtime belongs.
     # Replace the variable $deploymentruntime-name with the deployment runtime name.
-    # Replace the variable $project with the project to which the deployment runtime belongs.
-    # Replace the variable $coderepo-name with the name of the code repository watched by the deployment runtime.
-    # Replace the variable $coderepo-target-revision with the revision or branch of the code repository watched by the deployment runtime.
-    # Replace the variable $coderepo-path with the relative path of the code repository watched by the deployment runtime.
-    # Replace the variable $destination with the target environment of the deployment runtime.
-    # Replace the variable $namespace-101 which is optional with the target namespace of the environment of the deployment runtime.
-    # Replace the variable $namespace-102 which is optional with the target namespace of the environment of the deployment runtime.
     curl -X 'POST' \
         'HTTP://$api-server-address/api/v1/products/$product-name/deploymentruntimes/$deploymentruntime-name' \
         -H 'accept: application/json' \
@@ -68,15 +61,25 @@ Compose an API request example by API definition `Deploymentruntime_SaveDeployme
                     # The relative path of the code repository watched by the deployment runtime
                     "path": $coderepo-path
                 },
-                # The target environment of the deployment runtime
+                # Target environment hosting the deployment runtime
                 "destination": {
-                  "environment": "$destination",
-                  # The DeploymentRuntime supports deploying different Deployments to different namespaces. For example, Deployment A is deployed to $namespace-101 and Deployment B is deployed to $namespace-102.
+                  # Environment name
+                  "environment": "$environment",
+                  # optional
+                  # The customization namespace is used to deploy applications in the target environment's namespace,
+                  # supporting multiple customization namespaces.
+                  # If not specified, a default namespace with the same name as the deployment runtime will be created.
                   "namespaces": [
-                    "$namespace-101"
-                    "$namespace-102"
+                    "$namespace1",
+                    "$namespace2"
                   ]
-                }
+                },
+                # optional
+                # The customization account refers to Nautes creating a service account in the target environment's namespace.
+                # This account has the necessary permissions to ensure deployment runtime resources work normally,
+                # such as cloning code repositories and getting artifact repository secrets.
+                # If not specified, a default service account with the same name as the deployment runtime will be created.
+                "account": "$account"
             }'
 ```
 
@@ -98,11 +101,13 @@ The request example after replacing the variables is shown below:
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-demo",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo-1"，
+                    "dr-demo-2"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```
 
@@ -118,10 +123,12 @@ After the request is successful, the resource file for the deployment runtime wi
     metadata:
         name: dr-dev
     spec:
+        account: dr-demo-account
         destination:
-            environment: env-dev
+            environment: env-dev-demo
             namespaces:
-              - dr-dev
+              - dr-demo-1
+              - dr-demo-2
         manifestSource:
             codeRepo: repo-xxxx
             path: manifests/development
@@ -206,11 +213,13 @@ Use the curl command or other tools to execute the API request to list deploymen
                 "path": "manifests/development"
             },
             "destination": {
-              "environment": "env-dev",
+              "environment": "env-dev-demo",
               "namespaces": [
-                "dr-dev"
+                "dr-demo-1",
+                "dr-demo-2"
               ]
-            }
+            },
+            "account": "dr-demo-account"
         }
     ]
 }
@@ -250,7 +259,7 @@ Use the curl command or other tools to execute the API request to view the deplo
 
 For special scenarios in which API verification needs to be skipped, refer to the [Initialize a Product](main-process.md#initialize-a-product) section.
 
-Taking creating a deployment runtime as an example, if the value of the `destination` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
+Taking creating a deployment runtime as an example, if the value of the `destination.environment` property is set to an invalid environment whose related cluster has been destroyed, you can forcibly submit a request by adding the `insecure_skip_check` query parameter with its value set to `true` , to submit the deployment runtime resource file. The request example is shown below:
 
 ```Shell
     curl -X 'POST' \
@@ -267,10 +276,12 @@ Taking creating a deployment runtime as an example, if the value of the `destina
                     "path": "manifests/development"
                 },
                 "destination": {
-                  "environment": "env-dev",
+                  "environment": "env-dev-invalid",
                   "namespaces": [
-                    "dr-dev"
+                    "dr-demo-1",
+                    "dr-demo-2"
                   ]
-                }
+                },
+                "account": "dr-demo-account"
             }'
 ```

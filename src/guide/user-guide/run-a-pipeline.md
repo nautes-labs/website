@@ -87,18 +87,44 @@ spec:
   workerType: "pipeline"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # tekton 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # argocd 域名，使用物理集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
-  # 如果没有产品名称可以先设定一个，再接下来创建产品时使用这里设定的产品名称，比如：demo-quickstart  
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    # 组件类别
+    multiTenant:
+      # 组件名称
+      name: hnc
+      # 组件的命名空间
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
+      additions:
+        # traefik 的内置参数，表示 HTTP、HTTPS 的自定义端口
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
+  # 选填项
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines :
       - $product-name
     argo-events:
       - $product-name
@@ -108,15 +134,14 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
-      - $product-name
-    oauth2-proxy:
-      - $product-name      
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+    hnc-system:
+      - $product-name   
+  # 选填项
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -141,13 +166,30 @@ spec:
   usage: "worker"
   workerType: "pipeline"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.physical-worker-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.physical-worker-aliyun.8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart
     argo-events:
       - demo-quickstart
@@ -157,14 +199,8 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
-      - demo-quickstart      
+    hnc-system:
+      - demo-quickstart    
   productAllowedClusterResources:
     demo-quickstart:
       - kind: ClusterRole
@@ -193,7 +229,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令以注册物理集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令以注册物理集群。
 
 ```Shell
 # examples/demo-cluster-physical-worker-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -236,10 +272,16 @@ spec:
   usage: "host"
   # 主域名，使用物理集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # traefik 配置
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   # 集群的 kubeconfig 文件内容：使用宿主集群的 kubeconfig 替换该变量
   kubeconfig: |
     $kubeconfig
@@ -257,9 +299,13 @@ spec:
   clusterType: "physical"
   usage: "host"
   primaryDomain: "8.217.50.114.nip.io"
-  traefik:
-    httpNodePort: "30080"
-    httpsNodePort: "30443"
+  componentsList:
+    gateway:
+      name: traefik
+      namespace: traefik
+      additions:
+        httpNodePort: "30080"
+        httpsNodePort: "30443"
   kubeconfig: |
     apiVersion: v1
     clusters:
@@ -282,7 +328,7 @@ spec:
         client-key-data: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1IY0NBUUVFSU5ZZFVkaER2SlFXcVNSRzR0d3gzQ2I4amhnck1HZlVOMG1uajV5dTRWZ1RvQW9HQ0NxR1NNNDkKQXdFSG9VUURRZ0FFanJJb1U4bmdKOHFjQTlnSVAxMVNaOVhMTU8rRmtNQVpwSmhmem1GaDFlQUltK1VZV0puRApBWHRyWDdYZTlQMS9YclVHa2VFazJoOXYrSEhkQm5uV1RnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo=
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，将注册宿主集群。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，将注册宿主集群。
 
 ```Shell
 # examples/demo-cluster-host.yaml 指在代码库中模板文件的相对路径
@@ -314,17 +360,54 @@ spec:
   hostCluster: "$host-cluster"
   # 主域名，使用宿主集群的 IP 替换变量 $cluster-ip
   primaryDomain: "$cluster-ip.nip.io"
-  # tekton 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  tektonHost: "tekton.$cluster-name.$cluster-ip.nip.io"
-  # argocd 域名，使用宿主集群的 IP 替换变量 $cluster-ip
-  argocdHost: "argocd.$cluster-name.$cluster-ip.nip.io"
   # 虚拟集群配置：virtual类型集群才有此属性
   vcluster: 
     # API SERVER 端口号
     httpsNodePort: "$api-server-port"
-  # reservedNamespacesAllowedProducts 可选，如果需要使用组件的保留命名空间，使用产品名称替换：$product-name
+  # 选填项
+  # 如果不填，将根据集群类型、集群用途和运行时类型安装对应组件类别的默认组件
+  # 更多信息，参见 https://nautes.io/guide/user-guide/cluster.html
+  componentsList:
+    # 组件类别
+    multiTenant:
+      # 组件名称
+      name: hnc
+      # 组件的命名空间
+      namespace: hnc-system
+      # 选填项
+      # 组件的自定义参数，支持 key value 格式
+      # 以 hnc 为例，通过定义参数，将从产品的 default.project 代码库（即产品配置库）同步指定类型的资源到运行时集群
+      # 例如，当运行时集群安装了 Tekton Pipeline 组件，并从产品的 default.project 代码库同步了 pipeline 资源到该集群，表示该产品可以在该集群中运行基于 pipeline 资源的一系列 task
+      additions:
+        # 在 default.project 代码库中的 kustomization 文件路径
+        # 使用 kustomization 文件路径替换变量 $kustomization-path
+        productResourceKustomizeFileFolder: "$kustomization-path"
+        # 在 default.project 代码库中获取 kustomization 文件的分支，默认值为 main
+        # 使用 kustomization 文件的所属分支替换变量 $kustomization-revison
+        productResourceRevision: "$kustomization-revision"
+        # 需要同步的资源类型
+        # 格式为："group/resouceType1,group/resourceType02"，多种资源类型用逗号分隔，例如 tekton.dev/Pipeline
+        # 使用遵循格式要求的资源类型替换变量 $resource-types
+        syncResourceTypes: "$resource-types"
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
+  # 选填项
+  # 产品使用保留命名空间的配置：保留命名空间指集群内组件的安装空间，默认只有集群内组件有权限向保留命名空间部署资源
+  # 例如默认只有 Argo CD 才能在 argocd 命名空间中部署资源
+  # 使用产品名称替换变量 $product-name，表示该产品可以在指定的保留命名空间中部署资源，以满足部分特殊场景
+  # 例如 Nautes 自安装时需要向 argocd 命名空间部署资源
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - $product-name
     argo-events:
       - $product-name
@@ -334,15 +417,16 @@ spec:
       - $product-name
     external-secrets:
       - $product-name
-    vault:
-      - $product-name
-    cert-manager:
-      - $product-name
-    hnc:
+    hnc-system:
       - $product-name
     oauth2-proxy:
       - $product-name       
-  # productAllowedClusterResources 可选，如果需要使用集群级别的权限，使用产品名称替换：$product-name
+  # 选填项
+  # 产品部署集群级别资源（cluster-scoped）的配置：
+  # 当资源范围超出某个命名空间时，需要使用集群级别资源
+  # 例如，存储卷（PersistentVolume）、整个集群通用的角色和权限（ClusterRole 和 ClusterRoleBinding）、自定义资源定义（CRDs）等
+  # 更多信息，参见 https://kubernetes.io/docs/reference/using-api/api-concepts/#resource-uris
+  # 使用产品名称替换变量 $product-name，表示该产品可以向当前集群部署指定的集群级别资源，下文代码段的资源仅为示例
   productAllowedClusterResources:
     $product-name:
       - kind: ClusterRole
@@ -365,12 +449,30 @@ spec:
   workerType: "pipeline"
   hostCluster: "host-aliyun"
   primaryDomain: "8.217.50.114.nip.io"
-  tektonHost: "tekton.vcluster-aliyun.8.217.50.114.nip.io"
-  argocdHost: "argocd.vcluster-aliyun.8.217.50.114.nip.io"
   vcluster: 
     httpsNodePort: "31456"
+  componentsList:
+    multiTenant:
+      name: hnc
+      namespace: hnc-system
+      additions:
+        productResourceKustomizeFileFolder: templates/pipelines
+        productResourceRevision: main
+        syncResourceTypes: tekton.dev/Pipeline
+    secretSync:
+      name: external-secrets
+      namespace: external-secrets
+    deployment:
+      name: argocd
+      namespace: argocd
+    eventListener:
+      name: argo-events
+      namespace: argo-events
+    pipeline:
+      name: tekton
+      namespace: tekton-pipelines    
   reservedNamespacesAllowedProducts:
-    tekton:
+    tekton-pipelines:
       - demo-quickstart    
     argo-rollouts:
       - demo-quickstart
@@ -380,13 +482,7 @@ spec:
       - demo-quickstart
     external-secrets:
       - demo-quickstart
-    vault:
-      - demo-quickstart
-    cert-manager:
-      - demo-quickstart
-    hnc:
-      - demo-quickstart
-    oauth2-proxy:
+    hnc-system:
       - demo-quickstart
   productAllowedClusterResources:
     demo-quickstart:
@@ -419,7 +515,7 @@ git clone https://github.com/nautes-labs/cli.git
 
 替换位于相对路径 `examples/demo-product.yaml` 下模板的变量，包括 `$suffix`。
 
-> 这里创建了两个代码库：“源码库”是用于存储项目源码和流水线配置文件，“部署配置库”是用于存储项目的部署清单文件。
+> 这里创建了三个代码库：“源码库”用于存储项目源码，“部署配置库”用于存储部署清单，“流水线配置库”用于存储项目的流水线配置文件。
 
 ```yaml
 # 产品
@@ -494,6 +590,31 @@ spec:
       # 代码库的可见性，例如：private、public
       visibility: private
       description: coderepo-deploy-demo-$suffix
+---      
+# 流水线配置库
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  # 代码库名称
+  name: coderepo-pipeline-demo-$suffix
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  # 代码库的所属产品
+  product: demo-$suffix
+  # 代码库的所属项目
+  project: project-demo-$suffix  
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      # 代码库的名称
+      name: coderepo-pipeline-demo-$suffix
+      # 代码库的路径
+      path: coderepo-pipeline-demo-$suffix
+      # 代码库的可见性，例如：private、public
+      visibility: private
+      description: coderepo-pipeline-demo-$suffix
 ```
 
 替换变量后的文件示例如下：
@@ -552,6 +673,24 @@ spec:
       path: coderepo-deploy-demo-quickstart
       visibility: private
       description: coderepo-deploy-demo-quickstart
+---
+apiVersion: nautes.resource.nautes.io/v1alpha1
+kind: CodeRepo
+spec:
+  name: coderepo-pipeline-demo-quickstart
+  codeRepoProvider: gitlab
+  deploymentRuntime: false
+  pipelineRuntime: true
+  product: demo-quickstart
+  project: project-demo-quickstart
+  webhook:
+    events: ["push_events"]
+  git:
+    gitlab:
+      name: coderepo-pipeline-demo-quickstart
+      path: coderepo-pipeline-demo-quickstart
+      visibility: private
+      description: coderepo-pipeline-demo-quickstart
 ```
 
 替换位于相对路径 `examples/demo-pipeline.yaml` 下模板的变量，包括 `$suffix`、`$pipeline-runtime-cluster`。
@@ -566,7 +705,7 @@ spec:
   name: env-dev-demo-$suffix
   # 环境的所属产品
   product: demo-$suffix
-  # 环境关联的运行时集群
+  # 环境关联的流水线运行时集群
   cluster: $pipeline-runtime-cluster
   # 环境类型
   envType: dev
@@ -594,12 +733,16 @@ kind: ProjectPipelineRuntime
 spec:
   # 流水线运行时的名称
   name: pr-demo-$suffix
+  # 选填项
+  # 自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保流水线运行时正常运行的相关权限，例如拉取代码、获取制品
+  # 如果不填，将创建与流水线运行时同名的默认账号
+  account: pr-demo-account-$suffix
   # 流水线运行时的所属产品
   product: demo-$suffix
   # 流水线运行时的所属项目
   project: project-demo-$suffix
   # 流水线配置的源码库
-  pipelineSource: coderepo-sc-demo-$suffix
+  pipelineSource: coderepo-pipeline-demo-$suffix
   # 流水线的定义
   pipelines:
     # 流水线名称
@@ -608,8 +751,29 @@ spec:
     label: main
     # 流水线配置文件的路径
     path: pipelines/main.yaml
-  # 承载部署运行时的环境
-  destination: env-dev-demo-$suffix
+  # 承载流水线运行时的目标环境
+  destination:
+    # 环境名称
+    environment: env-dev-demo-$suffix
+    # 选填项
+    # 自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+    # 如果向流水线配置库提交了流水线配置文件，将在该命名空间中创建并运行流水线
+    # 如果不填，将创建与流水线运行时同名的默认命名空间
+    namespace: pr-demo-ns-$suffix
+  # 选填项
+  # 自定义存储流水线资源的代码库，包括代码库的名称、分支和路径
+  # 用于存储流水线的相关资源，例如 ConfigMap 、PVC 等
+  additionalResources:
+    git:
+      # 存储流水线资源的代码库的名称
+      # 如果 codeRepo 与 pipelineSource 相同：表示流水线资源与流水线存储在相同的代码库
+      # 如果 codeRepo 与 pipelineSource 不同：表示流水线资源与流水线存储在不同的代码库，适用于多条流水线共享资源等场景，
+      # 这时需要将存储流水线资源的代码库授权给流水线，以确保成功创建流水线资源
+      codeRepo: coderepo-sc-demo-$suffix
+      # 存储流水线资源的代码库的分支
+      revision: main
+      # 存储流水线资源的代码库的路径
+      path: test
   # 触发流水线的事件源
   eventSources:
     # 事件源名称
@@ -662,14 +826,22 @@ apiVersion: nautes.resource.nautes.io/v1alpha1
 kind: ProjectPipelineRuntime
 spec:
   name: pr-demo-quickstart
+  account: pr-demo-account-quickstart
   product: demo-quickstart
   project: project-demo-quickstart
-  pipelineSource: coderepo-sc-demo-quickstart
+  pipelineSource: coderepo-pipeline-demo-quickstart
   pipelines:
   - name: pipeline-dev-demo-quickstart
     label: main
     path: pipelines/main.yaml
-  destination: env-dev-demo-quickstart
+  destination:
+    environment: env-dev-demo-quickstart
+    namespace: pr-demo-ns-quickstart
+  additionalResources:
+    git:
+      codeRepo: coderepo-pipeline-demo-quickstart
+      revision: main
+      path: test  
   eventSources:
   - name: webhook
     gitlab:
@@ -683,7 +855,7 @@ spec:
     pipeline: pipeline-dev-demo-quickstart
 ```
 
-下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.3.8)，执行以下命令，以初始化产品。
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，以初始化产品。
 
 ```Shell
 # examples/demo-product.yaml 和 examples/demo-pipeline.yaml 指在代码库中模板文件的相对路径
@@ -697,7 +869,8 @@ nautes apply -f examples/demo-pipeline.yaml -t $gitlab-access-token -s $api-serv
 
 您需要在 Github 上准备一个[账号或组织](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts)，例如：`https://github.com/nautes-labs`，并在对此有权限的账号下生成一个具有 `write:packages` 权限的 [personal access token](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)。
 
-当运行时集群中与流水线运行时同名的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
+当运行时集群中的命名空间就绪后，您需要在此命名空间下创建一个 ConfigMap 资源，流水线中的 `image-build` 任务在推送容器镜像时可以使用此 ConfigMap 通过镜像仓库的认证。
+> 命名空间的默认名称与流水线运行时的名称相同，自定义名称参见流水线运行时资源中的`spec.destination.namespace`。
 
 ConfigMap 资源的模板位于相对路径 `examples/config.json` 下，您需要用以下命令生成的字符串替换其中的 `$auth` 变量：
 
@@ -716,7 +889,28 @@ kubectl create configmap registry-auth --from-file=config.json -n $pipeline-runt
 
 ## 执行流水线
 
-将示例项目的源码和流水线配置文件推送到“源码库”，将示例项目的 Kubernetes 资源清单（例如：deployment、service 等）提交至“部署配置库”。
+将示例项目的源码提交至“源码库”、Kubernetes 资源清单（例如：deployment、service 等）提交至“部署配置库”、流水线配置文件提交至“流水线配置库”。
+
+### 提交源码
+
+克隆源码示例的代码库到本地。
+
+```shell
+# 【待修订】
+git clone https://github.com/nautes-examples/user-pipeline.git
+```
+
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+
+推送源码示例代码至源码库。
+
+```Shell
+# 更改 origin 远程仓库为源码库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
+git add .
+git commit -m '提交源码'
+git push origin main -f
+```
 
 ### 提交部署清单
 
@@ -764,11 +958,11 @@ git clone https://github.com/nautes-examples/user-pipeline.git
 
 替换本代码库中流水线配置文件 `pipelines/main.yaml` 中变量，包括：
 
-**$pipeline-runtime-name** 替换为流水线运行时名称，如：`pr-demo-quickstart`。
+**$pipeline-runtime-account** 替换为流水线运行时的 account，例如：`pr-demo-account-quickstart`。
 
-**$sc-repo-id** 替换为源码库 ID，您可以从 Gitlab 控制台的 Project 首页中找到这个 ID。
+**$pipeline-repo-id** 替换为流水线配置库 ID，您可以从 Gitlab 控制台的 Project 首页中找到这个 ID。
 
-**$sc-repo-url** 替换为源码库的 SSH URL，你可以 Gitlab 控制台的 Project 首页中找到这个 URL，如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
+**$sc-repo-url** 替换为源码库的 SSH URL，您可以从 Gitlab 控制台的 Project 首页中找到这个 URL，例如：`git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git`。
 
 **$deploy-repo-url** 替换为部署配置库的 SSH URL，来源同上。
 
@@ -785,57 +979,57 @@ spec:
     value: main
   taskRunSpecs:
   - pipelineTaskName: git-clone-sourcecode
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readonly"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readonly"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readonly" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readonly" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: git-clone-deployment
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   - pipelineTaskName: manifest-update
-    taskServiceAccountName: nautes-sa
+    taskServiceAccountName: $pipeline-runtime-account
     metadata:
       annotations:
         vault.hashicorp.com/agent-inject: 'true'
         vault.hashicorp.com/agent-pre-populate-only: "true"
         vault.hashicorp.com/tls-secret: "ca"
         vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
-        vault.hashicorp.com/role: '$pipeline-runtime-name'
+        vault.hashicorp.com/role: '$pipeline-runtime-account'
         vault.hashicorp.com/agent-run-as-user: '0' 
         vault.hashicorp.com/agent-run-as-group: '0'
-        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$sc-repo-id/default/readwrite"
+        vault.hashicorp.com/agent-inject-secret-id_ecdsa: "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite"
         vault.hashicorp.com/secret-volume-path-id_ecdsa: "/root/.ssh"
         vault.hashicorp.com/agent-inject-perms-id_ecdsa: '0400'
         vault.hashicorp.com/agent-inject-template-id_ecdsa: |
-          {{- with secret "git/data/gitlab/repo-$sc-repo-id/default/readwrite" -}}
+          {{- with secret "git/data/gitlab/repo-$pipeline-repo-id/default/readwrite" -}}
           {{ .Data.data.deploykey }}
           {{- end -}}
   pipelineSpec:
@@ -966,13 +1160,13 @@ spec:
       name: registry-auth
 ```
 
-访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[源码库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
+访问 [GitLab](installation.md#查看安装结果)，并设置 GitLab 账号具备[流水线配置库](#初始化产品) main 分支的强制推送权限。详情参考[保护分支启用强制推送](https://docs.gitlab.com/ee/user/project/protected_branches.html#allow-force-push-on-a-protected-branch)。
 
-推送流水线配置至源码库。
+推送流水线配置文件至流水线配置库。
 
 ```Shell
 # 更改 origin 远程仓库为源码库，以下仓库地址仅为示例，需要将 $gitlab-url 替换为 Gitlab 的 IP 或域名
-git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-sc-demo-quickstart.git
+git remote set-url origin git@$gitlab-url:demo-quickstart/coderepo-pipeline-demo-quickstart.git
 git add .
 git commit -m '提交流水线配置'
 git push origin main -f
@@ -982,11 +1176,22 @@ git push origin main -f
 
 ### 流水线
 
-当您提交流水线配置到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`
+当您提交代码到源码库后，Nautes 会响应代码库的 Webhook 回调，并在流水线运行时中声明的集群中触发流水线的执行。您可以使用浏览器访问 Tekton Dashboard 来查看流水线的执行情况，地址为：`http://$tekonHost:$traefik-httpsNodePort`。
 
-> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.tekonHost`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
->
-> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考[注册物理集群](#注册物理集群)或者[注册虚拟集群](#注册虚拟集群)章节中属性模板的 `spec.traefik.httpsNodePort`，例如：`30443`。
+
+下载 [命令行工具](https://github.com/nautes-labs/cli/releases/tag/v0.4.1)，执行以下命令，查看 Tekton Dashboard 的访问地址。
+```shell
+# cluster-name 指集群名称
+# 如果集群是虚拟的流水线运行时集群，请分别设置 cluster-name 为流水线运行时集群的名称、宿主集群的名称，以分别查询 tekonHost 地址和 traefik 端口
+# 如果集群是物理的流水线运行时集群，请设置 cluster-name 为流水线运行时集群的名称，以查询 tekonHost 地址和 traefik 端口
+# gitlab-access-token 指 GitLab access token
+# api-server-address 指 Nautes API Server 的访问地址
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> 替换变量 $tekonHost 为运行时集群的 tekonHost 字段的值，详情参考命令行返回值中的 `componentsList.pipeline.additions.host`，例如：`tekton.vcluster-aliyun.8.217.50.114.nip.io`。
+> 
+> 替换变量 $traefik-httpsNodePort 为运行时集群的 traefik 端口，详情参考命令行返回值中的 `componentsList.gateway.additions.httpsNodePort`，例如：`30443`。
 
 当您访问 Tekton Dashboard 时，如果在当前浏览器会话中未登录过 GitLab，访问动作会触发统一认证，认证过程中需要使用您的 GitLab 账号密码进行登录，登录成功后页面会自动跳转到 Tekton Dashboard。
 

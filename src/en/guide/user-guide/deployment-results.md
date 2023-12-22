@@ -14,9 +14,23 @@ You can view the pipeline information using the Tekton Dashboard and the image r
 
 You can view the pipelines in the Tekton Dashboard installed in the runtime cluster by using a browser to access `https://$tekonHost:$traefik-httpsNodePort`.
 
-> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `spec.tekonHost` in the property template in the [Register Physical Cluster](run-a-pipeline.md#register-physical-cluster) or [Register Virtual Cluster](run-a-pipeline.md#register-virtual-cluster) section, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the command to view the address of the Tekton Dashboard.
+
+```shell
+# cluster-name refers to the name of the cluster.
+# For a virtual pipeline runtime,
+# set `cluster-name` respectively to the names of the pipeline runtime cluster and the host cluster,
+# to query the tekonHost address and traefik port separately.
+# For a physical pipeline runtime,
+# set `cluster-name` to the name of the pipeline runtime cluster, to query the tekonHost address and traefik port.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> Replace the $tekonHost variable with the tekonHost address of the runtime cluster. For more information, refer to `componentsList.pipeline.additions.host` in the command return value, for example, `tekton.vcluster-aliyun.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](run-a-pipeline.md#register-physical-cluster) or [Register Virtual Cluster](run-a-pipeline.md#register-virtual-cluster) section, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 When you access the Tekton Dashboard, if you haven't logged into the GitLab in the current browser session, the action will trigger unified authentication. During the authentication process, you need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the Tekton Dashboard.
 
@@ -53,9 +67,22 @@ spec:
 
 Access the ArgoCD console installed on the runtime cluster by using a browser to access `https://$argocdHost:$traefik-httpsNodePort`. Click `LOG IN VIA DEX` for unified authentication. If you haven't logged into GitLab in the current browser session, you'll need to enter your GitLab account and password to log in. After successful login, the page will automatically redirect to the ArgoCD console.
 
-> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `spec.argocdHost` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
+Download the [command-line tool](https://github.com/nautes-labs/cli/releases/tag/v0.4.1) and run the command to view the address of the ArgoCD Dashboard.
+```shell
+# cluster-name refers to the name of the cluster.
+# For a virtual deployment runtime,
+# set `cluster-name` respectively to the names of the deployment runtime cluster and the host cluster,
+# to query the argocdHost address and traefik port separately.
+# For a physical deployment runtime,
+# set `cluster-name` to the name of the deployment runtime cluster, to query the argocdHost address and traefik port.
+# gitlab-access-token refers to the GitLab access token.
+# api-server-address refers to the access address of the Nautes API Server.
+nautes get cluster $cluster-name -o yaml $gitlab-access-token -s $api-server-address
+```
+
+> Replace the $argocdHost variable with the argocdHost address of the runtime cluster. For more information, refer to `componentsList.deployment.additions.host` in the command return value, for example, `argocd.vcluster-aliyun-0412.8.217.50.114.nip.io`.
 >
-> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `spec.traefik.httpsNodePort` in the property template in the [Register Physical Cluster](deploy-an-application.md#register-physical-cluster) or [Register Virtual Cluster](deploy-an-application.md#register-virtual-cluster) section, for example, `30443`.
+> Replace the $traefik-httpsNodePort variable with the traefik port of the runtime cluster. For more information, refer to `componentsList.gateway.additions.httpsNodePort` in the command return value, for example, `30443`.
 
 The ArgoCD console lists ArgoCD applications related to products authorized for you, and you will be able to view and manage related resources. By clicking on an ArgoCD application card, you can view the resource manifest, YAML, events, logs, and perform operations such as synchronization, restart, and deletion. By clicking on "Settings" in the left menu bar of the ArgoCD console, you can also view ArgoCD projects related to authorized products.
 

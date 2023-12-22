@@ -129,8 +129,41 @@ title: 维护流水线运行时
                         "pipeline": "pipeline-release"
                     }
                 ],
-                "destination": "env-dev-demo",
-                "isolation": "exclusive"
+                "destination": {
+                  "environment": "env-dev-demo",
+                  "namespace": "pr-demo-namespace"
+                },
+                "additionalResources": {
+                  "git": {
+                    "codeRepo": "coderepo-sc-demo",
+                    "revision": "main",
+                    "path": "test"
+                  }
+                },
+                "hooks": {
+                    "pre_hooks": [
+                        {
+                            "name": "ls",
+                            "vars": {
+                                "imageName": "bash",
+                                "printPath": "/var"
+                            },
+                            "alias": "pre-ls"
+                        }
+                    ],
+                    "post_hooks": [
+                        {
+                            "name": "ls",
+                            "vars": {
+                                "imageName": "bash",
+                                "printPath": "/usr"
+                            },
+                            "alias": "post-ls"
+                        }
+                    ]
+                },
+                "isolation": "exclusive",
+                "account": "pr-demo-account"
             }'
 ```
 
@@ -216,16 +249,81 @@ title: 维护流水线运行时
             "revision": "$pipeline-revision"
         }
     ],
-    // destination 指执行流水线的目标环境
-    "destination": "$destination",
+    // destination 表示承载流水线运行时的目标环境
+    "destination": {
+        // environment 指环境名称
+        "environment": "$environment",
+        // 选填项
+        // namespace 指自定义命名空间，Nautes 将在目标环境中创建指定名称的命名空间
+        // 如果向流水线配置库提交了流水线配置文件，将在该命名空间中创建并运行流水线
+        // 如果不填，将创建与流水线运行时同名的默认命名空间
+        "namespace": "$namespace"
+    },
+    // 选填项
+    // additionalResources 指自定义存储流水线资源的代码库，包括代码库的名称、分支和路径
+    // 用于存储流水线的相关资源，例如 ConfigMap 、PVC 等
+    "additionalResources": {
+      "git": {
+        // codeRepo 指存储流水线资源的代码库的名称
+        // 如果 codeRepo 与 pipelineSource 相同：表示流水线资源与流水线存储在相同的代码库
+        // 如果 codeRepo 与 pipelineSource 不同：表示流水线资源与流水线存储在不同的代码库，适用于多条流水线共享资源等场景，
+        // 这时需要将存储流水线资源的代码库授权给流水线，以确保成功创建流水线资源
+        "codeRepo": "$pipeline-res-coderepo-name",
+        // revision 指存储流水线资源的代码库的分支
+        "revision": "$pipeline-res-coderepo-revision",
+        // path 指存储流水线资源的代码库的路径
+        "path": "$pipeline-res-coderepo-path"
+      }
+    }, 
+    // 选填项
+    // Hook 是一种机制，用于在流水线的特定阶段自动执行预定义的操作
+    // 要在流水线中使用 hook，必须安装实现 hook 的相应插件。例如，某插件可以在 GitLab 界面中跟踪流水线的执行过程和结果
+    // 关于流水线插件，详情参见 how_to_write_a_pipeline_plugin.md
+    // 流水线启动前后的 hook 按以下方式配置
+    "hooks": {
+        // pre_hooks 指流水线启动前要执行的一系列操作
+        "pre_hooks": [
+            {
+                // hook 名称
+                "name": "$hook-name",
+                // hook 参数
+                "vars": {
+                    "$hook-params-1": "$hook-value-1",
+                    "$hook-params-2": "$hook-value-2"
+                },
+                // 选填项
+                // hook 别名
+                // 在一个流水线运行时中，相同阶段（启动前或启动后）不能设置多个相同的 hook
+                // 如果需要使用相同的 hook，则需在不同阶段（启动前和启动后）分别设置，并通过设置 alias 确保名称唯一
+                "alias": "$hook-alias-name"
+            }
+        ],
+        // post_hooks 指流水线启动后要执行的一系列操作
+        "post_hooks": [
+            {
+                "name": "$hook-name",
+                "vars": {
+                    "$hook-params-1": "$hook-value-1",
+                    "$hook-params-2": "$hook-value-2"
+                },
+                "alias": "$hook-alias-name"
+            }
+        ]
+    },
     // isolation 指流水线运行时相关资源的隔离性，包括：shared 或者 exclusive
     // shared 表示多个 event_sources 共享资源。例如：当某个 event_source 需要重启时，将影响其他的 event_sources
     // shared 相较于 exclusive 模式，更节省资源
     // exclusive 表示每个 event_sources 独占资源，不同 event_sources 之间资源隔离互不影响
     // exclusive 相较于 shared 模式，将占用更多资源
-    "isolation": "$isolation"
+    "isolation": "$isolation",
+    // 选填项
+    // account 指自定义账号，Nautes 将创建指定名称的账号，该账号拥有确保流水线运行时正常运行的相关权限，例如拉取代码、获取制品
+    // 如果不填，将创建与流水线运行时同名的默认账号
+    "account": "$account"
 }
 ```
+
+> 关于将代码库授权给流水线，详情参见[初始化产品](run-a-pipeline.md#初始化产品)。
 
 ### 执行创建/更新流水线运行时的 API 请求
 
@@ -240,7 +338,15 @@ title: 维护流水线运行时
         name: pr-demo
         namespace: product-xxxx
     spec:
-        destination: env-dev-demo
+        account: pr-demo-account
+        destination:
+          environment: env-dev-demo
+          namespace: pr-demo-namespace
+        additionalResources:
+          git:
+            codeRepo: repo-3
+            revision: main
+            path: test
         eventSources:
         - gitlab:
             events:
@@ -290,6 +396,19 @@ title: 维护流水线运行时
           name: pipeline-release
           path: pipelines/release.yaml
         project: project-demo
+        hooks:
+            preHooks:
+            - name: ls
+              alias: pre-ls
+              vars: 
+                imageName: bash
+                printPath: /var
+            postHooks:
+            - name: ls 
+              alias: post-ls          
+              vars: 
+                imageName: bash
+                printPath: /var
 ```
 
 > 请求 API 更新流水线运行时也将更新流水线运行时的资源文件。
@@ -356,6 +475,7 @@ title: 维护流水线运行时
 {
     "items": [
         {
+            "account": "pr-demo-account",
             "name": "pr-demo",
             "project": "project-demo",
             "pipeline_source": "coderepo-sc-demo",
@@ -437,7 +557,39 @@ title: 维护流水线运行时
                     "pipeline": "pipeline-release"
                 }
             ],
-            "destination": "env-dev-demo",
+            "destination": {
+                "environment": "env-dev-demo",
+                "namespace": "pr-demo-namespace"
+            },
+            "additionalResources": {
+                "git": {
+                    "codeRepo": "coderepo-pipeline-demo",
+                    "revision": "main",
+                    "path": "test"
+                }
+            },
+            "hooks": {
+                "pre_hooks": [
+                    {
+                        "name": "ls",
+                        "vars": {
+                            "imageName": "bash",
+                            "printPath": "/var"
+                        },
+                        "alias": "pre-ls"
+                    }
+                ],
+                "post_hooks": [
+                    {
+                        "name": "ls",
+                        "vars": {
+                            "imageName": "bash",
+                            "printPath": "/usr"
+                        },
+                        "alias": "post-ls"
+                    }
+                ]
+            }
             "isolation": "exclusive"
         }
     ]
@@ -478,7 +630,7 @@ title: 维护流水线运行时
 
 适用于需要跳过 API 校验的特殊场景，详情参见[初始化产品](main-process.md#初始化产品)。
 
-以创建流水线运行时为例，将 `destination` 属性设置为不合规的 environment，启用 `insecure-skip-check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
+以创建流水线运行时为例，将 `destination.environment` 属性设置为不合规的 environment，启用 `insecure-skip-check` 查询参数并设置其值为 `true`，可以强制提交流水线运行时的资源文件。请求示例的片段如下：
 
 ```Shell
     curl -X 'POST' \
@@ -490,7 +642,11 @@ title: 维护流水线运行时
                 "project": "api-server",
                 "pipeline-source": "api-server",
                 ...
-                "destination": "env-invalid",
-                "isolation": "shared"
+                "destination": {
+                  "environment": "env-dev-invalid",
+                  "namespace": "pr-demo-namespace"
+                },
+                "isolation": "shared",
+                "account": "pr-demo-account"
             }'
 ```
