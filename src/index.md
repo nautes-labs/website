@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: /nautes.png
-tagline: Kubernets 原生的一站式开发者平台
+tagline: Kubernetes 原生的一站式开发者平台
 actionText: 快速入门 →
 actionLink: /guide/user-guide/introduction
 features:
